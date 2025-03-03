@@ -4,10 +4,14 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { env } from './config/env';
 import { connectDB } from './config/database';
+import cron from 'node-cron';
+import { publishScheduledPosts } from './controllers/schedule/schedule.controller';
 
 // Import routes
 import authRoutes from './routes/auth';
 import postRoutes from './routes/post';
+import aiRoutes from './routes/ai';
+import scheduleRoutes from './routes/schedule';
 
 // Khởi tạo express app
 const app = express();
@@ -23,6 +27,8 @@ app.use(cors({
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/schedules', scheduleRoutes);
 
 // Tạo HTTP server
 const httpServer = createServer(app);
@@ -56,6 +62,9 @@ io.on('connection', (socket) => {
     console.log('User disconnected');
   });
 });
+
+// Lập lịch chạy cron job mỗi phút để kiểm tra và đăng bài
+cron.schedule('* * * * *', publishScheduledPosts);
 
 // Kết nối database
 connectDB();

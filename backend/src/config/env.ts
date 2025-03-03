@@ -1,24 +1,33 @@
+import { cleanEnv, str, num } from 'envalid';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const env = {
-  NODE_ENV: process.env.NODE_ENV || 'development',
-  PORT: process.env.PORT || 5000,
-  MONGODB_URI: process.env.MONGODB_URI || 'mongodb://localhost:27017/s-blog',
-  JWT_SECRET: process.env.JWT_SECRET || 'your-secret-key',
-  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '7d',
-  CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:3000',
+export const env = cleanEnv(process.env, {
+  NODE_ENV: str({ choices: ['development', 'test', 'production', 'staging'] }),
+  PORT: num({ default: 5000 }),
+  MONGODB_URI: str(),
   
-  // Email configuration
-  SMTP_HOST: process.env.SMTP_HOST,
-  SMTP_PORT: process.env.SMTP_PORT,
-  SMTP_USER: process.env.SMTP_USER,
-  SMTP_PASS: process.env.SMTP_PASS,
+  // JWT config
+  JWT_SECRET: str(),
+  JWT_REFRESH_SECRET: str(),
+  JWT_EXPIRES_IN: str({ default: '1h' }),
   
-  // OAuth configuration
-  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
-  FACEBOOK_APP_ID: process.env.FACEBOOK_APP_ID,
-  FACEBOOK_APP_SECRET: process.env.FACEBOOK_APP_SECRET,
-}; 
+  // Frontend config
+  FRONTEND_URL: str({ default: 'http://localhost:3000' }),
+  
+  // CORS config  
+  CORS_ORIGIN: str({ default: '*' }),
+
+  // SMTP config
+  SMTP_HOST: str({ default: undefined }),
+  SMTP_PORT: str({ default: undefined }),
+  SMTP_USER: str({ default: undefined }),
+  SMTP_PASS: str({ default: undefined }),
+
+  // OAuth config
+  GOOGLE_CLIENT_ID: str({ default: undefined }),
+  GOOGLE_CLIENT_SECRET: str({ default: undefined }),
+  FACEBOOK_APP_ID: str({ default: undefined }),
+  FACEBOOK_APP_SECRET: str({ default: undefined }),
+}); 

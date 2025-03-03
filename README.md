@@ -140,3 +140,5 @@ npm run dev
 
 ## Design System
 The UI follows the design system from [Figma](https://www.figma.com/design/jxtgVCFmtRdq23YUj3Ijkt/S-Blog?node-id=0-1&p=f&m=dev) 
+
+OPENAI_API_KEY=your_api_key_here 
