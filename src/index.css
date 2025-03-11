@@ -1,1 +1,82 @@
+@import 'normalize.css';
 @import 'tailwindcss';
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    margin: 0;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button,
+input,
+textarea {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+button {
+    background: transparent;
+    outline: none;
+}
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    font-family: var(--font-primary);
+    font-size: 1.6rem;
+    line-height: 1.5;
+    text-rendering: optimizeSpeed;
+    margin: 0;
+}
+
+html,
+body {
+    overflow-y: overlay;
+    scroll-behavior: smooth;
+    background-color: var(--background-color);
+}
+:root {
+    /* Font */
+    --font-primary: 'Open Sans', sans-serif;
+
+    /* General Colors */
+    --color-red: #ff5480;
+    --color-purple: #9283e0;
+    --color-orange: #ffa599;
+    --color-yellow: #ffd581;
+    --color-pink: #fe90ec;
+    --color-blue: #27aeff;
+    --color-green: #00dc90;
+    --color-background: #f9f9fb;
+
+    /* Text Colors */
+    --text-default: #000000;
+    --text-passive: #9b9b9b;
+    --text-quote: #9283e0;
+    --text-hover: #ff5480;
+}
