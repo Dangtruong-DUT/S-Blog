@@ -7,6 +7,10 @@ import Profile from 'src/pages/User/Profile'
 import CreateBlog from 'src/pages/Blog/CreateBlog'
 import MainLayout from 'src/layouts/MainLayout'
 import NotFound from 'src/pages/NotFound'
+import Topics from 'src/pages/Topics'
+import Login from 'src/pages/Auth/Login'
+import Register from 'src/pages/Auth/Register'
+import FullWidthLayout from 'src/layouts/FullWidthLayout'
 
 function useRouteElements() {
     const routeElements = useRoutes([
@@ -19,7 +23,7 @@ function useRouteElements() {
             )
         },
         {
-            path: routes.blogs,
+            path: routes.blogList,
             element: (
                 <MainLayout>
                     <BlogList />
@@ -61,9 +65,34 @@ function useRouteElements() {
         {
             path: routes.notFound,
             element: (
-                <MainLayout>
+                <FullWidthLayout>
                     <NotFound />
+                </FullWidthLayout>
+            )
+        },
+        {
+            path: routes.topicsList,
+            element: (
+                <MainLayout>
+                    <Topics />
                 </MainLayout>
+            )
+        },
+        {
+            path: routes.login,
+            element: (
+                <MainLayout>
+                    <Login />
+                </MainLayout>
+            )
+        },
+
+        {
+            path: routes.register,
+            element: (
+                <FullWidthLayout>
+                    <Register />
+                </FullWidthLayout>
             )
         }
     ])

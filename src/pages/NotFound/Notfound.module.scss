@@ -1,0 +1,92 @@
+.container {
+    width: 100%;
+    background-color: var(--background-color);
+    background-image: url('src/assets/images/background404.png');
+    background-size: cover;
+    height: calc(100vh - 67px);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content-wrapper {
+    text-align: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    .content-center {
+        margin: auto;
+    }
+    .icon {
+        position: absolute;
+    }
+
+    .ellipse102 {
+        top: 15%;
+        right: 15%;
+        width: 30px;
+    }
+
+    .ellipse103 {
+        bottom: 10%;
+        left: 10%;
+        width: 50px;
+    }
+
+    .ellipse104 {
+        top: 20%;
+        left: 20%;
+        width: 40px;
+    }
+
+    .group36661 {
+        top: 50%;
+        left: 0%;
+        transform: translate(-100%, -50%);
+        width: 80px;
+    }
+
+    .group36662 {
+        bottom: 15%;
+        right: 15%;
+        width: 60px;
+    }
+
+    .group36663 {
+        top: 60%;
+        right: 5%;
+        width: 70px;
+    }
+
+    .group36664 {
+        bottom: 5%;
+        left: 25%;
+        width: 90px;
+    }
+}
+
+.title {
+    font-size: 12.8rem;
+    font-weight: 600;
+    color: var(--text-default);
+    margin: 0;
+}
+
+.subtitle {
+    font-size: 6.4rem;
+    font-weight: 400;
+    font-family: 'Gavency Free';
+    color: var(--text-default);
+}
+
+.description {
+    margin-top: 13px;
+    font-size: 2.4rem;
+    font-weight: 500;
+    color: var(--text-default);
+    max-width: 62.5rem;
+    margin-left: auto;
+    margin-right: auto;
+}
