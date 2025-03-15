@@ -94,7 +94,7 @@ function UserAccess() {
                     title='Login | S-blog'
                     description='Log in to your account and start sharing your blogs with the world.'
                     path={routes.blogList}
-                    image={`${import.meta.env.VITE_SITE_URL}/images/blog-thumbnail.png`}
+                    image={`https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiYVq9zoC-Zcg9eFZliPXWxWxBLHqer4bfLg&s`}
                     type='website'
                 />
             ) : (
@@ -102,7 +102,7 @@ function UserAccess() {
                     title='Register | S-blog'
                     description='Create an account and start your blogging journey today.'
                     path={routes.blogList}
-                    image={`${import.meta.env.VITE_SITE_URL}/images/blog-thumbnail.png`}
+                    image={`https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiYVq9zoC-Zcg9eFZliPXWxWxBLHqer4bfLg&s`}
                     type='website'
                 />
             )}
