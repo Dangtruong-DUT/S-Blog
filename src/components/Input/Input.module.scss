@@ -1,86 +1,95 @@
-.input-container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
+.form-group {
     position: relative;
-    margin-bottom: 1.5rem;
+    width: 100%;
+    margin-bottom: 2rem;
 }
 
-.input-label {
-    font-size: 1rem;
-    color: var(--text-default);
-    margin-bottom: 0.5rem;
+.formMessage {
+    position: absolute;
+    bottom: -14px;
+    font-size: 0.9rem;
+    color: red;
     font-weight: 500;
 }
 
-.input-wrapper {
-    position: relative;
-    width: 100%;
-}
-
-.input-field {
-    width: 100%;
-    padding: 1rem;
-    padding-right: 3rem;
-    border: 1px solid var(--border-cl);
-    border-radius: 8px;
-    background: var(--background-color);
-    color: var(--text-default);
-    font-size: 1.2rem;
-    transition: all 0.3s ease;
-}
-
-.input-field:focus {
-    border-color: var(--primary-text-cl);
-    outline: none;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-}
-
-.input-field::placeholder {
-    color: var(--text-placeholder);
-}
-
-.input-error {
-    border-color: red;
-}
-
-.input-message {
-    font-size: 0.9rem;
-    color: red;
-    margin-top: 0.5rem;
-}
-
-/* Icon trong input */
-.input-icon {
+.form-group label {
     position: absolute;
     top: 50%;
     left: 1rem;
     transform: translateY(-50%);
-    font-size: 1.2rem;
-    color: var(--primary-text-cl);
+    font-size: 1rem;
+    color: var(--text-default);
+    transition: all 0.3s ease;
+    background: transparent;
+    padding: 0 5px;
+    cursor: pointer;
 }
 
-/* Nút toggle password */
+.form-group input {
+    width: 100%;
+    padding: 1rem;
+    outline: 1px solid var(--border-cl);
+    border-radius: 8px;
+    background: var(--background-color);
+    color: var(--text-default);
+    font-size: 1.2rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:not(:placeholder-shown) {
+    outline-color: var(--border-cl);
+}
+
+.form-group input:focus {
+    outline-width: 2px;
+}
+
+.form-group input:focus + label,
+.form-group input:not(:placeholder-shown) + label {
+    top: 0.1rem;
+    left: 0.9rem;
+    font-size: 1rem;
+    color: var(--primary-text-cl);
+    background: var(--background-color);
+    border-radius: 4px;
+}
+
+.form-group input:-webkit-autofill,
+.form-group input:-webkit-autofill:hover,
+.form-group input:-webkit-autofill:focus,
+.form-group input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0px 1000px var(--background-color) inset !important;
+    -webkit-text-fill-color: var(--text-default) !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.password-input-container {
+    position: relative;
+}
+
 .password-toggle-btn {
     position: absolute;
     top: 50%;
     right: 1rem;
     transform: translateY(-50%);
-    background: none;
+    padding: 0.5rem;
+    background: var(--background-color);
     border: none;
+    outline: none;
     cursor: pointer;
     font-size: 1.2rem;
     color: var(--primary-text-cl);
+    background: var(--background-color);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .input-field {
-        font-size: 1rem;
-    }
-
-    .input-icon,
-    .password-toggle-btn {
-        font-size: 1rem;
-    }
+.form-btn {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    margin-top: 1rem;
 }

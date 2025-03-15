@@ -11,15 +11,17 @@ export interface MenuItemProps {
     onClick?: () => void
     leftIcon?: ReactNode
     className?: string
+    active?: boolean
 }
 
-function MenuItem({ data, onClick, className }: MenuItemProps) {
+function MenuItem({ data, onClick, className, active }: MenuItemProps) {
     const classes = cx(
         'list-items__item',
         {
             separate: data.separate
         },
-        className
+        className,
+        { active: active }
     )
 
     return (

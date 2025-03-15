@@ -2,30 +2,33 @@ import classNames from 'classnames/bind'
 import styles from './Header.module.scss'
 import { ReactSVG } from 'react-svg'
 import logo from 'src/assets/icon/logo.svg'
-import { NavLink } from 'react-router-dom'
+import { Link, NavLink, useMatch } from 'react-router-dom'
 import { routes } from 'src/config'
 import { MdMoreVert } from 'react-icons/md'
-import { CiSearch } from 'react-icons/ci'
-import { MENU_ITEMS } from 'src/constants/MenuItem'
 import Menu from '../Popper/Components/Menu/Menu'
+import SearchBar from './Component/SearchBar'
+import { useMenuItems } from 'src/hooks/useMenuItem'
 
 const cx = classNames.bind(styles)
 
 function Header() {
-    const handleMenuChange = (title: string) => {
-        console.log(title)
-    }
+    const isNewPage = useMatch('/new')
+
+    const MENU_ITEMS = useMenuItems()
     return (
         <header className={cx('header-fixed-wrapper')}>
             <div className={cx('header')}>
-                <ReactSVG src={logo} />
-                <nav>
+                <Link to={routes.home} className={cx('header__logo')}>
+                    <ReactSVG src={logo} />
+                </Link>
+
+                <nav style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
                     <ul className={cx('nav_list')}>
-                        <li>
-                            <button className={cx('nav__btn', 'nav__btn--search')}>
-                                <CiSearch size={'2rem'} />
-                            </button>
-                        </li>
+                        {!isNewPage && (
+                            <li>
+                                <SearchBar />
+                            </li>
+                        )}
                         <li>
                             <NavLink
                                 to={routes.blogList}
@@ -59,7 +62,7 @@ function Header() {
                             </NavLink>
                         </li>
                         <li>
-                            <Menu items={MENU_ITEMS} onChange={handleMenuChange}>
+                            <Menu items={MENU_ITEMS}>
                                 <button className={cx('nav__btn')}>
                                     <MdMoreVert size={'2rem'} />
                                 </button>

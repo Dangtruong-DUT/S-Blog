@@ -1,4 +1,4 @@
-import BlogList from '../Blog/BlogList'
+import BlogList from '../BlogList'
 
 function Topics() {
     return (

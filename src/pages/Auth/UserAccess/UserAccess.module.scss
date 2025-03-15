@@ -1,4 +1,4 @@
-.register-container {
+.container {
     display: flex;
     min-height: 100vh;
     background: var(--background-color);
@@ -8,7 +8,7 @@
     padding: 4rem;
 }
 
-html[data-theme='dark'] .register-container {
+html[data-theme='dark'] .container {
     background-image: url('src/assets/images/ThumbnailDark.png');
 }
 
@@ -65,7 +65,7 @@ html[data-theme='dark'] .register-container {
     justify-content: center;
     align-items: center;
 
-    .register-form {
+    .form {
         background: var(--background-second-color);
         padding: 3rem;
         border-radius: 12px;
@@ -85,84 +85,6 @@ html[data-theme='dark'] .register-container {
         margin-bottom: 2rem;
         color: var(--text-default);
         align-self: flex-start;
-    }
-
-    .form-group {
-        position: relative;
-        width: 100%;
-        margin-bottom: 2rem;
-        .formMessage {
-            position: absolute;
-            bottom: -14px;
-            font-size: 0.9rem;
-            color: red;
-            font-weight: 500;
-        }
-    }
-
-    .form-group label {
-        position: absolute;
-        top: 50%;
-        left: 1rem;
-        transform: translateY(-50%);
-        font-size: 1rem;
-        color: var(--text-default);
-        transition: all 0.3s ease;
-        background: transparent;
-        padding: 0 5px;
-    }
-
-    .form-group input {
-        width: 100%;
-        padding: 1rem;
-        outline: 1px solid var(--border-cl);
-        border-radius: 8px;
-        background: var(--background-color);
-        color: var(--text-default);
-        font-size: 1.2rem;
-        transition: border-color 0.3s;
-    }
-    .form-group input:not(:placeholder-shown) {
-        outline-color: var(--border-cl);
-    }
-    .form-group input:focus {
-        outline-width: 2px;
-    }
-    .form-group input:focus + label,
-    .form-group input:not(:placeholder-shown) + label {
-        top: 0.1rem;
-        left: 0.9rem;
-        font-size: 1rem;
-        color: var(--primary-text-cl);
-        background: var(--background-color);
-        border-radius: 4px;
-    }
-    .form-group input:-webkit-autofill,
-    .form-group input:-webkit-autofill:hover,
-    .form-group input:-webkit-autofill:focus,
-    .form-group input:-webkit-autofill:active {
-        -webkit-box-shadow: 0 0 0px 1000px var(--background-color) inset !important;
-        -webkit-text-fill-color: var(--text-default) !important;
-        transition: background-color 5000s ease-in-out 0s;
-    }
-
-    .password-input-container {
-        position: relative;
-    }
-
-    .password-toggle-btn {
-        position: absolute;
-        top: 50%;
-        right: 1rem;
-        transform: translateY(-50%);
-        padding: 0.5rem;
-        background: var(--background-color);
-        border: none;
-        outline: none;
-        cursor: pointer;
-        font-size: 1.2rem;
-        color: var(--primary-text-cl);
-        background: var(--background-color);
     }
     .form-btn {
         width: 100%;
@@ -185,9 +107,24 @@ html[data-theme='dark'] .register-container {
     }
 }
 
+.loading-icon {
+    animation: spin 1s linear infinite;
+    font-size: 1.6rem;
+    margin-right: 2px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
-    .register-container {
+    .-container {
         flex-direction: column;
     }
 
@@ -197,7 +134,7 @@ html[data-theme='dark'] .register-container {
         width: 100%;
     }
 
-    .register-form {
+    .form {
         padding: 2.5rem;
     }
 }

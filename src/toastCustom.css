@@ -1,0 +1,40 @@
+/* custom-toast.css */
+.Toastify__toast {
+    border-radius: 12px !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    padding: 14px 18px;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.Toastify__toast--success {
+    background: rgba(46, 204, 113, 0.2) !important;
+    color: white;
+}
+
+.Toastify__toast--error {
+    background: rgba(231, 76, 60, 0.2) !important;
+    color: white;
+}
+
+.Toastify__toast--warning {
+    background: rgba(241, 196, 15, 0.2) !important;
+    color: white;
+}
+
+.Toastify__toast--info {
+    background: rgba(52, 152, 219, 0.2) !important;
+    color: white;
+}
+
+.Toastify__toast-body {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.Toastify__close-button {
+    color: white !important;
+}

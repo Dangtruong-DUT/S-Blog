@@ -1,9 +1,9 @@
 const routes = {
     home: '/',
     blogList: '/new',
-    blogDetail: '/blogs/:id',
-    createBlog: '/blogs/create',
-    editBlog: '/blogs/:id/edit',
+    blogDetail: '/:nameId',
+    createBlog: '/create',
+    editBlog: '/:id/edit',
     readingList: '/reading-list',
     topics: '/topics/:topicId',
     topicsList: '/topics',
@@ -13,6 +13,7 @@ const routes = {
     forgotPassword: '/auth/forgot-password',
     notFound: '*',
     profile: '/profile/:username',
+    me: '/me',
     changePassword: '/auth/change-password'
 } as const
 

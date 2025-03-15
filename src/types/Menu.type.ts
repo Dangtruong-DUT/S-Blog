@@ -6,6 +6,8 @@ export interface MenuItem {
     separate?: boolean
     icon?: ReactNode
     code?: string
+    onClick?: () => void
+    active?: boolean
     children?: {
         title: string
         menuItems: MenuItem[]

@@ -38,6 +38,10 @@
         }
     }
 
+    &__item.active {
+        background-color: var(--btn-hover-cl);
+    }
+
     & &__item:last-child {
         margin-bottom: 8px;
     }
@@ -56,7 +60,7 @@
 }
 
 .list-items__item:hover {
-    background-color: var(--btn-hover-cl);
+    color: var(--text-hover);
 }
 
 .header__btn-back {

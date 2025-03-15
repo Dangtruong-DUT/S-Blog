@@ -1,4 +1,4 @@
-import { useRoutes } from 'react-router-dom'
+import { Navigate, Outlet, useRoutes } from 'react-router-dom'
 import Home from '../pages/Home'
 import { routes } from 'src/config'
 import BlogList from 'src/pages/Blog/BlogList'
@@ -7,19 +7,32 @@ import Profile from 'src/pages/User/Profile'
 import CreateBlog from 'src/pages/Blog/CreateBlog'
 import MainLayout from 'src/layouts/MainLayout'
 import NotFound from 'src/pages/NotFound'
-import Topics from 'src/pages/Topics'
-import Login from 'src/pages/Auth/Login'
-import Register from 'src/pages/Auth/Register'
+import UserAccess from 'src/pages/Auth/UserAccess'
 import FullWidthLayout from 'src/layouts/FullWidthLayout'
+import Topics from 'src/pages/Blog/Topics'
+import { useContext } from 'react'
+import { AppContext } from 'src/contexts/app.context'
+import AuthLayout from 'src/layouts/AuthLayout'
+
+export function ProtectedRoute() {
+    const { isAuthenticated } = useContext(AppContext)
+    return isAuthenticated ? <Outlet /> : <Navigate to={routes.login} />
+}
+
+export function RejectedRoute() {
+    const { isAuthenticated } = useContext(AppContext)
+    return !isAuthenticated ? <Outlet /> : <Navigate to={routes.blogList} />
+}
 
 function useRouteElements() {
     const routeElements = useRoutes([
         {
             path: routes.home,
+            index: true,
             element: (
-                <MainLayout>
+                <FullWidthLayout>
                     <Home />
-                </MainLayout>
+                </FullWidthLayout>
             )
         },
         {
@@ -33,25 +46,9 @@ function useRouteElements() {
         {
             path: routes.blogDetail,
             element: (
-                <MainLayout>
+                <FullWidthLayout>
                     <BlogDetail />
-                </MainLayout>
-            )
-        },
-        {
-            path: routes.createBlog,
-            element: (
-                <MainLayout>
-                    <CreateBlog />
-                </MainLayout>
-            )
-        },
-        {
-            path: routes.editBlog,
-            element: (
-                <MainLayout>
-                    <CreateBlog />
-                </MainLayout>
+                </FullWidthLayout>
             )
         },
         {
@@ -63,14 +60,6 @@ function useRouteElements() {
             )
         },
         {
-            path: routes.notFound,
-            element: (
-                <FullWidthLayout>
-                    <NotFound />
-                </FullWidthLayout>
-            )
-        },
-        {
             path: routes.topicsList,
             element: (
                 <MainLayout>
@@ -79,19 +68,62 @@ function useRouteElements() {
             )
         },
         {
-            path: routes.login,
-            element: (
-                <MainLayout>
-                    <Login />
-                </MainLayout>
-            )
+            path: '',
+            element: <RejectedRoute />,
+            children: [
+                {
+                    path: routes.login,
+                    element: (
+                        <AuthLayout>
+                            <UserAccess />
+                        </AuthLayout>
+                    )
+                },
+                {
+                    path: routes.register,
+                    element: (
+                        <AuthLayout>
+                            <UserAccess />
+                        </AuthLayout>
+                    )
+                }
+            ]
         },
-
         {
-            path: routes.register,
+            path: '',
+            element: <ProtectedRoute />,
+            children: [
+                {
+                    path: routes.me,
+                    element: (
+                        <MainLayout>
+                            <Profile />
+                        </MainLayout>
+                    )
+                },
+                {
+                    path: routes.createBlog,
+                    element: (
+                        <FullWidthLayout>
+                            <CreateBlog />
+                        </FullWidthLayout>
+                    )
+                },
+                {
+                    path: routes.editBlog,
+                    element: (
+                        <MainLayout>
+                            <CreateBlog />
+                        </MainLayout>
+                    )
+                }
+            ]
+        },
+        {
+            path: routes.notFound,
             element: (
                 <FullWidthLayout>
-                    <Register />
+                    <NotFound />
                 </FullWidthLayout>
             )
         }

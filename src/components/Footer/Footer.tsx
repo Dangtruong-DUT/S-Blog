@@ -3,6 +3,8 @@ import styles from './Footer.module.scss'
 import logo from 'src/assets/icon/logo.svg'
 import { ReactSVG } from 'react-svg'
 import SOCIALS from 'src/constants/Socials'
+import { Link } from 'react-router-dom'
+import { routes } from 'src/config'
 
 const cx = classNames.bind(styles)
 
@@ -10,7 +12,9 @@ function Footer() {
     return (
         <footer className={cx('footerWrapper')}>
             <div className={cx('footerInner')}>
-                <ReactSVG src={logo} />
+                <Link to={routes.home}>
+                    <ReactSVG src={logo} />
+                </Link>
                 <ul className={cx('footer-socials')}>
                     {SOCIALS.map((social) => (
                         <li key={social.label}>

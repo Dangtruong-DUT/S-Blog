@@ -1,34 +1,53 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react'
+import { HTMLInputTypeAttribute, useState } from 'react'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import classNames from 'classnames/bind'
 import styles from './Input.module.scss'
+import { RegisterOptions, UseFormRegister } from 'react-hook-form'
 
 const cx = classNames.bind(styles)
 
 interface InputProps {
-    label: string
+    className?: string
+    classInput?: string
     id?: string
-    type?: 'text' | 'email' | 'password'
+    errorMessage?: string
+    type?: HTMLInputTypeAttribute
     placeholder?: string
-    error?: string
-    [key: string]: any
+    label: string
+    name: string
+    rules?: RegisterOptions<any>
+    register: UseFormRegister<any>
 }
 
-function Input({ label, id, type = 'text', placeholder = ' ', error }: InputProps) {
+function Input({
+    classInput,
+    className,
+    label,
+    id,
+    name,
+    type = 'text',
+    placeholder = ' ',
+    errorMessage,
+    register,
+    rules
+}: InputProps) {
     const [showPassword, setShowPassword] = useState(false)
     const isPassword = type === 'password'
-
+    const classes = cx('form-group', className)
+    const classInputs = cx(classInput)
     return (
-        <div className={cx('form-group')}>
+        <div className={classes}>
             <input
+                className={classInputs}
                 type={isPassword && showPassword ? 'text' : type}
                 id={id}
                 placeholder={placeholder}
                 autoComplete={isPassword ? 'on' : undefined}
+                {...register(name, rules)}
             />
             <label htmlFor={id}>{label}</label>
-            <div className={cx('formMessage')}>{error}</div>
+            <div className={cx('formMessage')}>{errorMessage}</div>
             {isPassword && (
                 <button
                     type='button'

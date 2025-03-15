@@ -18,7 +18,7 @@ interface MenuProps {
     hideOnClick?: boolean
     children: ReactElement
     items: MenuItemType[]
-    onChange: (title: string) => void
+    onChange?: (title: string) => void
 }
 
 function Menu({ hideOnClick = false, children, items = [], onChange }: MenuProps) {
@@ -29,10 +29,12 @@ function Menu({ hideOnClick = false, children, items = [], onChange }: MenuProps
         return (
             current.menuItems?.map((item, index) => {
                 const hasSubMenu = !!item.children
+                const isActive = item.active
                 return (
                     <MenuItem
                         key={index}
                         className={cx('item')}
+                        active={isActive}
                         data={item}
                         onClick={() => {
                             if (hasSubMenu) {
@@ -41,7 +43,22 @@ function Menu({ hideOnClick = false, children, items = [], onChange }: MenuProps
                                     { title: item.title, menuItems: item.children?.menuItems }
                                 ])
                             } else {
-                                onChange(item.title)
+                                // Cập nhật trạng thái active cho menu item
+                                setHistory((prev) => {
+                                    const updatedMenuItems =
+                                        prev[prev.length - 1].menuItems?.map((menuItem) => ({
+                                            ...menuItem,
+                                            active: menuItem.title === item.title
+                                        })) || []
+
+                                    return [
+                                        ...prev.slice(0, prev.length - 1),
+                                        { ...prev[prev.length - 1], menuItems: updatedMenuItems }
+                                    ]
+                                })
+
+                                if (item.onClick) item.onClick()
+                                if (onChange) onChange(item.title)
                             }
                         }}
                     />

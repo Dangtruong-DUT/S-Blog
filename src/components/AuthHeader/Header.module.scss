@@ -1,0 +1,28 @@
+.header-fixed-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: var(--background-secondary);
+    padding: 7px 0;
+    box-shadow: 0 4px 10px #0000001f;
+    .header {
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 1170px;
+    }
+}
+.header__logo {
+    display: inline-block;
+    color: var(--text-default);
+}
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    background-color: var(--background-color);
+    border-radius: 999px;
+    border: 1px solid var(--border-cl);
+    padding: 8px;
+    transition: all 0.3s ease-in-out;
+}

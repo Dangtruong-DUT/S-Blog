@@ -4,6 +4,7 @@
     z-index: 100;
     background-color: var(--background-secondary);
     padding: 7px 0;
+
     .header {
         margin: 0 auto;
         display: flex;
@@ -13,6 +14,7 @@
     }
 }
 .header__logo {
+    display: inline-block;
     color: var(--text-default);
 }
 .nav_list {
@@ -25,6 +27,8 @@
         padding: 2px 37.5px;
         display: inline-block;
     }
+
+    .nav__link:hover,
     .nav__link--active {
         color: var(--color-red);
     }
@@ -34,9 +38,27 @@
         align-items: center;
         justify-content: center;
     }
-    .nav__btn--search {
-        border-radius: 999px;
-        padding: 5px;
-        background-color: var(--background-color);
+}
+
+.search-results {
+    background: var(--background-color);
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    width: 250px;
+    padding: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.search-result-item {
+    padding: 8px 12px;
+    font-size: 1.4rem;
+    color: var(--primary-text-cl);
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.2s ease-in-out;
+
+    &:hover {
+        background: var(--hover-color);
     }
 }
