@@ -3,12 +3,22 @@ import styles from './Home.module.scss'
 import Button from 'src/components/Button'
 import { FaPenFancy } from 'react-icons/fa' // Icon viết blog
 import { routes } from 'src/config'
+import SEO from 'src/components/SeoHelmet'
 
 const cx = classNames.bind(styles)
 
 function Home() {
     return (
         <div className={cx('container')}>
+            <SEO
+                description=' Are you passionate about writing and sharing your knowledge? Our platform is a space where anyone can
+                become a blogger and contribute valuable insights, ideas, and experiences. Whether youre a tech
+                enthusiast, a creative writer, or an expert in any field, this is your place to inspire and connect with
+                like-minded individuals.'
+                title='Welcome to Our Blogging Community'
+                path='/'
+                image='https://www.sblog.tech/images/Thumbnail.png'
+            />
             <h1 className={cx('title')}>Welcome to Our Blogging Community</h1>
             <p className={cx('description')}>
                 Are you passionate about writing and sharing your knowledge? Our platform is a space where anyone can

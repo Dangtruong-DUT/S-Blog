@@ -5,7 +5,7 @@ interface props {
 
 function createSocialLink({ title, url }: props) {
     const siteUrl = import.meta.env.VITE_SITE_URL || 'https://www.sblog.tech'
-    const fullUrl = encodeURIComponent(`${siteUrl}${url}`)
+    const fullUrl = encodeURIComponent(`${siteUrl}/${url}`)
     const text = encodeURIComponent(title)
 
     const socialLinks = {
