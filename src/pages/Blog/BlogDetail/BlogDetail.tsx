@@ -2,11 +2,13 @@ import { useQuery } from '@tanstack/react-query'
 import styles from './BlogDetail.module.scss'
 import classNames from 'classnames/bind'
 import { useState } from 'react'
-import { FaFacebookF, FaTwitter, FaInstagram, FaHeart, FaEye } from 'react-icons/fa'
+import { FaFacebookF, FaTwitter, FaHeart, FaEye, FaTelegram } from 'react-icons/fa'
 import { useParams } from 'react-router-dom'
 import { formatter, getIdFromNameId } from 'src/utils/common.util'
 import blogApi from 'src/apis/blog.api'
 import SkeletonBlogDetail from './components/SkeletonBlogDetail'
+import SEO from 'src/components/SeoHelmet'
+import createSocialLink from 'src/utils/socialLink'
 const cx = classNames.bind(styles)
 
 function BlogDetail() {
@@ -21,10 +23,21 @@ function BlogDetail() {
     const handleOnClickLike = () => {
         setLiked((prev) => !prev)
     }
+    let social
+    if (blog) {
+        social = createSocialLink({ title: blog?.title, url: nameId as string })
+    }
     return (
         <section className={cx('blog-detail')}>
             {blog && !isLoading && (
                 <>
+                    <SEO
+                        description={blog.subTitle}
+                        title={blog.subTitle}
+                        path={nameId as string}
+                        image='https://vione.ai/wp-content/uploads/2022/03/tri-tue-nhan-tao.jpg'
+                        type='article'
+                    />
                     <header className={cx('blog-detail__header')}>
                         <div className={cx('blog-header-inner')}>
                             <h1 className={cx('blog-detail__header-title')}>{blog.title}</h1>
@@ -34,17 +47,14 @@ function BlogDetail() {
 
                     <div className={cx('blog-detail__content-wrapper')}>
                         <aside className={cx('blog-detail__sidebar')}>
-                            <a
-                                href='https://www.facebook.com/sharer/sharer.php?u=taplamit.tech'
-                                className={cx('blog-detail__sidebar-item')}
-                            >
+                            <a href={social?.facebook} className={cx('blog-detail__sidebar-item')}>
                                 <FaFacebookF size={'2rem'} />
                             </a>
-                            <a href='#' className={cx('blog-detail__sidebar-item')}>
+                            <a href={social?.twitter} className={cx('blog-detail__sidebar-item')}>
                                 <FaTwitter size={'2rem'} />
                             </a>
-                            <a href='#' className={cx('blog-detail__sidebar-item')}>
-                                <FaInstagram size={'2rem'} />
+                            <a href={social?.telegram} className={cx('blog-detail__sidebar-item')}>
+                                <FaTelegram size={'2rem'} />
                             </a>
                         </aside>
 
