@@ -1,0 +1,10 @@
+.blogListWrapper {
+    padding: 37px 0;
+    min-height: calc(100vh - 64px);
+    .blogListGrid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        column-gap: 32px;
+        row-gap: 51px;
+    }
+}

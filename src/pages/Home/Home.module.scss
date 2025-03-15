@@ -1,0 +1,52 @@
+// src/pages/Home/Home.module.scss
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: #0d0d0d;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.title {
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    background: linear-gradient(to right, #ff8c00, #ff2e63);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.description {
+    font-size: 1.6rem;
+    max-width: 600px;
+    margin-bottom: 25px;
+    opacity: 0.8;
+}
+
+.button {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: white;
+    background: #ff2e63;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+        background: #ff8c00;
+    }
+
+    .icon {
+        margin-right: 10px;
+        font-size: 1.4rem;
+    }
+}

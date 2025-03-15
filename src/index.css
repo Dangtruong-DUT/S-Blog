@@ -1,1 +1,163 @@
+@import 'normalize.css';
 @import 'tailwindcss';
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    margin: 0;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button,
+input,
+textarea {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+button {
+    background: transparent;
+    outline: none;
+}
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    font-family: var(--font-primary);
+    font-size: 1.6rem;
+    line-height: 1.5;
+    text-rendering: optimizeSpeed;
+    margin: 0;
+}
+
+html,
+body {
+    overflow-y: visible;
+    scroll-behavior: smooth;
+    background-color: var(--background-color);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: Grayscale;
+}
+
+:root {
+    --font-primary: 'Poppins', sans-serif;
+}
+
+:root,
+[data-theme='light'] {
+    --background-color: #f9f9fb;
+    --background-secondary: #ffffff;
+    --color-red: #ff5480;
+    --color-purple: #9283e0;
+    --color-orange: #ffa599;
+    --color-yellow: #ffd581;
+    --color-pink: #fe90ec;
+    --color-blue: #27aeff;
+    --color-green: #00dc90;
+    --text-default: #000000;
+    --text-dark-gray: #4a4a4a;
+    --text-passive: #9b9b9b;
+    --text-quote: #9283e0;
+    --text-Nightfall: #111210;
+    --text-Deep-Black: #131313;
+    --text-Gray-Soft: #9b9b9b;
+    --text-hover: #ff5480;
+    --thumb-cl: rgba(22, 24, 35, 0.06);
+    --border-cl: #e0e0e0;
+    --btn-hover-cl: #f0f0f0;
+    --primary-text-cl: #333333;
+    --background-second-color: #ffffff;
+    --box-shadow-color: rgba(0, 0, 0, 0.08);
+    --box-shadow-hover: 0px 0px 8px rgba(0, 0, 0, 0.08);
+    --box-BG0-hover-cl: #f6f3ff;
+    --skeleton-border-color: #e5e7eb;
+    --skeleton-bg-color: #e5e7eb;
+    --skeleton-icon-color: #d1d5db;
+    --btn-disable-cl: #e0e0e0;
+}
+
+[data-theme='dark'] {
+    /* Dark Mode Colors */
+    --background-color: #121212;
+    --background-secondary: #1e1e1e;
+    --color-red: #ff85a9;
+    --color-purple: #b1a2f0;
+    --color-orange: #ffb9ad;
+    --color-yellow: #ffe2a8;
+    --color-pink: #ffb3f0;
+    --color-blue: #5ec6ff;
+    --color-green: #42e2b3;
+    --text-default: #e0e0e0;
+    --text-dark-gray: #bfbfbf;
+    --text-passive: #a0a0a0;
+    --text-quote: #b1a2f0;
+    --text-hover: #ff85a9;
+    --text-Nightfall: #ededed;
+    --text-Nightfall-Dark: #e5e5e5;
+    --text-Deep-Black-Dark: #eeeeee;
+    --text-Gray-Soft: #c4c4c4;
+    --thumb-cl: rgba(164, 164, 164, 0.06);
+    --border-cl: #333333;
+    --btn-hover-cl: #3a3a3a;
+    --primary-text-cl: #e0e0e0;
+    --background-second-color: #1e1e1e;
+    --box-shadow-color: rgba(255, 255, 255, 0.02);
+    --box-shadow-hover: 0px 0px 8px rgba(119, 119, 119, 0.03);
+    --box-BG0-hover-cl: #2a2139;
+    --skeleton-border-color: #374151;
+    --skeleton-bg-color: #4b5563;
+    --skeleton-icon-color: #6b7280;
+    --btn-disable-cl: #424242;
+}
+
+html,
+body {
+    background-color: var(--background-color);
+    color: var(--text-default);
+}
+
+/* custom scroll */
+
+html *::-webkit-scrollbar {
+    border-radius: 0;
+    width: 8px;
+}
+
+html *::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: var(--thumb-cl);
+}
+
+html *::-webkit-scrollbar-track {
+    border-radius: 0;
+    background-color: var(--background-color);
+}
+
+::selection {
+    background: var(--text-hover);
+    color: white;
+}
