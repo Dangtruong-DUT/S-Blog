@@ -12,7 +12,7 @@ function Footer() {
     return (
         <footer className={cx('footerWrapper')}>
             <div className={cx('footerInner')}>
-                <Link to={routes.home}>
+                <Link to={routes.blogList}>
                     <ReactSVG src={logo} />
                 </Link>
                 <ul className={cx('footer-socials')}>

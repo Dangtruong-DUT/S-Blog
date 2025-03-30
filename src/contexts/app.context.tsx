@@ -1,4 +1,4 @@
-import { getAccessToken, getProfileFromLS } from 'src/utils/aut.util'
+import { getAccessToken, getProfileFromLS } from 'src/utils/auth.util'
 import { createContext, useState } from 'react'
 import { User } from 'src/types/user.type'
 

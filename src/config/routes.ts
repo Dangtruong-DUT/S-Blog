@@ -1,20 +1,19 @@
 const routes = {
     home: '/',
     blogList: '/new',
-    blogDetail: '/:nameId',
+    blogDetail: '/blogs/:nameId',
     createBlog: '/create',
-    editBlog: '/:id/edit',
-    readingList: '/reading-list',
-    topics: '/topics/:topicId',
-    topicsList: '/topics',
+    editBlog: '/blogs/:id/edit',
+    blogsOfCategory: '/category/:category',
+    category: '/category',
     setting: '/setting',
+    changePassword: '/setting/change-password',
+    settingProfile: '/setting',
     login: '/auth/login',
     register: '/auth/register',
     forgotPassword: '/auth/forgot-password',
     notFound: '*',
-    profile: '/profile/:username',
-    me: '/me',
-    changePassword: '/auth/change-password'
+    profile: '/:username'
 } as const
 
 export default routes

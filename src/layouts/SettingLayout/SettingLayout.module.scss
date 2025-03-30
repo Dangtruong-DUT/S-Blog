@@ -1,0 +1,17 @@
+.SettingLayoutWrapper {
+    margin: 0 auto;
+    display: flex;
+    height: calc(100vh - 64px);
+    max-width: 1170px;
+    column-gap: 16px;
+}
+.settingSidebar {
+    padding-top: 16px;
+    flex: 1;
+    height: calc(100vh - 64px);
+}
+.settingContent {
+    padding-top: 16px;
+    flex: 2;
+    height: calc(100vh - 64px);
+}

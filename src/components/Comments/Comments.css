@@ -1,0 +1,207 @@
+/* Base styles with Thread-inspired design */
+.userInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.userInfo .commentsTwo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.userInfo .commentsTwo .fullName {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--primary-text-color);
+    line-height: 1.4;
+}
+
+.userInfo .commentsTwo .commenttimestamp {
+    font-size: 13px;
+    color: var(--secondary-text-color);
+    font-weight: 400;
+}
+
+.halfDiv {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Button styles matching Thread's minimal approach */
+.replyBtn {
+    background: none;
+    border: none;
+    color: var(--accent-color);
+    font-weight: 500;
+    font-size: 14px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.replyBtn:hover {
+    background: var(--hover-background);
+}
+
+/* User actions with subtle hover effects */
+.userActions {
+    display: flex;
+    gap: 4px;
+}
+
+.userActions .actionsBtn {
+    background: none;
+    border: none;
+    padding: 6px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--secondary-text-color);
+    transition: background 0.2s ease;
+}
+
+.userActions .actionsBtn:hover {
+    background: var(--hover-background);
+    color: var(--primary-text-color);
+}
+
+/* Avatar styling */
+.userLink {
+    display: flex;
+    text-decoration: none;
+    color: inherit;
+    align-items: center;
+    gap: 8px;
+}
+
+.userLink .imgdefault {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--avatar-border-color);
+}
+
+/* Comment form styling */
+.replysection {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.form {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    padding: 12px;
+    background: var(--form-background);
+    border-radius: 12px;
+    border: 1px solid var(--input-border-color);
+}
+
+.form .postComment {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 8px 0;
+    font-size: 15px;
+    line-height: 1.4;
+    resize: none;
+    min-height: 40px;
+}
+
+.form .postComment:focus {
+    outline: none;
+}
+
+.form .postBtn {
+    background: var(--button-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.form .postBtn:hover {
+    background: var(--button-hover-color);
+}
+
+.form .cancelBtn {
+    background: none;
+    border: none;
+    color: var(--secondary-text-color);
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px;
+}
+
+/* Sign in prompt */
+.signBox {
+    border: 1px solid var(--input-border-color);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--form-background);
+}
+
+.signBox .signLine {
+    font-size: 14px;
+    color: var(--secondary-text-color);
+}
+
+.signBox .signBtn {
+    background: var(--button-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.signBox .signBtn:hover {
+    background: var(--button-hover-color);
+}
+
+/* Emoji picker */
+.emoji-input {
+    position: relative;
+}
+
+.emoji-input .emoji-icon {
+    color: var(--secondary-text-color);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s ease;
+}
+
+.emoji-input .emoji-icon:hover {
+    background: var(--hover-background);
+}
+
+/* Focus states */
+.advanced-border {
+    border: 1px solid var(--input-border-color);
+    padding: 12px;
+    border-radius: 12px;
+    transition: border 0.2s ease;
+}
+
+.advanced-border:focus-within {
+    border: 1px solid var(--accent-color);
+    box-shadow: 0 0 0 1px var(--accent-color);
+}

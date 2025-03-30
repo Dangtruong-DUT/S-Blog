@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind'
 import styles from './SkeletonBlogDetail.module.scss'
-import SkeletonBlogCart from 'src/pages/Blog/BlogList/components/SkeletonBlogCart'
+import SkeletonBlogCart from 'src/components/Skeleton'
 
 const cx = classNames.bind(styles)
 

@@ -1,0 +1,26 @@
+.blogsWrapper {
+    width: 100%;
+}
+.blogsLabel {
+    display: inline-block;
+    font-size: 1.3rem;
+    font-weight: 400;
+    letter-spacing: -0.075px;
+    color: var(--text-Gray-Soft);
+    margin-bottom: 12px;
+}
+.blogListGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 32px;
+    row-gap: 51px;
+}
+.blogListGrid > :last-child {
+    grid-column: 1 / -1;
+    justify-self: center;
+}
+@media screen and (max-width: 768px) {
+    .blogListGrid {
+        grid-template-columns: 1fr;
+    }
+}

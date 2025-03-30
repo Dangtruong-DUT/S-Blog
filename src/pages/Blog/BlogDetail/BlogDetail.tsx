@@ -1,17 +1,25 @@
 import { useQuery } from '@tanstack/react-query'
 import styles from './BlogDetail.module.scss'
 import classNames from 'classnames/bind'
-import { useState } from 'react'
-import { FaFacebookF, FaTwitter, FaHeart, FaEye, FaTelegram } from 'react-icons/fa'
-import { useParams } from 'react-router-dom'
+import { useContext, useMemo, useState } from 'react'
+import { FaFacebookF, FaTwitter, FaHeart, FaEye, FaTelegramPlane, FaArrowLeft } from 'react-icons/fa'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { formatter, getIdFromNameId } from 'src/utils/common.util'
 import blogApi from 'src/apis/blog.api'
 import SkeletonBlogDetail from './components/SkeletonBlogDetail'
 import SEO from 'src/components/SeoHelmet'
 import createSocialLink from 'src/utils/socialLink'
+import { convertToHtml } from 'src/utils/convertQuillToHTML'
+import hljs from 'highlight.js'
+import { DeltaStatic } from 'quill'
+import { AiFillEdit } from 'react-icons/ai'
+import { AppContext } from 'src/contexts/app.context'
+import Comments from 'src/components/Comments'
 const cx = classNames.bind(styles)
 
 function BlogDetail() {
+    const navigate = useNavigate()
+    const profile = useContext(AppContext)
     const { nameId } = useParams()
     const id = getIdFromNameId(nameId as string)
     const { data: blogData, isLoading } = useQuery({
@@ -27,21 +35,52 @@ function BlogDetail() {
     if (blog) {
         social = createSocialLink({ title: blog?.title, url: nameId as string })
     }
+
+    const getContentHtml = useMemo(() => {
+        if (blog?.content) {
+            hljs.highlightAll()
+            try {
+                const delta = JSON.parse(blog.content) as DeltaStatic
+                return convertToHtml(delta)
+            } catch (err) {
+                console.log('Error on converting JSON to HTML', err)
+                return `<p style="color: #d32f2f; font-weight: bold;">
+                        *An error occurred while displaying the content. We sincerely apologize for this issue.
+                    </p>`
+            }
+        }
+        return ''
+    }, [blog?.content])
+
+    const handleBackScreen = () => {
+        navigate(-1)
+    }
+
     return (
         <section className={cx('blog-detail')}>
             {blog && !isLoading && (
                 <>
                     <SEO
-                        description={blog.subTitle}
-                        title={blog.subTitle}
+                        description={blog.sub_title}
+                        title={blog.sub_title}
                         path={nameId as string}
                         image='https://vione.ai/wp-content/uploads/2022/03/tri-tue-nhan-tao.jpg'
                         type='article'
                     />
                     <header className={cx('blog-detail__header')}>
                         <div className={cx('blog-header-inner')}>
+                            <div className={cx('blog-header__toolbar')}>
+                                <button className={cx('blog-header__toolbar-icon')} onClick={handleBackScreen}>
+                                    <FaArrowLeft size={'2rem'} />
+                                </button>
+                                {blog.author == profile.profile?.username && (
+                                    <Link to={`/blogs/${id}/edit`} className={cx('blog-header__toolbar-icon')}>
+                                        <AiFillEdit size={'2rem'} />
+                                    </Link>
+                                )}
+                            </div>
                             <h1 className={cx('blog-detail__header-title')}>{blog.title}</h1>
-                            <h2 className={cx('blog-detail__header-subtitle')}>{blog.subTitle}</h2>
+                            <h2 className={cx('blog-detail__header-subtitle')}>{blog.sub_title}</h2>
                         </div>
                     </header>
 
@@ -54,18 +93,14 @@ function BlogDetail() {
                                 <FaTwitter size={'2rem'} />
                             </a>
                             <a href={social?.telegram} className={cx('blog-detail__sidebar-item')}>
-                                <FaTelegram size={'2rem'} />
+                                <FaTelegramPlane size={'2rem'} />
                             </a>
                         </aside>
 
-                        <div className={cx('blog-detail__content')}>
-                            <img
-                                src='https://example.com/post1.jpg'
-                                alt='Blog Post'
-                                className={cx('blog-detail__content-image')}
-                            />
-                            <p className={cx('blog-detail__content-text')}>{blog.content}</p>
-                        </div>
+                        <div
+                            dangerouslySetInnerHTML={{ __html: getContentHtml }}
+                            className={cx('previewContent', 'ql-editor htmlConverter', 'blog-detail__content')}
+                        ></div>
 
                         <div className={cx('blog-detail__actions')}>
                             <div className={cx('blog-detail__actions-like')}>
@@ -85,8 +120,7 @@ function BlogDetail() {
                             </div>
                         </div>
                     </div>
-
-                    <div className={cx('blog-detail__comments')}></div>
+                    <div className={cx('blog-detail__comments')}>{/* <Comments /> */}</div>
                 </>
             )}
             {isLoading && !blogData && (

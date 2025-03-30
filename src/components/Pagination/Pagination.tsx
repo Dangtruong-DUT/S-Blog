@@ -1,7 +1,7 @@
 // Pagination.tsx
 import classNames from 'classnames/bind'
 import { Link, createSearchParams } from 'react-router-dom'
-import { QueryConfig } from 'src/pages/Blog/BlogList/BlogList'
+import { QueryConfig } from 'src/pages/Blog/BlogsPage/BlogsPage'
 import styles from './Pagination.module.scss'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 

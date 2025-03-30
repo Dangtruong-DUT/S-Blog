@@ -23,9 +23,10 @@ function MenuItem({ data, onClick, className, active }: MenuItemProps) {
         className,
         { active: active }
     )
+    const classNameInner = cx('itemInner')
 
     return (
-        <Button className={classes} to={data.to} onClick={onClick}>
+        <Button classNameInner={classNameInner} className={classes} to={data.to} onClick={onClick}>
             {data.icon && <span className={cx('icon')}>{data.icon}</span>}
             <span className={cx('title')}>{data.title}</span>
         </Button>

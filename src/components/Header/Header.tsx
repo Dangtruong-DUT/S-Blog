@@ -18,7 +18,7 @@ function Header() {
     return (
         <header className={cx('header-fixed-wrapper')}>
             <div className={cx('header')}>
-                <Link to={routes.home} className={cx('header__logo')}>
+                <Link to={routes.blogList} className={cx('header__logo')}>
                     <ReactSVG src={logo} />
                 </Link>
 
@@ -39,18 +39,10 @@ function Header() {
                         </li>
                         <li>
                             <NavLink
-                                to={routes.readingList}
+                                to={routes.category}
                                 className={({ isActive }) => cx('nav__link', { 'nav__link--active': isActive })}
                             >
-                                Reading list
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink
-                                to={routes.topicsList}
-                                className={({ isActive }) => cx('nav__link', { 'nav__link--active': isActive })}
-                            >
-                                Topics
+                                Category
                             </NavLink>
                         </li>
                         <li>

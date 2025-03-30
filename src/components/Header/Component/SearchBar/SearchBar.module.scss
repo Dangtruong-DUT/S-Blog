@@ -1,7 +1,8 @@
 .search-bar {
     display: flex;
     align-items: center;
-    background-color: var(--background-color);
+    background-color: rgb(var(--background-color), 0.8);
+    backdrop-filter: invert(80%);
     border-radius: 999px;
     border: 1px solid var(--border-cl);
     padding: 5px;
@@ -63,6 +64,10 @@
     &__loading-icon {
         animation: spin 1s linear infinite;
     }
+}
+
+.search-bar--expanded {
+    background-color: var(--background-color);
 }
 
 @keyframes spin {

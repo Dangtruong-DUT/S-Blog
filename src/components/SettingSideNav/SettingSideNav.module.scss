@@ -1,0 +1,24 @@
+.user-sidenav {
+    padding: 16px 0;
+    background-color: var(--background-secondary);
+    border-radius: 16px;
+    height: 100%;
+    &__menu {
+        &-item {
+            display: flex;
+            align-items: flex-end;
+            text-transform: capitalize;
+            transition: color 0.2s;
+            color: var(--text-default);
+            text-decoration: none;
+            padding: 14px 24px;
+            font-size: 2rem;
+            font-weight: 400;
+            line-height: 1;
+            gap: 10px;
+            &--active {
+                color: var(--color-red);
+            }
+        }
+    }
+}

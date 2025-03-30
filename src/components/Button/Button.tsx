@@ -14,9 +14,23 @@ interface ButtonProps extends ComponentProps<'button'> {
     className?: string
     to?: string
     href?: string
+    loading?: boolean
+    classNameInner?: string
 }
 
-const Button = ({ children, variant, outline, curve, disabled, className, to, href, ...props }: ButtonProps) => {
+const Button = ({
+    children,
+    variant,
+    outline,
+    curve,
+    disabled,
+    className,
+    classNameInner,
+    to,
+    href,
+    loading,
+    ...props
+}: ButtonProps) => {
     let Component: ElementType = 'button'
 
     if (to) {
@@ -31,14 +45,21 @@ const Button = ({ children, variant, outline, curve, disabled, className, to, hr
             [`button--${variant}`]: variant,
             'button--outline': outline,
             'button--curve': curve,
-            'button--disabled': disabled
+            'button--disabled': disabled || loading
         },
         className
     )
 
     return (
-        <Component {...props} to={to} href={href} className={buttonClass} disabled={disabled}>
-            {children}
+        <Component {...props} to={to} href={href} className={buttonClass} disabled={disabled || loading}>
+            <div className={cx('button-inner', classNameInner)}>
+                <span className={cx('button-content', { 'button-content--hidden': loading })}>{children}</span>
+                {loading && (
+                    <div className={cx('loader')}>
+                        <div className={cx('spinner')}></div>
+                    </div>
+                )}
+            </div>
         </Component>
     )
 }

@@ -1,0 +1,137 @@
+.formContainer {
+    width: 700px;
+    padding: 8px 0px;
+
+    .formGroup {
+        margin: 0 24px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding: 16px 0px;
+        display: flex;
+        border-bottom: 0.5px solid var(--border-cl);
+        .input-wrapper {
+            width: 360px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        label {
+            font-weight: 600;
+            font-size: 1.6rem;
+            width: 120px;
+            margin-right: 24px;
+            text-align: left;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            background-color: var(--background-input);
+            border-radius: 5px;
+            caret-color: var(--color-red);
+        }
+        .input--error {
+            outline: 1px solid red;
+        }
+        small {
+            display: block;
+            color: var(--text-dark-gray);
+            margin-top: 15px;
+            text-align: left;
+        }
+        .error {
+            justify-self: flex-start;
+            text-align: left;
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .txt-error {
+            color: red;
+        }
+    }
+
+    .avatar {
+        margin: 0 auto;
+        width: 100px;
+        display: flex;
+        justify-content: center;
+        position: relative;
+        img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-cl);
+        }
+        .editIcon {
+            position: absolute;
+            bottom: 0;
+            right: 5px;
+            background: var(--background-color);
+            padding: 7%;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 1px solid var(--border-cl);
+        }
+    }
+
+    .buttonGroup {
+        height: 86px;
+        display: flex;
+        padding: 0px 24px;
+        justify-content: flex-end;
+        border-top: 0.5px solid var(--border-cl);
+        align-items: center;
+        width: 100%;
+        bottom: 0px;
+        gap: 12px;
+
+        .buttonGroup__btn {
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+            padding: 7px 16px;
+            min-width: 96px;
+            height: 36px;
+            font-weight: 400;
+        }
+    }
+}
+
+.textarea-input {
+    width: 360px;
+    border-radius: 4px;
+    background: var(--background-input);
+    caret-color: var(--color-red);
+    font-size: 1.6rem;
+    color: var(--text-default);
+    line-height: 24px;
+    outline: none;
+    border: none;
+    box-sizing: border-box;
+    height: 100px;
+    padding: 12px;
+    resize: none;
+}
+.txt-input:focus {
+    outline: 1px solid var(--border-cl);
+}
+
+.social-input {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    .social-icon {
+        color: var(--text-dark-gray);
+    }
+}
+.add-social-btn {
+    display: inline-block;
+    margin-top: 5px;
+}
+
+.social-input + .social-input {
+    margin-top: 10px;
+}

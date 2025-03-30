@@ -16,16 +16,16 @@ import { toast } from 'react-toastify'
 import { UserMessage } from 'src/constants/Message'
 import handleFormError from 'src/utils/handleFormError.util'
 import { AppContext } from 'src/contexts/app.context'
-import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 import authApi from 'src/apis/auth.api'
 import SEO from 'src/components/SeoHelmet'
+import LoadingIcon from 'src/components/LoadingIcon'
 
 const cx = classNames.bind(styles)
 
-type FormRegisterData = Pick<SchemaType, 'email' | 'confirmPassword' | 'firstName' | 'lastName' | 'password'>
+type FormRegisterData = Pick<SchemaType, 'email' | 'confirm_password' | 'first_name' | 'last_name' | 'password'>
 type FormLoginData = Pick<SchemaType, 'email' | 'password'>
 
-const registerSchema = schema.pick(['email', 'firstName', 'lastName', 'confirmPassword', 'password'])
+const registerSchema = schema.pick(['email', 'first_name', 'last_name', 'confirm_password', 'password'])
 
 const loginSchema = schema.pick(['email', 'password'])
 
@@ -49,7 +49,7 @@ function UserAccess() {
     const location = useLocation()
     const isLogin = useMemo(() => location.pathname.includes('/auth/login'), [location.pathname])
     const registerAccountMutation = useMutation({
-        mutationFn: (body: Omit<FormRegisterData, 'confirmPassword'>) => authApi.registerAccount(body)
+        mutationFn: (body: Omit<FormRegisterData, 'confirm_password'>) => authApi.registerAccount(body)
     })
 
     const loginMutation = useMutation({
@@ -63,7 +63,7 @@ function UserAccess() {
     })
 
     const handleRegisterSubmit = registerForm.handleSubmit((data) => {
-        const body = omit(data, ['confirmPassword'])
+        const body = omit(data, ['confirm_password'])
         registerAccountMutation.mutate(body, {
             onSuccess: (data) => {
                 setAuthenticated(true)
@@ -135,24 +135,18 @@ function UserAccess() {
                             <>
                                 <Input
                                     id='firstName'
-                                    name='firstName'
+                                    name='first_name'
                                     label='First Name'
                                     register={registerForm.register}
-                                    errorMessage={registerForm.formState.errors.firstName?.message}
+                                    errorMessage={registerForm.formState.errors.first_name?.message}
                                 />
 
                                 <Input
                                     id='lastName'
                                     label='Last Name'
-                                    name='lastName'
+                                    name='last_name'
                                     register={registerForm.register}
-                                    rules={{
-                                        required: {
-                                            value: true,
-                                            message: 'last name is required'
-                                        }
-                                    }}
-                                    errorMessage={registerForm.formState.errors.lastName?.message}
+                                    errorMessage={registerForm.formState.errors.last_name?.message}
                                 />
                             </>
                         )}
@@ -185,12 +179,12 @@ function UserAccess() {
 
                         {!isLogin && (
                             <Input
-                                id='confirmPassword'
+                                id='confirm_password'
                                 label='Confirm Password'
                                 type='password'
-                                name='confirmPassword'
+                                name='confirm_password'
                                 register={registerForm.register}
-                                errorMessage={registerForm.formState.errors.confirmPassword?.message}
+                                errorMessage={registerForm.formState.errors.confirm_password?.message}
                             />
                         )}
 
@@ -200,9 +194,7 @@ function UserAccess() {
                             className={cx('form-btn')}
                             disabled={loginMutation.isPending || registerAccountMutation.isPending}
                         >
-                            {(loginMutation.isPending || registerAccountMutation.isPending) && (
-                                <AiOutlineLoading3Quarters className={cx('loading-icon')} />
-                            )}
+                            {(loginMutation.isPending || registerAccountMutation.isPending) && <LoadingIcon />}
                             {isLogin ? 'Sign In' : 'Sign Up'}
                         </Button>
 

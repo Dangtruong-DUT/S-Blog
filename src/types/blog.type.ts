@@ -1,11 +1,10 @@
 export interface Blog {
     id: string
-    featureImage: string
+    feature_image: string
     content: string
     title: string
-    subTitle: string
+    sub_title: string
     author: string
-    slug: string
     created_at: string
     updated_at: string
     categories: string[]
@@ -30,4 +29,14 @@ export interface BlogListQueryConfig {
     exclude?: string
     author?: string
     category?: string
+    liked?: boolean
+}
+
+export interface Categories {
+    categories: category[]
+}
+
+export interface category {
+    id: string
+    name: string
 }

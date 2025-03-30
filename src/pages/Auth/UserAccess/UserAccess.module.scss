@@ -107,21 +107,6 @@ html[data-theme='dark'] .container {
     }
 }
 
-.loading-icon {
-    animation: spin 1s linear infinite;
-    font-size: 1.6rem;
-    margin-right: 2px;
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
 /* Responsive design */
 @media (max-width: 768px) {
     .-container {

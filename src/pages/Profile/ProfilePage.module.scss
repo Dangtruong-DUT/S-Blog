@@ -1,0 +1,28 @@
+.container {
+    padding: 0 0 3rem;
+}
+.tabs-wrapper {
+    margin-top: 21px;
+    position: relative;
+    margin-bottom: 2rem;
+
+    .filters {
+        position: absolute;
+        top: calc(2.5rem * 1.334 / 2);
+        right: 0;
+        transform: translateY(-50%);
+        display: flex;
+        background-color: var(--btn-disable-cl);
+        border-radius: 4px;
+        padding: 3px;
+    }
+    .filters__item {
+        padding: 0.5rem 1.5rem;
+        color: var(--text-passive);
+        border-radius: 4px;
+    }
+    .filters__item--active {
+        color: var(--text-default);
+        background-color: var(--background-secondary);
+    }
+}
