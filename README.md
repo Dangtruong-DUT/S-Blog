@@ -52,7 +52,7 @@ npm run dev
 ```
 ---
 
-##📁 Project Structure
+## 📁 Project Structure
 
 ```
 src/
@@ -67,8 +67,8 @@ src/
 ```
 
 ---
-##🤝 Contributing
-Feel free to open Issues or submit a Pull Request if you find bugs or have feature suggestions.
+## 🤝 Contributing
+- Feel free to open Issues or submit a Pull Request if you find bugs or have feature suggestions.
 ---
-##📄 License
-MIT License — see the LICENSE file for details.
+## 📄 License
+- MIT License — see the LICENSE file for details.
