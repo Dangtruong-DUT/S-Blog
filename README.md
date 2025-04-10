@@ -24,7 +24,7 @@
 | Category             | Technology                                                                  |
 |----------------------|------------------------------------------------------------------------------|
 | ⚛️ Framework          | React                                                                        |
-| 🎨 UI / CSS           | [Tailwind CSS](https://tailwindcss.com/), [Headless UI](https://headlessui.dev/) |
+| 🎨 UI / CSS           | [SCSS module]|
 | 🔄 State Management   | [React Query](https://tanstack.com/query) (async), [React Context](https://reactjs.org/docs/context.html) (local state) |
 | 📑 Form Handling      | [React Hook Form](https://react-hook-form.com/)                              |
 | 🧭 Routing            | [React Router](https://reactrouter.com/)                                     |
