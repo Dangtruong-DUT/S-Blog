@@ -1,5 +1,5 @@
 import Tippy from '@tippyjs/react/headless'
-import styles from './BlogCard.module.scss'
+import styles from './AuthorInfo.module.scss'
 import classNames from 'classnames/bind'
 import { memo, useCallback } from 'react'
 import PopperWrapper from 'src/components/Popper'
@@ -31,7 +31,7 @@ const AuthorInfo = ({ userData, categoryName, onClickProfile }: Props) => {
     )
 
     return (
-        <h3 className={cx('author')}>
+        <h3 className={cx('wrapper')}>
             BY
             <strong>
                 <Tippy interactive placement='bottom-start' appendTo='parent' render={renderProfileCard}>

@@ -2,7 +2,7 @@ import { memo } from 'react'
 import { FiEdit } from 'react-icons/fi'
 import { MdDeleteOutline } from 'react-icons/md'
 import { Link } from 'react-router-dom'
-import styles from './BlogCard.module.scss'
+import styles from './ActionMenu.module.scss'
 import classNames from 'classnames/bind'
 
 const cx = classNames.bind(styles)

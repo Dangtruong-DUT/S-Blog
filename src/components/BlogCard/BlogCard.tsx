@@ -12,18 +12,18 @@ import { AppContext } from 'src/contexts/app.context'
 import blogApi from 'src/apis/blog.api'
 import userApi from 'src/apis/user.api'
 import PopperWrapper from '../Popper'
-import ActionMenu from './ActionMenu'
-import AuthorInfo from './AuthorInfo'
 import { FiMoreHorizontal } from 'react-icons/fi'
-import ConfirmDeleteModal from './ConfirmDeleteModal'
+import ConfirmDeleteModal from './components/ConfirmDeleteModal'
+import AuthorInfo from './components/AuthorInfo'
+import ActionMenu from './components/ActionMenu'
 
 const cx = classNames.bind(styles)
 
-interface BlogcardProps {
+interface BlogCardProps {
     blog: Blog
 }
 
-function Blogcard({ blog }: BlogcardProps) {
+function BlogCard({ blog }: BlogCardProps) {
     const { profile } = useContext(AppContext)
     const navigate = useNavigate()
     const queryClient = useQueryClient()
@@ -87,7 +87,7 @@ function Blogcard({ blog }: BlogcardProps) {
     return (
         <>
             <Link to={`/blogs/${generateNameId({ name: blog.title, id: blog.id })}`}>
-                <article className={cx('BlogcardWrapper')}>
+                <article className={cx('BlogCardWrapper')}>
                     <div className={cx('featureImageWrapper')}>
                         {isAuthor && (
                             <Tippy
@@ -119,32 +119,11 @@ function Blogcard({ blog }: BlogcardProps) {
                         <img src={blog.featured_image} alt={blog.title} className={cx('blog__image')} />
                     </div>
 
-                    <h3 className={cx('blog__author')}>
-                        BY
-                        <strong>
-                            <Tippy
-                                interactive
-                                placement='bottom-start'
-                                appendTo='parent'
-                                render={(attrs) => (
-                                    <div className={cx('more-action-blog')} tabIndex={-1} {...attrs}>
-                                        <PopperWrapper className={cx('menu-wrapper')}>
-                                            <AuthorInfo
-                                                userData={userData}
-                                                categoryName={categoryData?.name}
-                                                onClickProfile={handleViewProfile}
-                                            />
-                                        </PopperWrapper>
-                                    </div>
-                                )}
-                            >
-                                <span onClick={handleViewProfile} className={cx('link')}>
-                                    {userData?.first_name} {userData?.last_name}
-                                </span>
-                            </Tippy>
-                        </strong>{' '}
-                        IN <strong>{categoryData?.name}</strong>
-                    </h3>
+                    <AuthorInfo
+                        userData={userData}
+                        categoryName={categoryData?.name}
+                        onClickProfile={handleViewProfile}
+                    />
 
                     <h2 className={cx('blog__title')}>{blog.title}</h2>
                     <p className={cx('blog__subtitle')}>{blog.subtitle}</p>
@@ -160,4 +139,4 @@ function Blogcard({ blog }: BlogcardProps) {
     )
 }
 
-export default Blogcard
+export default BlogCard

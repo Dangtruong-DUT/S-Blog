@@ -9,7 +9,7 @@ const URL_UPLOAD_IMAGE = import.meta.env.VITE_API_URL_UPLOAD
 const uploadApi = {
     uploadImage(body: FormData) {
         return http.post<ResponseApi<UploadImageData>>(
-            URL_UPLOAD_IMAGE,
+            `${URL_UPLOAD_IMAGE}/`,
             body,
 
             {

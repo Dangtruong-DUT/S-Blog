@@ -1,7 +1,7 @@
 import Modal from 'react-modal'
 import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 import classNames from 'classnames/bind'
-import styles from './BlogCard.module.scss'
+import styles from './ConfirmDeleteModal.module.scss'
 import { memo } from 'react'
 
 const cx = classNames.bind(styles)

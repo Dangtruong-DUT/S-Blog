@@ -25,13 +25,13 @@ const blogApi = {
         return http.get<ResponseApi<category[]>>(URL_CATEGORIES)
     },
     createBlog(body: CreateBlogReqBody) {
-        return http.post<ResponseApi<Blog>>(URL, body)
+        return http.post<ResponseApi<Blog>>(`${URL}/`, body)
     },
     updateBlog(data: { body: UpdateBlogReqBody; id: string }) {
-        return http.put<ResponseApi<Blog>>(`${URL}${data.id}/`, data.body)
+        return http.put<ResponseApi<Blog>>(`${URL}/${data.id}/`, data.body)
     },
     deleteBlog(id: string) {
-        return http.delete<ResponseApi<null>>(`${URL}${id}/`)
+        return http.delete<ResponseApi<null>>(`${URL}/${id}/`)
     },
     getCategoryById(id: string) {
         return http.get<ResponseApi<category>>(`${URL_CATEGORIES}/${id}/`)
