@@ -1,3 +1,3 @@
-import MultiSelectCategory from './MultiSelectCategory'
+import SingleSelectCategory from './SingleSelectCategory'
 
-export default MultiSelectCategory
+export default SingleSelectCategory

@@ -10,3 +10,15 @@ export type AuthResponse = ResponseApi<{
 export type RefreshTokenResponse = ResponseApi<{
     access_token: string
 }>
+
+export interface RegisterReqBody {
+    first_name: string
+    last_name: string
+    email: string
+    password: string
+}
+
+export interface LoginReqBody {
+    email: string
+    password: string
+}

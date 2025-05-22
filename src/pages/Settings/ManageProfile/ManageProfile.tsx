@@ -17,8 +17,8 @@ import Skeleton from './components/Skeleton'
 import uploadApi from 'src/apis/upload.api'
 
 const cx = classNames.bind(styles)
-type FormData = Pick<SchemaType, 'avatar' | 'username' | 'bio' | 'first_name' | 'last_name'>
-const FormSchema = schema.pick(['avatar', 'bio', 'username', 'first_name', 'last_name'])
+type FormData = Pick<SchemaType, 'avatar' | 'bio' | 'first_name' | 'last_name'>
+const FormSchema = schema.pick(['avatar', 'bio', 'first_name', 'last_name'])
 function Profile() {
     const { setProfile, profile: currentData } = useContext(AppContext)
     const [fileImage, setFileImage] = useState<File>()
@@ -27,7 +27,6 @@ function Profile() {
         defaultValues: {
             avatar: '',
             bio: '',
-            username: '',
             first_name: '',
             last_name: ''
         },
@@ -40,8 +39,8 @@ function Profile() {
         mutationFn: uploadApi.uploadImage
     })
     const { data, refetch, isLoading } = useQuery({
-        queryKey: [`profile: ${currentData?.username}`],
-        queryFn: () => userApi.getProfile(currentData?.username as string)
+        queryKey: [`profile: ${currentData?.id}`],
+        queryFn: () => userApi.getProfile(currentData?.id as string)
     })
     const profile = data?.data.data
 
@@ -49,7 +48,6 @@ function Profile() {
     useEffect(() => {
         if (profile) {
             profileForm.setValue('bio', profile.bio)
-            profileForm.setValue('username', profile.username || '')
             profileForm.setValue('last_name', profile.last_name || '')
             profileForm.setValue('first_name', profile.first_name || '')
             profileForm.setValue('avatar', profile.avatar || '')
@@ -63,14 +61,18 @@ function Profile() {
                 const form = new FormData()
                 form.append('image', fileImage)
                 const response = await uploadAvatarMutation.mutateAsync(form)
-                avatar_url = response.data.data.image
+                avatar_url = response.data.data.url
             } catch (error) {
                 console.log(error)
                 toast.error('An unknown error has occurred. Please try again later.')
             }
         }
         const body = { ...data, avatar: avatar_url }
-        updateProfileMutate(body, {
+        const payload = {
+            body,
+            userId: currentData?.id as string
+        }
+        updateProfileMutate(payload, {
             onSuccess: (data) => {
                 toast.success(data.data.message, {
                     position: 'top-center'
@@ -106,17 +108,7 @@ function Profile() {
                                 </div>
                                 <span className={cx('form-group__error')}></span>
                             </div>
-                            <div className={cx('form-group')}>
-                                <Input
-                                    type='text'
-                                    register={profileForm.register}
-                                    name='username'
-                                    errorMessage={profileForm.formState.errors.username?.message}
-                                    label='username'
-                                    id='Username'
-                                    placeholder='Enter your username...'
-                                />
-                            </div>
+
                             <div className={cx('form-group')}>
                                 <Input
                                     type='text'

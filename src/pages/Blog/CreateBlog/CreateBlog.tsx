@@ -12,7 +12,7 @@ import thumbnailDefault from 'src/assets/images/Thumbnail.png'
 import { blogSchema, BlogSchemaType } from 'src/utils/rules.util'
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import MultiSelectCategory from 'src/components/MultiSelectCategory'
+import SingleSelectCategory from 'src/components/MultiSelectCategory'
 import { convertToHtml } from 'src/utils/convertQuillToHTML'
 import hljs from 'highlight.js'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -22,8 +22,8 @@ import { routes } from 'src/config'
 import { toast } from 'react-toastify'
 import uploadApi from 'src/apis/upload.api'
 import handleFormError from 'src/utils/handleFormError.util'
-import { Blog } from 'src/types/blog.type'
-import SkeletonBlogCart from 'src/components/Skeleton'
+import { Blog, CreateBlogReqBody, UpdateBlogReqBody } from 'src/types/blog.type'
+import SkeletonBlogcard from 'src/components/Skeleton'
 import { IoArrowBackCircle } from 'react-icons/io5'
 import { AppContext } from 'src/contexts/app.context'
 
@@ -50,9 +50,9 @@ const BlogEditor = () => {
     const blogForm = useForm<FormData>({
         defaultValues: {
             content: '',
-            sub_title: '',
+            subtitle: '',
             title: '',
-            categories: [],
+            category: '',
             feature_image: ''
         },
         resolver: yupResolver(formSchema)
@@ -88,7 +88,7 @@ const BlogEditor = () => {
 
     useEffect(() => {
         if (!isAddMode && blog) {
-            const hasPermission = blog.author !== profile?.username
+            const hasPermission = blog.author_id != profile?.id
             if (hasPermission) {
                 navigate(routes.home)
                 toast.dismiss()
@@ -101,9 +101,9 @@ const BlogEditor = () => {
         if (blog) {
             blogForm.setValue('content', blog.content)
             blogForm.setValue('title', blog.title)
-            blogForm.setValue('sub_title', blog.sub_title)
-            blogForm.setValue('feature_image', blog.feature_image)
-            blogForm.setValue('categories', blog.categories)
+            blogForm.setValue('subtitle', blog.subtitle)
+            blogForm.setValue('feature_image', blog.featured_image)
+            blogForm.setValue('category', blog.category)
         }
     }, [blog, blogForm])
 
@@ -114,26 +114,23 @@ const BlogEditor = () => {
                 const form = new FormData()
                 form.append('image', fileImage)
                 const response = await uploadImageMutation.mutateAsync(form)
-                thumbnail_url = response.data.data.image
+                thumbnail_url = response.data.data.url
             } catch (error) {
                 console.log(error)
                 toast.error('An unknown error has occurred. Please try again later.')
             }
         }
 
-        const body: Blog = {
-            id: blog?.id || '',
-            author: blog?.author || '',
-            created_at: blog?.created_at || new Date().toISOString(),
-            updated_at: blog?.updated_at || new Date().toISOString(),
-            like: blog?.like || 0,
-            watched: blog?.watched || 0,
-            ...data,
-            feature_image: thumbnail_url || data.feature_image,
-            categories: data.categories as string[]
-        }
-
         if (isAddMode) {
+            const body: CreateBlogReqBody = {
+                category: data.category,
+                content: data.content,
+                featured_image: thumbnail_url || data.feature_image,
+                subtitle: data.subtitle,
+                title: data.title,
+                status: 'published'
+            }
+
             await createBlogMutate(body, {
                 onSuccess: (data) => {
                     toast.success(data.data.message, {
@@ -144,8 +141,17 @@ const BlogEditor = () => {
                 onError: (error) => handleFormError<FormData>(error, blogForm)
             })
         } else {
+            const body: UpdateBlogReqBody = {
+                category: data.category,
+                content: data.content,
+                featured_image: thumbnail_url || data.feature_image,
+                subtitle: data.subtitle,
+                title: data.title,
+                status: 'published'
+            }
+
             await updateBlogMutation(
-                { body: body, id: body.id },
+                { body: body, id: id as string },
                 {
                     onSuccess: (data) => {
                         toast.success(data.data.message, {
@@ -175,16 +181,16 @@ const BlogEditor = () => {
                 <form method='post' onSubmit={handleOnSubmit} noValidate>
                     <Controller
                         control={blogForm.control}
-                        name='categories'
+                        name='category'
                         render={({ field }) => (
                             <div className={cx('form__row')}>
                                 <label className={cx('form-group__label')}>Category</label>
-                                <MultiSelectCategory
-                                    selectedCategories={field.value as string[]}
+                                <SingleSelectCategory
+                                    selectedCategory={field.value as string}
                                     onChange={field.onChange}
                                 />
                                 <span className={cx('form-group__error')}>
-                                    {blogForm.formState.errors?.categories?.message}
+                                    {blogForm.formState.errors?.category?.message}
                                 </span>
                             </div>
                         )}
@@ -228,12 +234,9 @@ const BlogEditor = () => {
                             type='text'
                             placeholder='Description...'
                             className={cx('form-group__input')}
-                            {...blogForm.register('sub_title')}
+                            {...blogForm.register('subtitle')}
                         />
-                        <span className={cx('form-group__error')}>
-                            {' '}
-                            {blogForm.formState.errors?.sub_title?.message}
-                        </span>
+                        <span className={cx('form-group__error')}> {blogForm.formState.errors?.subtitle?.message}</span>
                     </div>
                     <Controller
                         control={blogForm.control}
@@ -263,7 +266,7 @@ const BlogEditor = () => {
                     </div>
                 </form>
             )}
-            {isLoading && <SkeletonBlogCart />}
+            {isLoading && <SkeletonBlogcard />}
 
             {/* Modal Preview */}
             <Modal

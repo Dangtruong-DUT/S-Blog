@@ -3,8 +3,8 @@ import styles from './Blogs.module.scss'
 import { BlogList, BlogListQueryConfig } from 'src/types/blog.type'
 import blogApi from 'src/apis/blog.api'
 import { InfiniteData, keepPreviousData, useInfiniteQuery } from '@tanstack/react-query'
-import BlogCart from 'src/components/BlogCart'
-import SkeletonBlogCart from 'src/components/Skeleton'
+import Blogcard from 'src/components/Blogcard'
+import SkeletonBlogcard from 'src/components/Skeleton'
 import { useEffect, useRef, useState } from 'react'
 import Button from 'src/components/Button'
 import { ResponseApi } from 'src/types/utils.type'
@@ -34,7 +34,7 @@ function InfiniteScrollBlog({ queryKey, queryConfig }: BlogListProps) {
         },
         getNextPageParam: (lastPage) => {
             const currentPage = lastPage.data.pagination.page
-            const pageSize = lastPage.data.pagination.page_size
+            const pageSize = lastPage.data.pagination.total_pages
             const nextPage = currentPage < pageSize ? currentPage + 1 : undefined
             return nextPage
         },
@@ -64,16 +64,16 @@ function InfiniteScrollBlog({ queryKey, queryConfig }: BlogListProps) {
             <div className={cx('blogListGrid')}>
                 {isLoading ? (
                     <>
-                        <SkeletonBlogCart />
-                        <SkeletonBlogCart />
-                        <SkeletonBlogCart />
-                        <SkeletonBlogCart />
-                        <SkeletonBlogCart />
+                        <SkeletonBlogcard />
+                        <SkeletonBlogcard />
+                        <SkeletonBlogcard />
+                        <SkeletonBlogcard />
+                        <SkeletonBlogcard />
                     </>
                 ) : (
                     <>
                         {data?.pages.map((page) =>
-                            page.data.Blogs.map((element) => <BlogCart blog={element} key={element.id} />)
+                            page.data.blogs.map((element) => <Blogcard blog={element} key={element.id} />)
                         )}
                         <div ref={lastItemRef}></div>
                     </>

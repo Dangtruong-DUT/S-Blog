@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind'
 import styles from './SkeletonBlogDetail.module.scss'
-import SkeletonBlogCart from 'src/components/Skeleton'
+import SkeletonBlogcard from 'src/components/Skeleton'
 
 const cx = classNames.bind(styles)
 
@@ -11,7 +11,7 @@ function SkeletonBlogDetail() {
             <div className={cx('skeleton-line', 'skeleton-line--medium')}></div>
             <div className={cx('skeleton-line', 'skeleton-line--medium')}></div>
             <div className={cx('skeleton-footer')}>
-                <SkeletonBlogCart />
+                <SkeletonBlogcard />
             </div>
         </div>
     )

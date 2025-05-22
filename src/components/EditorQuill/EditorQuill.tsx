@@ -27,15 +27,16 @@ const quillImageCallback = function (this: any) {
 
         try {
             const response = await uploadApi.uploadImage(formData)
-
-            if (response.status !== HttpStatusCode.Ok) {
+            console.log('response', response.data)
+            if (response.status !== HttpStatusCode.Created) {
                 toast.error(response.data.message)
                 return
             }
 
             const quill = this.quill
             const range = quill.getSelection()
-            if (range) quill.insertEmbed(range.index, 'image', response.data.data.image)
+            console.log('image', response.data.data.url)
+            if (range) quill.insertEmbed(range.index, 'image', response.data.data.url)
         } catch (error) {
             console.error('Error uploading image:', error)
         }

@@ -120,6 +120,7 @@
 }
 
 .social-input {
+    margin-top: 10px;
     display: flex;
     gap: 12px;
     align-items: center;
@@ -130,8 +131,4 @@
 .add-social-btn {
     display: inline-block;
     margin-top: 5px;
-}
-
-.social-input + .social-input {
-    margin-top: 10px;
 }

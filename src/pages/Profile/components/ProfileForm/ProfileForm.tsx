@@ -18,9 +18,9 @@ import { FaFacebook, FaGithub, FaGlobe, FaInstagram, FaLinkedin, FaTiktok, FaTwi
 import { AiOutlineDeleteRow } from 'react-icons/ai'
 import { useNavigate } from 'react-router-dom'
 
-type FormData = Pick<SchemaType, 'avatar' | 'bio' | 'social_links' | 'username'>
+type FormData = Pick<SchemaType, 'avatar' | 'bio' | 'social_links'>
 
-const FormSchema = schema.pick(['avatar', 'bio', 'social_links', 'username'])
+const FormSchema = schema.pick(['avatar', 'bio', 'social_links'])
 
 const getIcon = (url: string) => {
     if (url?.includes('facebook.com')) return <FaFacebook />
@@ -49,7 +49,6 @@ const ProfileForm = ({ userData, onCancel }: props) => {
         defaultValues: {
             avatar: '',
             bio: '',
-            username: '',
             social_links: []
         },
         resolver: yupResolver(FormSchema)
@@ -57,7 +56,7 @@ const ProfileForm = ({ userData, onCancel }: props) => {
 
     const { fields, append, remove, replace } = useFieldArray({
         control: profileForm.control,
-        name: 'social_links'
+        name: 'social_links' as never
     })
 
     const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,20 +84,22 @@ const ProfileForm = ({ userData, onCancel }: props) => {
         mutationFn: uploadApi.uploadImage
     })
 
-    const { data, refetch, isLoading } = useQuery({
-        queryKey: [`profile: ${currentData?.username}`],
-        queryFn: () => userApi.getProfile(currentData?.username as string)
+    const {
+        data,
+        refetch,
+        isPending: isLoading
+    } = useQuery({
+        queryKey: [`profile: ${currentData?.id}`],
+        queryFn: () => userApi.getProfile(currentData?.id as string)
     })
     const profile = data?.data.data
 
     const avatar = profileForm.watch('avatar')
     const bio = profileForm.watch('bio')
-    const username = profileForm.watch('username')
 
     useEffect(() => {
         if (profile) {
             profileForm.setValue('bio', profile.bio)
-            profileForm.setValue('username', profile.username || '')
             profileForm.setValue('avatar', profile.avatar || '')
             if (profile.social_links && Array.isArray(profile.social_links)) {
                 replace(profile.social_links)
@@ -115,7 +116,7 @@ const ProfileForm = ({ userData, onCancel }: props) => {
                 const form = new FormData()
                 form.append('image', fileImage)
                 const response = await uploadAvatarMutation.mutateAsync(form)
-                avatar_url = response.data.data.image
+                avatar_url = response.data.data.url
             } catch (error) {
                 console.log(error)
                 toast.error('An unknown error has occurred. Please try again later.')
@@ -129,7 +130,7 @@ const ProfileForm = ({ userData, onCancel }: props) => {
                 })
                 setProfile(data.data.data)
                 onCancel()
-                navigate(`/@${encodeURIComponent(data.data.data.username)}`)
+                navigate(`/@${encodeURIComponent(data.data.data.id)}`)
             },
             onError: (error) => handleFormError<FormData>(error, profileForm)
         })
@@ -142,7 +143,7 @@ const ProfileForm = ({ userData, onCancel }: props) => {
                 <label>Profile photo</label>
                 <div className={cx('input-wrapper')}>
                     <button className={cx('avatar')} onClick={handleUpload}>
-                        <img src={previewImage || avatar} alt={userData.username} />
+                        <img src={previewImage || avatar} alt={userData.first_name} />
                         <span className={cx('editIcon')}>
                             <FiEdit3 />
                         </span>
@@ -161,25 +162,6 @@ const ProfileForm = ({ userData, onCancel }: props) => {
                 </div>
             </div>
 
-            <div className={cx('formGroup')}>
-                <label htmlFor='username'>Username</label>
-                <div className={cx('input-wrapper')}>
-                    <input
-                        type='text'
-                        className={cx('txt-input', {
-                            'input--error': profileForm.formState.errors.username?.message
-                        })}
-                        id='username'
-                        {...profileForm.register('username')}
-                    />
-                    <span className={cx('error')}>{profileForm.formState.errors.username?.message}</span>
-                    <small>www.sblog.tech/@{username}</small>
-                    <small>
-                        Usernames can only contain letters, numbers, underscores, and periods. Changing your username
-                        will also change your profile link.
-                    </small>
-                </div>
-            </div>
             <div className={cx('formGroup')}>
                 <label>Socials</label>
                 <div className={cx('input-wrapper')}>

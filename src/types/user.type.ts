@@ -1,6 +1,5 @@
 export interface User {
     id: string
-    username: string
     email: string
     first_name?: string
     last_name?: string
@@ -12,6 +11,6 @@ export interface User {
     date_joined: string
     social_links?: string[]
     followers: number
-    likes: number
+    like_count: number
     isFollowing?: boolean
 }

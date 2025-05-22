@@ -1,3 +1,3 @@
-import SkeletonBlogCart from './SkeletonBlogCart'
+import SkeletonBlogCard from './SkeletonBlogCard'
 
-export default SkeletonBlogCart
+export default SkeletonBlogCard

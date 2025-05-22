@@ -14,20 +14,20 @@ interface BodyUpdateProfile
         | 'isFollowing'
         | 'likes'
         | 'followers'
+        | 'social_links'
     > {
     password?: string
     newPassword?: string
 }
 
-const URL_GET_USER = '/api/users'
-const URL_UPDATE_PROFILE = '/user'
+const URL_USER = import.meta.env.VITE_API_URL_USER
 
 const userApi = {
-    getProfile(username: string) {
-        return http.get<ResponseApi<User>>(`${URL_GET_USER}/${username}`)
+    getProfile(id: string) {
+        return http.get<ResponseApi<User>>(`${URL_USER}/${id}/`)
     },
-    updateProfile(body: BodyUpdateProfile) {
-        return http.put<ResponseApi<User>>(URL_UPDATE_PROFILE, body)
+    updateProfile({ body, userId }: { body: BodyUpdateProfile; userId: string }) {
+        return http.put<ResponseApi<User>>(`${URL_USER}/${userId}/`, body)
     }
 }
 

@@ -1,111 +1,30 @@
-import { useMutation } from '@tanstack/react-query'
+// components/UserAccess/UserAccess.tsx
+import { useLocation, Link } from 'react-router-dom'
+import { AnimatePresence } from 'framer-motion'
 import classNames from 'classnames/bind'
-import { useForm } from 'react-hook-form'
-import { useContext, useMemo } from 'react'
-import { useLocation, Link, useNavigate } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import { yupResolver } from '@hookform/resolvers/yup'
 import styles from './UserAccess.module.scss'
 import thumbnail from 'src/assets/images/Thumbnail.png'
-import Button from 'src/components/Button'
 import { routes } from 'src/config'
-import Input from 'src/components/Input'
-import { schema, SchemaType } from 'src/utils/rules.util'
-import { omit } from 'lodash'
-import { toast } from 'react-toastify'
-import { UserMessage } from 'src/constants/Message'
-import handleFormError from 'src/utils/handleFormError.util'
-import { AppContext } from 'src/contexts/app.context'
-import authApi from 'src/apis/auth.api'
 import SEO from 'src/components/SeoHelmet'
-import LoadingIcon from 'src/components/LoadingIcon'
+import FormWrapper from './components/FormWrapper'
+import LoginForm from './components/LoginForm'
+import RegisterForm from './components/RegisterForm'
 
 const cx = classNames.bind(styles)
 
-type FormRegisterData = Pick<SchemaType, 'email' | 'confirm_password' | 'first_name' | 'last_name' | 'password'>
-type FormLoginData = Pick<SchemaType, 'email' | 'password'>
-
-const registerSchema = schema.pick(['email', 'first_name', 'last_name', 'confirm_password', 'password'])
-
-const loginSchema = schema.pick(['email', 'password'])
-
-const formVariants = {
-    initial: (isLogin: boolean) => ({
-        x: isLogin ? 50 : -50,
-        opacity: 0
-    }),
-    animate: { x: 0, opacity: 1, transition: { duration: 0.25, ease: 'easeOut' } },
-    exit: (isLogin: boolean) => ({
-        x: isLogin ? -50 : 50,
-        opacity: 0,
-        transition: { duration: 0.25, ease: 'easeIn' }
-    })
-}
-
-function UserAccess() {
-    const { setAuthenticated, setProfile } = useContext(AppContext)
-    const navigate = useNavigate()
-
+export default function UserAccess() {
     const location = useLocation()
-    const isLogin = useMemo(() => location.pathname.includes('/auth/login'), [location.pathname])
-    const registerAccountMutation = useMutation({
-        mutationFn: (body: Omit<FormRegisterData, 'confirm_password'>) => authApi.registerAccount(body)
-    })
-
-    const loginMutation = useMutation({
-        mutationFn: (body: FormLoginData) => authApi.login(body)
-    })
-    const registerForm = useForm<FormRegisterData>({
-        resolver: yupResolver(registerSchema)
-    })
-    const loginForm = useForm<FormLoginData>({
-        resolver: yupResolver(loginSchema)
-    })
-
-    const handleRegisterSubmit = registerForm.handleSubmit((data) => {
-        const body = omit(data, ['confirm_password'])
-        registerAccountMutation.mutate(body, {
-            onSuccess: (data) => {
-                setAuthenticated(true)
-                navigate(routes.blogList)
-                toast.success(UserMessage.REGISTER_SUCCESS)
-                setProfile(data.data.data.user)
-            },
-            onError: (error) => handleFormError<FormRegisterData>(error, registerForm)
-        })
-    })
-
-    const handleLoginSubmit = loginForm.handleSubmit((body) => {
-        loginMutation.mutate(body, {
-            onSuccess: (data) => {
-                setAuthenticated(true)
-                navigate(routes.blogList)
-                toast.success(UserMessage.LOGIN_SUCCESS)
-                setProfile(data.data.data.user)
-            },
-            onError: (error) => handleFormError<FormLoginData>(error, loginForm)
-        })
-    })
+    const isLogin = location.pathname.includes('/auth/login')
 
     return (
         <div className={cx('container')}>
-            {isLogin ? (
-                <SEO
-                    title='Login | S-blog'
-                    description='Log in to your account and start sharing your blogs with the world.'
-                    path={routes.blogList}
-                    image={`https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiYVq9zoC-Zcg9eFZliPXWxWxBLHqer4bfLg&s`}
-                    type='website'
-                />
-            ) : (
-                <SEO
-                    title='Register | S-blog'
-                    description='Create an account and start your blogging journey today.'
-                    path={routes.blogList}
-                    image={`https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiYVq9zoC-Zcg9eFZliPXWxWxBLHqer4bfLg&s`}
-                    type='website'
-                />
-            )}
+            <SEO
+                title={isLogin ? 'Login | S-blog' : 'Register | S-blog'}
+                description={isLogin ? 'Log in to your account...' : 'Create an account...'}
+                path={routes.blogList}
+                image='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiYVq9zoC-Zcg9eFZliPXWxWxBLHqer4bfLg&s'
+                type='website'
+            />
             <div className={cx('left-section')}>
                 <img src={thumbnail} alt='Thumbnail' className={cx('thumbnail')} />
                 <div className={cx('brand-info')}>
@@ -118,97 +37,18 @@ function UserAccess() {
             </div>
             <div className={cx('right-section')}>
                 <AnimatePresence mode='wait' custom={isLogin}>
-                    <motion.form
-                        key={isLogin ? 'login' : 'register'}
-                        className={cx('form')}
-                        onSubmit={isLogin ? handleLoginSubmit : handleRegisterSubmit}
-                        noValidate
-                        custom={isLogin}
-                        initial='initial'
-                        animate='animate'
-                        exit='exit'
-                        variants={formVariants}
-                    >
+                    <FormWrapper isLogin={isLogin} className={cx('form')}>
                         <h1 className={cx('form-heading')}>{isLogin ? 'Sign In' : 'Sign Up'}</h1>
-
-                        {!isLogin && (
-                            <>
-                                <Input
-                                    id='firstName'
-                                    name='first_name'
-                                    label='First Name'
-                                    register={registerForm.register}
-                                    errorMessage={registerForm.formState.errors.first_name?.message}
-                                />
-
-                                <Input
-                                    id='lastName'
-                                    label='Last Name'
-                                    name='last_name'
-                                    register={registerForm.register}
-                                    errorMessage={registerForm.formState.errors.last_name?.message}
-                                />
-                            </>
-                        )}
-
-                        <Input
-                            id='email'
-                            label='Your Email'
-                            type='email'
-                            name='email'
-                            register={isLogin ? loginForm.register : registerForm.register}
-                            errorMessage={
-                                isLogin
-                                    ? loginForm.formState.errors.email?.message
-                                    : registerForm.formState.errors.email?.message
-                            }
-                        />
-
-                        <Input
-                            id='password'
-                            label='Password'
-                            type='password'
-                            name='password'
-                            register={isLogin ? loginForm.register : registerForm.register}
-                            errorMessage={
-                                isLogin
-                                    ? loginForm.formState.errors.password?.message
-                                    : registerForm.formState.errors.password?.message
-                            }
-                        />
-
-                        {!isLogin && (
-                            <Input
-                                id='confirm_password'
-                                label='Confirm Password'
-                                type='password'
-                                name='confirm_password'
-                                register={registerForm.register}
-                                errorMessage={registerForm.formState.errors.confirm_password?.message}
-                            />
-                        )}
-
-                        <Button
-                            variant='primary'
-                            type='submit'
-                            className={cx('form-btn')}
-                            disabled={loginMutation.isPending || registerAccountMutation.isPending}
-                        >
-                            {(loginMutation.isPending || registerAccountMutation.isPending) && <LoadingIcon />}
-                            {isLogin ? 'Sign In' : 'Sign Up'}
-                        </Button>
-
+                        {isLogin ? <LoginForm /> : <RegisterForm />}
                         <p className={cx('form-footer')}>
                             <Link to={isLogin ? routes.register : routes.login}>
                                 {isLogin ? "Don't have an account?" : 'Already have an account?'}
                                 <strong> {isLogin ? 'Sign up.' : 'Log in.'}</strong>
                             </Link>
                         </p>
-                    </motion.form>
+                    </FormWrapper>
                 </AnimatePresence>
             </div>
         </div>
     )
 }
-
-export default UserAccess

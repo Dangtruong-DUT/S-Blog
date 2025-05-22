@@ -109,7 +109,7 @@ html[data-theme='dark'] .container {
 
 /* Responsive design */
 @media (max-width: 768px) {
-    .-container {
+    .container {
         flex-direction: column;
     }
 

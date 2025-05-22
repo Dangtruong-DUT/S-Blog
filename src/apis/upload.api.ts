@@ -1,10 +1,10 @@
 import { ResponseApi } from 'src/types/utils.type'
 import http from 'src/utils/https.util'
 interface UploadImageData {
-    image: string
+    url: string
 }
 
-const URL_UPLOAD_IMAGE = '/upload/image'
+const URL_UPLOAD_IMAGE = import.meta.env.VITE_API_URL_UPLOAD
 
 const uploadApi = {
     uploadImage(body: FormData) {

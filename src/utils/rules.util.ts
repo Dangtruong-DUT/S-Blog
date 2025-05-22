@@ -19,12 +19,6 @@ export const schema = yup.object({
         .oneOf([yup.ref('password')], 'Confirmation password does not match')
         .required('Confirm password is required'),
     old_password: yup.string().required('Old password is required'),
-    username: yup
-        .string()
-        .trim()
-        .matches(/^[a-zA-Z0-9._]+$/, 'Usernames can only contain letters, numbers, underscores, and periods.')
-        .max(80, 'Length from 1-80 characters')
-        .required('Username is required'),
     bio: yup.string().trim().max(80, 'Length from 0-80 characters'),
     avatar: yup.string().trim(),
     social_links: yup.array().of(yup.string().trim().url('Invalid URL format'))
@@ -34,17 +28,17 @@ export const blogSchema = yup.object({
         .string()
         .trim()
         .required('title is required')
-        .min(6, 'Length from 6-300 characters')
-        .max(300, 'Length from 6-300 characters'),
-    sub_title: yup
+        .min(6, 'Length from 6-255 characters')
+        .max(255, 'Length from 6-255 characters'),
+    subtitle: yup
         .string()
         .trim()
         .required('description is required')
-        .min(6, 'Length from 6-300 characters')
-        .max(300, 'Length from 6-300 characters'),
+        .min(6, 'Length from 6-255 characters')
+        .max(255, 'Length from 6-255 characters'),
     feature_image: yup.string().trim().required('thumbnail is required'),
     content: yup.string().trim().required('content is required'),
-    categories: yup.array().of(yup.string().trim()).min(1, 'Must select at least one category')
+    category: yup.string().trim().required('category is required')
 })
 
 export type SchemaType = yup.InferType<typeof schema>

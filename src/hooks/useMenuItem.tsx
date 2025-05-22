@@ -38,7 +38,7 @@ export function useMenuItems() {
             {
                 icon: <MdPersonOutline size='1em' />,
                 title: 'View profile',
-                to: `/@${encodeURIComponent(profile?.username || '')}`
+                to: `/@${encodeURIComponent(profile?.id || '')}`
             },
             {
                 icon: <MdSettings size='1em' />,

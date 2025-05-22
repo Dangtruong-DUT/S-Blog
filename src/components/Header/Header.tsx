@@ -6,7 +6,7 @@ import { Link, NavLink, useMatch } from 'react-router-dom'
 import { routes } from 'src/config'
 import { MdMoreVert } from 'react-icons/md'
 import Menu from '../Popper/Components/Menu/Menu'
-import SearchBar from './Component/SearchBar'
+import SearchBar from '../SearchBar'
 import { useMenuItems } from 'src/hooks/useMenuItem'
 
 const cx = classNames.bind(styles)
