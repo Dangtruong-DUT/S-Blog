@@ -1,7 +1,5 @@
-import React, { useMemo } from 'react'
-import { CommentSection } from 'react-comments-section'
+import React, { useMemo, useEffect, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import 'react-comments-section/dist/index.css'
 import commentApi from 'src/apis/comment.api'
 import { Comment as APIComment, AddCommentPayload } from 'src/types/comment.type'
 
@@ -117,42 +115,54 @@ const Comments: React.FC<CommentsProps> = ({ postId, currentUser, postAuthorId }
         comId: string
     }
 
-    return (
-        <CommentSection
-            currentUser={
-                currentUser
-                    ? {
-                          currentUserId: String(currentUser.id),
-                          currentUserImg: currentUser.avatar,
-                          currentUserProfile: `/@${currentUser.id}`,
-                          currentUserFullName: currentUser.fullName
-                      }
-                    : null
-            }
-            logIn={{
-                onLogin: () => (window.location.href = '/login'),
-                signUpLink: '/register'
-            }}
-            commentData={commentData.map((c) => ({
-                ...c,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [CommentSection, setCommentSection] = useState<React.ComponentType<any> | null>(null)
 
-                fullName: typeof c.fullName === 'string' ? c.fullName : `${c.user.first_name} ${c.user.last_name}`
-            }))}
-            placeHolder={'Viết bình luận...'}
-            onSubmitAction={async (data: CommentActionData) => {
-                await addMutation.mutateAsync({ content: data.text, post: postId })
-            }}
-            onReplyAction={async (data: { repliedToCommentId: string; text: string }) => {
-                await replyMutation.mutateAsync({
-                    parentId: Number(data.repliedToCommentId),
-                    payload: { content: data.text, post: postId }
-                })
-            }}
-            onDeleteAction={async (data: { comIdToDelete: string }) => {
-                await deleteMutation.mutateAsync(Number(data.comIdToDelete))
-            }}
-            currentData={() => {}}
-        />
+    useEffect(() => {
+        // Dynamic import để tránh lỗi require khi build
+        import('react-comments-section').then((mod) => {
+            import('react-comments-section/dist/index.css')
+            setCommentSection(() => mod.CommentSection)
+        })
+    }, [])
+
+    return (
+        CommentSection && (
+            <CommentSection
+                currentUser={
+                    currentUser
+                        ? {
+                              currentUserId: String(currentUser.id),
+                              currentUserImg: currentUser.avatar,
+                              currentUserProfile: `/@${currentUser.id}`,
+                              currentUserFullName: currentUser.fullName
+                          }
+                        : null
+                }
+                logIn={{
+                    onLogin: () => (window.location.href = '/auth/login'),
+                    signUpLink: '/auth/register'
+                }}
+                commentData={commentData.map((c) => ({
+                    ...c,
+                    fullName: typeof c.fullName === 'string' ? c.fullName : `${c.user.first_name} ${c.user.last_name}`
+                }))}
+                placeHolder={'Viết bình luận...'}
+                onSubmitAction={async (data: CommentActionData) => {
+                    await addMutation.mutateAsync({ content: data.text, post: postId })
+                }}
+                onReplyAction={async (data: { repliedToCommentId: string; text: string }) => {
+                    await replyMutation.mutateAsync({
+                        parentId: Number(data.repliedToCommentId),
+                        payload: { content: data.text, post: postId }
+                    })
+                }}
+                onDeleteAction={async (data: { comIdToDelete: string }) => {
+                    await deleteMutation.mutateAsync(Number(data.comIdToDelete))
+                }}
+                currentData={() => {}}
+            />
+        )
     )
 }
 
