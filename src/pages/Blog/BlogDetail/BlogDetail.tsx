@@ -7,68 +7,65 @@ import BlogSidebar from './components/BlogSidebar'
 import BlogContent from './components/BlogContent'
 import BlogActions from './components/BlogActions'
 import { useBlogDetail } from 'src/hooks/useBlogDetail'
-import useLikeBlog from 'src/hooks/useLikeBlog'
-import { useCallback, useContext } from 'react'
+import { useContext } from 'react'
 import Comments from 'src/components/Comments/Comments'
 import { AppContext } from 'src/contexts/app.context'
+import BlogDetailLayout from './components/BlogDetailLayout'
+import { useBlogLikeHandler } from './hooks/useBlogLikeHandler'
 
 const cx = classNames.bind(styles)
 
 export default function BlogDetail() {
     const { blog, isLoading, contentHtml, socialLinks, id, refetch } = useBlogDetail()
-    const { handleLikeBlog } = useLikeBlog({ id })
+    const handleLike = useBlogLikeHandler(id, refetch)
     const { profile } = useContext(AppContext)
-
-    const handleLike = useCallback(() => {
-        handleLikeBlog({
-            onSuccess: () => {
-                refetch()
-            },
-            onError: () => {
-                refetch()
-            }
-        })
-    }, [handleLikeBlog, refetch])
 
     if (isLoading && !blog) return <SkeletonBlogDetail />
 
     if (!blog) return null
 
+    const sidebar = (
+        <div className={cx('blogDetail__sidebar')}>
+            <BlogSidebar social={socialLinks} />
+        </div>
+    )
+    const actions = (
+        <div className={cx('blogDetail__actions')}>
+            <BlogActions
+                likes={blog.likes_count}
+                views={blog.watch_count}
+                isLiked={blog.is_liked}
+                handleLike={handleLike}
+            />
+        </div>
+    )
+    const content = <BlogContent html={contentHtml} />
+    const comments = (
+        <Comments
+            postId={Number(id)}
+            currentUser={
+                profile
+                    ? {
+                          id: Number(profile.id),
+                          fullName: `${profile.first_name} ${profile.last_name}`,
+                          avatar: profile.avatar || ''
+                      }
+                    : undefined
+            }
+            postAuthorId={Number(blog.author_id)}
+        />
+    )
     return (
-        <section className={cx('blog-detail')}>
+        <>
             <SEO
                 description={blog.subtitle}
                 title={blog.subtitle}
                 path={id}
-                image='https://vione.ai/wp-content/uploads/2022/03/tri-tue-nhan-tao.jpg'
+                image={blog.featured_image}
                 type='article'
             />
             <BlogHeader blogId={id} title={blog.title} subtitle={blog.subtitle} authorId={blog.author_id} />
-            <div className={cx('blogDetail__contentWrapper')}>
-                <BlogSidebar social={socialLinks} />
-                <BlogContent html={contentHtml} />
-                <BlogActions
-                    likes={blog.likes_count}
-                    views={blog.watch_count}
-                    isLiked={blog.is_liked}
-                    handleLike={handleLike}
-                />
-            </div>
-            <div className={cx('blogDetail__comments')}>
-                <Comments
-                    postId={Number(id)}
-                    currentUser={
-                        profile
-                            ? {
-                                  id: Number(profile.id),
-                                  fullName: `${profile.first_name} ${profile.last_name}`,
-                                  avatar: profile.avatar || ''
-                              }
-                            : undefined
-                    }
-                    postAuthorId={Number(blog.author_id)}
-                />
-            </div>
-        </section>
+            <BlogDetailLayout sidebar={sidebar} content={content} actions={actions} comments={comments} />
+        </>
     )
 }

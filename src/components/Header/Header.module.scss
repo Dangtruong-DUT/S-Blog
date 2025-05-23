@@ -7,7 +7,12 @@
     -webkit-backdrop-filter: blur(5px);
     padding: 7px 0;
     max-height: 64px;
-
+    padding-left: 20px;
+    padding-right: 20px;
+    @media (max-width: 768px) {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
     .header {
         margin: 0 auto;
         display: flex;
@@ -63,5 +68,70 @@
 
     &:hover {
         background: var(--hover-color);
+    }
+}
+
+.drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 2000;
+    display: flex;
+    justify-content: flex-end;
+}
+.drawer {
+    background: var(--background-secondary);
+    width: 80vw;
+    max-width: 320px;
+    height: 100vh;
+    box-shadow: -2px 0 16px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 0 0 0;
+    position: relative;
+    animation: slideInDrawer 0.25s ease;
+    padding-left: 12px;
+    padding-right: 12px;
+}
+.drawer__close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--text-dark-gray);
+    font-size: 2rem;
+    cursor: pointer;
+}
+.drawer__search {
+    margin-top: 24px;
+    padding: 0 16px;
+}
+.drawer__list {
+    list-style: none;
+    padding: 0 8px;
+    margin: 24px 0 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+.drawer__menu {
+    margin-top: 16px;
+    padding: 0 8px;
+}
+@keyframes slideInDrawer {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+@media (min-width: 769px) {
+    .drawer-overlay,
+    .drawer {
+        display: none !important;
     }
 }

@@ -3,16 +3,12 @@ import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import 'highlight.js/styles/atom-one-dark.css'
 import Modal from 'react-modal'
-import EditorQuill from 'src/components/EditorQuill'
 import Button from 'src/components/Button'
-import InputFile from 'src/components/InputFile/InputFile'
 import classNames from 'classnames/bind'
 import styles from './CreateBlog.module.scss'
-import thumbnailDefault from 'src/assets/images/Thumbnail.png'
 import { blogSchema, BlogSchemaType } from 'src/utils/rules.util'
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import SingleSelectCategory from 'src/components/MultiSelectCategory'
 import { convertToHtml } from 'src/utils/convertQuillToHTML'
 import hljs from 'highlight.js'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -26,6 +22,14 @@ import { CreateBlogReqBody, UpdateBlogReqBody } from 'src/types/blog.type'
 import { SkeletonBlogCard } from 'src/components/Skeleton'
 import { IoArrowBackCircle } from 'react-icons/io5'
 import { AppContext } from 'src/contexts/app.context'
+import SEO from 'src/components/SeoHelmet'
+import CategorySelect from './components/CategorySelect'
+import ThumbnailUpload from './components/ThumbnailUpload'
+import TitleInput from './components/TitleInput'
+import DescriptionInput from './components/DescriptionInput'
+import ContentEditor from './components/ContentEditor'
+import FormFooter from './components/FormFooter'
+import PreviewModal from './components/PreviewModal'
 
 Modal.setAppElement('#root')
 
@@ -167,126 +171,72 @@ const BlogEditor = () => {
     })
 
     return (
-        <div className={cx('container')}>
-            <div className={cx('heading-wrapper')}>
-                {!isAddMode && (
-                    <Button variant='primary' outline className={cx('button-back')} onClick={handleBackScreen}>
-                        <IoArrowBackCircle size={'3.6rem'} />
-                    </Button>
-                )}
-                <h1>{isAddMode ? 'Create Post' : 'Update Post'}</h1>
-            </div>
-
-            {!isLoading && (
-                <form method='post' onSubmit={handleOnSubmit} noValidate>
-                    <Controller
-                        control={blogForm.control}
-                        name='category'
-                        render={({ field }) => (
-                            <div className={cx('form__row')}>
-                                <label className={cx('form-group__label')}>Category</label>
-                                <SingleSelectCategory
-                                    selectedCategory={field.value as string}
-                                    onChange={field.onChange}
-                                />
-                                <span className={cx('form-group__error')}>
-                                    {blogForm.formState.errors?.category?.message}
-                                </span>
-                            </div>
-                        )}
-                    />
-                    <Controller
-                        control={blogForm.control}
-                        name='feature_image'
-                        render={({ field }) => (
-                            <div className={cx('form__row')}>
-                                <label className={cx('form-group__label')}>Thumbnail</label>
-                                <div className={cx('thumbnailWrapper')}>
-                                    <img src={field.value || thumbnailDefault} className={cx('imageReview')} alt='' />
-                                    <InputFile
-                                        textInnerButton='Choose Thumbnail'
-                                        onChange={(file) => {
-                                            const fileURL = file !== undefined ? URL.createObjectURL(file) : ''
-                                            field.onChange(fileURL)
-                                            setFileImage(file)
-                                        }}
-                                    />
-                                </div>
-                                <span className={cx('form-group__error')}>
-                                    {blogForm.formState.errors?.feature_image?.message}
-                                </span>
-                            </div>
-                        )}
-                    />
-                    <div className={cx('form__row')}>
-                        <label className={cx('form-group__label')}>Title</label>
-                        <input
-                            type='text'
-                            placeholder='Title...'
-                            className={cx('form-group__input')}
-                            {...blogForm.register('title')}
-                        />
-                        <span className={cx('form-group__error')}>{blogForm.formState.errors?.title?.message}</span>
-                    </div>
-                    <div className={cx('form__row')}>
-                        <label className={cx('form-group__label')}>Description</label>
-                        <input
-                            type='text'
-                            placeholder='Description...'
-                            className={cx('form-group__input')}
-                            {...blogForm.register('subtitle')}
-                        />
-                        <span className={cx('form-group__error')}> {blogForm.formState.errors?.subtitle?.message}</span>
-                    </div>
-                    <Controller
-                        control={blogForm.control}
-                        name='content'
-                        render={({ field }) => (
-                            <div className={cx('form__row')}>
-                                <label className={cx('form-group__label')}>Content</label>
-                                <EditorQuill ref={quillRef} onChange={field.onChange} value={field.value} />
-                                <span className={cx('form-group__error')}>
-                                    {blogForm.formState.errors?.content?.message}
-                                </span>
-                            </div>
-                        )}
-                    />
-
-                    <div className={cx('form_footer')}>
-                        <Button type='button' variant='neutral' outline onClick={() => setIsPreviewOpen(true)}>
-                            Preview
+        <>
+            <SEO
+                title='Tạo bài viết mới | S-Blog'
+                description='Tạo và chia sẻ bài viết, blog mới trên S-Blog. Nền tảng chia sẻ tri thức, công nghệ, lập trình, phát triển bản thân và nhiều lĩnh vực khác.'
+                path='/blogs/create'
+            />
+            <div className={cx('container')}>
+                <div className={cx('heading-wrapper')}>
+                    {!isAddMode && (
+                        <Button variant='primary' outline className={cx('button-back')} onClick={handleBackScreen}>
+                            <IoArrowBackCircle size={'3.6rem'} />
                         </Button>
-                        <Button
-                            variant='primary'
-                            type='submit'
-                            loading={submitFormCreatePending || submitFormUpdatePending}
-                        >
-                            {isAddMode ? 'Public' : 'Save'}
-                        </Button>
-                    </div>
-                </form>
-            )}
-            {isLoading && <SkeletonBlogCard />}
-
-            {/* Modal Preview */}
-            <Modal
-                isOpen={isPreviewOpen}
-                onRequestClose={() => setIsPreviewOpen(false)}
-                overlayClassName={cx('modalOverlay')}
-                className={cx('modal')}
-            >
-                <div className={cx('modalContent')}>
-                    <h2 className={cx('modal__heading')}>Preview Post</h2>
-                    <div
-                        dangerouslySetInnerHTML={{ __html: getContentHtml() }}
-                        className={cx('previewContent', 'ql-editor htmlConverter ')}
-                    />
-                    <Button variant='neutral' onClick={() => setIsPreviewOpen(false)}>
-                        Close
-                    </Button>
+                    )}
+                    <h1>{isAddMode ? 'Create Post' : 'Update Post'}</h1>
                 </div>
-            </Modal>
-        </div>
+
+                {!isLoading && (
+                    <form method='post' onSubmit={handleOnSubmit} noValidate>
+                        <CategorySelect control={blogForm.control} errors={blogForm.formState.errors} />
+                        <Controller
+                            control={blogForm.control}
+                            name='feature_image'
+                            render={({ field }) => (
+                                <ThumbnailUpload
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    error={blogForm.formState.errors?.feature_image?.message ?? ''}
+                                    setFileImage={setFileImage}
+                                />
+                            )}
+                        />
+                        <TitleInput
+                            register={blogForm.register}
+                            error={blogForm.formState.errors?.title?.message || ''}
+                        />
+                        <DescriptionInput
+                            register={blogForm.register}
+                            error={blogForm.formState.errors?.subtitle?.message ?? ''}
+                        />
+                        <Controller
+                            control={blogForm.control}
+                            name='content'
+                            render={({ field }) => (
+                                <ContentEditor
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    error={blogForm.formState.errors?.content?.message || ''}
+                                    quillRef={quillRef}
+                                />
+                            )}
+                        />
+                        <FormFooter
+                            isAddMode={isAddMode}
+                            loading={submitFormCreatePending || submitFormUpdatePending}
+                            onPreview={() => setIsPreviewOpen(true)}
+                        />
+                    </form>
+                )}
+                {isLoading && <SkeletonBlogCard />}
+                <PreviewModal
+                    isOpen={isPreviewOpen}
+                    onRequestClose={() => setIsPreviewOpen(false)}
+                    getContentHtml={getContentHtml}
+                />
+            </div>
+        </>
     )
 }
 

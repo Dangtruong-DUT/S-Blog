@@ -1,0 +1,13 @@
+.formFooter {
+    display: flex;
+    justify-content: flex-end;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+@media (max-width: 600px) {
+    .formFooter {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+}

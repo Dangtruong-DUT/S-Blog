@@ -9,6 +9,7 @@ import { useMutation } from '@tanstack/react-query'
 import userApi from 'src/apis/user.api'
 import handleFormError from 'src/utils/handleFormError.util'
 import { toast } from 'react-toastify'
+import SEO from 'src/components/SeoHelmet'
 
 const cx = classNames.bind(styles)
 
@@ -44,53 +45,60 @@ function ChangePassWord() {
         })
     })
     return (
-        <div className={cx('profile')}>
-            <h1 className={cx('profile__title')}>Change Password</h1>
-            <form className={cx('formWrapper')} method='post' noValidate onSubmit={onFormSubmit}>
-                <div className={cx('form-group')}>
-                    <Input
-                        type='password'
-                        register={changePasswordForm.register}
-                        name='old_password'
-                        errorMessage={changePasswordForm.formState.errors.old_password?.message}
-                        label='Password'
-                        id='old_password'
-                        placeholder='Enter your password'
-                    />
-                </div>
-                <div className={cx('form-group')}>
-                    <Input
-                        type='password'
-                        register={changePasswordForm.register}
-                        name='password'
-                        errorMessage={changePasswordForm.formState.errors.password?.message}
-                        label='New password'
-                        id='new_password'
-                        placeholder='Enter your new password'
-                    />
-                </div>
-                <div className={cx('form-group')}>
-                    <Input
-                        type='password'
-                        name='confirm_password'
-                        register={changePasswordForm.register}
-                        errorMessage={changePasswordForm.formState.errors.confirm_password?.message}
-                        label='Confirm password'
-                        id='confirm_password'
-                        placeholder='Confirm your new password'
-                    />
-                </div>
-                <Button
-                    variant='primary'
-                    type='submit'
-                    className={cx('form-btnSubmit')}
-                    disabled={isSubmitPending}
-                    loading={isSubmitPending}
-                >
-                    Save
-                </Button>
-            </form>
-        </div>
+        <>
+            <SEO
+                title='Đổi mật khẩu | S-Blog'
+                description='Thay đổi mật khẩu, tăng cường bảo mật tài khoản của bạn trên S-Blog.'
+                path='/settings/change-password'
+            />
+            <div className={cx('profile')}>
+                <h1 className={cx('profile__title')}>Change Password</h1>
+                <form className={cx('formWrapper')} method='post' noValidate onSubmit={onFormSubmit}>
+                    <div className={cx('form-group')}>
+                        <Input
+                            type='password'
+                            register={changePasswordForm.register}
+                            name='old_password'
+                            errorMessage={changePasswordForm.formState.errors.old_password?.message}
+                            label='Password'
+                            id='old_password'
+                            placeholder='Enter your password'
+                        />
+                    </div>
+                    <div className={cx('form-group')}>
+                        <Input
+                            type='password'
+                            register={changePasswordForm.register}
+                            name='password'
+                            errorMessage={changePasswordForm.formState.errors.password?.message}
+                            label='New password'
+                            id='new_password'
+                            placeholder='Enter your new password'
+                        />
+                    </div>
+                    <div className={cx('form-group')}>
+                        <Input
+                            type='password'
+                            name='confirm_password'
+                            register={changePasswordForm.register}
+                            errorMessage={changePasswordForm.formState.errors.confirm_password?.message}
+                            label='Confirm password'
+                            id='confirm_password'
+                            placeholder='Confirm your new password'
+                        />
+                    </div>
+                    <Button
+                        variant='primary'
+                        type='submit'
+                        className={cx('form-btnSubmit')}
+                        disabled={isSubmitPending}
+                        loading={isSubmitPending}
+                    >
+                        Save
+                    </Button>
+                </form>
+            </div>
+        </>
     )
 }
 

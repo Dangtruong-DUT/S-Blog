@@ -8,15 +8,40 @@
         margin: 0 auto;
         max-width: 1170px;
         position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
     }
 
     &__toolbar {
         position: absolute;
+        left: 0;
+        top: 34px;
         display: flex;
-        flex-direction: column;
-        gap: 20px;
-        top: 0px;
-        left: calc(-34px * 3);
+        flex-direction: row;
+        gap: 16px;
+        z-index: 2;
+        justify-content: flex-start;
+
+        @media (max-width: 1024px) {
+            position: static;
+            flex-direction: row;
+            gap: 12px;
+            margin-bottom: 8px;
+            left: 0;
+            top: 0;
+            justify-content: flex-start;
+            width: 100%;
+        }
+
+        @media (max-width: 600px) {
+            flex-direction: row;
+            gap: 8px;
+            margin-bottom: 4px;
+            width: 100%;
+            justify-content: flex-start;
+        }
     }
 
     &__icon-button {
@@ -26,8 +51,16 @@
         background-color: var(--background-color);
         color: var(--text-default);
         border-radius: 999px;
-        padding: 1rem;
-        transition: background-color 0.25s ease-in-out;
+        padding: 0.9rem;
+        font-size: 1.7rem;
+        min-width: 38px;
+        min-height: 38px;
+        transition:
+            background-color 0.25s,
+            font-size 0.25s,
+            padding 0.25s,
+            min-width 0.25s,
+            min-height 0.25s;
 
         &:hover {
             background-color: var(--color-red);
@@ -43,6 +76,22 @@
         line-height: 1.6;
         letter-spacing: -0.225px;
         color: var(--text-dark-gray);
+        text-align: center;
+        word-break: break-word;
+
+        @media (max-width: 1024px) {
+            font-size: 2.4rem;
+            margin-top: 10px;
+            text-align: center;
+            padding: 0 8px;
+        }
+
+        @media (max-width: 600px) {
+            font-size: 1.7rem;
+            margin-top: 6px;
+            text-align: center;
+            padding: 0 4px;
+        }
     }
 
     &__subtitle {
@@ -52,5 +101,37 @@
         line-height: 1.4;
         color: var(--text-default);
         letter-spacing: -0.112px;
+
+        @media (max-width: 1024px) {
+            font-size: 1.3rem;
+            margin-top: 6px;
+            padding: 0 8px;
+        }
+
+        @media (max-width: 600px) {
+            font-size: 1.1rem;
+            margin-top: 2px;
+            padding: 0 4px;
+        }
+    }
+
+    &__toolbar--below {
+        position: static;
+        margin-top: 18px;
+        display: flex;
+        flex-direction: row;
+        gap: 16px;
+        width: 100%;
+        justify-content: flex-start;
+
+        @media (max-width: 1024px) {
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            gap: 8px;
+            margin-top: 6px;
+        }
     }
 }

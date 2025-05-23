@@ -2,18 +2,21 @@ import classNames from 'classnames/bind'
 import styles from './Header.module.scss'
 import { ReactSVG } from 'react-svg'
 import logo from 'src/assets/icon/logo.svg'
-import { Link, NavLink, useMatch } from 'react-router-dom'
+import { Link, useMatch } from 'react-router-dom'
 import { routes } from 'src/config'
 import { MdMoreVert } from 'react-icons/md'
-import Menu from '../Popper/Components/Menu/Menu'
-import SearchBar from '../SearchBar'
 import { useMenuItems } from 'src/hooks/useMenuItem'
+import { useState } from 'react'
+import useIsMobile from 'src/hooks/useIsMobile'
+import DrawerMenu from './DrawerMenu'
+import HeaderNav from './HeaderNav'
 
 const cx = classNames.bind(styles)
 
 function Header() {
     const isNewPage = useMatch('/new')
-
+    const isMobile = useIsMobile(768)
+    const [drawerOpen, setDrawerOpen] = useState(false)
     const MENU_ITEMS = useMenuItems()
     return (
         <header className={cx('header-fixed-wrapper')}>
@@ -21,47 +24,16 @@ function Header() {
                 <Link to={routes.blogList} className={cx('header__logo')}>
                     <ReactSVG src={logo} />
                 </Link>
-
-                <nav style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
-                    <ul className={cx('nav_list')}>
-                        {!isNewPage && (
-                            <li>
-                                <SearchBar />
-                            </li>
-                        )}
-                        <li>
-                            <NavLink
-                                to={routes.blogList}
-                                className={({ isActive }) => cx('nav__link', { 'nav__link--active': isActive })}
-                            >
-                                New
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink
-                                to={routes.category}
-                                className={({ isActive }) => cx('nav__link', { 'nav__link--active': isActive })}
-                            >
-                                Category
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink
-                                to={routes.createBlog}
-                                className={({ isActive }) => cx('nav__link', { 'nav__link--active': isActive })}
-                            >
-                                Create
-                            </NavLink>
-                        </li>
-                        <li>
-                            <Menu items={MENU_ITEMS}>
-                                <button className={cx('nav__btn')}>
-                                    <MdMoreVert size={'2rem'} />
-                                </button>
-                            </Menu>
-                        </li>
-                    </ul>
-                </nav>
+                {isMobile ? (
+                    <>
+                        <button className={cx('nav__btn')} onClick={() => setDrawerOpen(true)} aria-label='Open menu'>
+                            <MdMoreVert size={'2rem'} />
+                        </button>
+                        <DrawerMenu open={drawerOpen} onClose={() => setDrawerOpen(false)} menuItems={MENU_ITEMS} />
+                    </>
+                ) : (
+                    <HeaderNav isNewPage={!!isNewPage} menuItems={MENU_ITEMS} />
+                )}
             </div>
         </header>
     )

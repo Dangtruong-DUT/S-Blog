@@ -42,3 +42,33 @@
         transform: scale(1);
     }
 }
+
+@media (max-width: 1024px) {
+    .blog-actions {
+        flex-direction: row;
+        gap: 32px;
+        justify-content: flex-start;
+        margin-bottom: 12px;
+        align-items: center;
+    }
+    .blog-actions__item {
+        flex-direction: row;
+        gap: 12px;
+        font-size: 1.5rem;
+    }
+}
+@media (max-width: 600px) {
+    .blog-actions {
+        flex-direction: row;
+        gap: 24px;
+        justify-content: center;
+        margin-bottom: 8px;
+        width: 100vw;
+        align-items: center;
+    }
+    .blog-actions__item {
+        flex-direction: row;
+        gap: 10px;
+        font-size: 1.3rem;
+    }
+}

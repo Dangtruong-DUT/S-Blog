@@ -11,6 +11,7 @@ import SkeletonTabBar from 'src/components/SkeletonTabBar'
 import { useMemo, useState } from 'react'
 import BlogList from './components/InfiniteScrollBlog/InfiniteScrollBlog'
 import { useFollowUser, useUnfollowUser } from 'src/hooks/useFollowUser'
+import SEO from 'src/components/SeoHelmet'
 
 const cx = classNames.bind(styles)
 
@@ -66,68 +67,75 @@ function ProfilePage() {
     }, [tabActiveIndex, userData, filterParam])
 
     return (
-        <div className={cx('container')}>
-            <div className={cx('profile')}>
-                {userData ? (
-                    <Profile
-                        userData={userData}
-                        onFollow={follow}
-                        onUnfollow={unfollow}
-                        followLoading={followLoading}
-                        followSuccess={followSuccess}
-                    />
-                ) : (
-                    <SkeletonProfile />
-                )}
-            </div>
-
-            <div className={cx('tabs-wrapper')}>
-                {userData ? (
-                    <>
-                        <TabBar
-                            getActiveIndex={getIndexTabBar}
-                            typeTab='button'
-                            tabs={ProfileTab}
-                            idIndexDefault={tabActiveDefault}
+        <>
+            <SEO
+                title='Trang cá nhân | S-Blog'
+                description='Trang cá nhân, thông tin, bài viết và hoạt động của thành viên trên S-Blog.'
+                path='/profile'
+            />
+            <div className={cx('container')}>
+                <div className={cx('profile')}>
+                    {userData ? (
+                        <Profile
+                            userData={userData}
+                            onFollow={follow}
+                            onUnfollow={unfollow}
+                            followLoading={followLoading}
+                            followSuccess={followSuccess}
                         />
-                        {tabActiveIndex === 1 && (
-                            <div className={cx('filters')}>
-                                <button
-                                    className={cx('filters__item', {
-                                        'filters__item--active': filterParam === 'all'
-                                    })}
-                                    onClick={() => setFilterParam('all')}
-                                >
-                                    All
-                                </button>
-                                <button
-                                    className={cx('filters__item', {
-                                        'filters__item--active': filterParam === 'popular'
-                                    })}
-                                    onClick={() => setFilterParam('popular')}
-                                >
-                                    Popular
-                                </button>
-                                <button
-                                    className={cx('filters__item', {
-                                        'filters__item--active': filterParam === 'recent'
-                                    })}
-                                    onClick={() => setFilterParam('recent')}
-                                >
-                                    Recent
-                                </button>
-                            </div>
-                        )}
-                    </>
-                ) : (
-                    <SkeletonTabBar />
-                )}
-            </div>
+                    ) : (
+                        <SkeletonProfile />
+                    )}
+                </div>
 
-            <div className={cx('content')}>
-                <BlogList queryConfig={queryConfig} queryKey={`@${username}/blogs/${tabActiveIndex}`} />
+                <div className={cx('tabs-wrapper')}>
+                    {userData ? (
+                        <>
+                            <TabBar
+                                getActiveIndex={getIndexTabBar}
+                                typeTab='button'
+                                tabs={ProfileTab}
+                                idIndexDefault={tabActiveDefault}
+                            />
+                            {tabActiveIndex === 1 && (
+                                <div className={cx('filters')}>
+                                    <button
+                                        className={cx('filters__item', {
+                                            'filters__item--active': filterParam === 'all'
+                                        })}
+                                        onClick={() => setFilterParam('all')}
+                                    >
+                                        All
+                                    </button>
+                                    <button
+                                        className={cx('filters__item', {
+                                            'filters__item--active': filterParam === 'popular'
+                                        })}
+                                        onClick={() => setFilterParam('popular')}
+                                    >
+                                        Popular
+                                    </button>
+                                    <button
+                                        className={cx('filters__item', {
+                                            'filters__item--active': filterParam === 'recent'
+                                        })}
+                                        onClick={() => setFilterParam('recent')}
+                                    >
+                                        Recent
+                                    </button>
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        <SkeletonTabBar />
+                    )}
+                </div>
+
+                <div className={cx('content')}>
+                    <BlogList queryConfig={queryConfig} queryKey={`@${username}/blogs/${tabActiveIndex}`} />
+                </div>
             </div>
-        </div>
+        </>
     )
 }
 
