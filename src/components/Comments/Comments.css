@@ -24,10 +24,6 @@
     transition: background 0.15s;
 }
 
-.comment:hover {
-    background: var(--background-input);
-}
-
 .comment:last-child {
     border-bottom: none;
 }
