@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind'
-import styles from './NotFound.module.scss'
+import styles from './NotFound1.module.scss'
 import { ReactSVG } from 'react-svg'
 import Ellipse102 from 'src/assets/icon/Ellipse 102.svg'
 import Ellipse103 from 'src/assets/icon/Ellipse 103.svg'
@@ -19,7 +19,7 @@ function NotFound() {
                     <h1 className={cx('title')}>404</h1>
                     <h2 className={cx('subtitle')}>Page not found</h2>
                     <p className={cx('description')}>
-                        we’re sorry. the page you requested could no be found Please go back to the home page
+                        we’re sorry. the page you requested could not be found. Please go back to the home page.
                     </p>
                 </section>
 

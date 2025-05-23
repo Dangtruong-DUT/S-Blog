@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { AxiosResponse } from 'axios'
 import { useCallback } from 'react'
-import { toast } from 'react-toastify'
 import blogApi from 'src/apis/blog.api'
 import { Blog } from 'src/types/blog.type'
 import { ResponseApi } from 'src/types/utils.type'
@@ -11,7 +10,7 @@ interface LikeBlogProps {
 }
 
 interface CallbackProps {
-    onSuccess?: (res: AxiosResponse<ResponseApi<Blog>, any>) => void
+    onSuccess?: (res: AxiosResponse<ResponseApi<Blog>, unknown>) => void
     onError?: (error: Error) => void
 }
 

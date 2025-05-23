@@ -1,3 +1,8 @@
+export interface SocialLink {
+    id: string
+    link: string
+}
+
 export interface User {
     id: string
     email: string
@@ -9,7 +14,7 @@ export interface User {
     is_staff?: boolean
     is_superuser?: boolean
     date_joined: string
-    social_links?: string[]
+    social_links?: SocialLink[]
     followers_count: number
     total_likes: number
     is_following?: boolean

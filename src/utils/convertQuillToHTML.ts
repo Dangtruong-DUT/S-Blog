@@ -6,7 +6,7 @@ export const convertToHtml = (delta: DeltaStatic) => {
     try {
         const deltaOps = delta.ops
         const converter = new QuillDeltaToHtmlConverter(deltaOps as DeltaOperation[])
-        converter.beforeRender((group, dataGroup) => {
+        converter.beforeRender((_group, dataGroup) => {
             if (dataGroup instanceof BlockGroup && dataGroup.op.isCodeBlock()) {
                 const codeContent = dataGroup.ops.map((value) => value.insert.value).join('')
                 const highlighted = hljs.highlightAuto(codeContent)
