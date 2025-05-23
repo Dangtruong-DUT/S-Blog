@@ -210,7 +210,6 @@ const CommentItem: React.FC<CommentItemProps> = ({
                                         marginRight: 8,
                                         marginLeft: 0
                                     }}
-                                    autoFocus
                                 />
                                 <button
                                     className='postBtn comment-form__btn'
@@ -360,7 +359,6 @@ const Comments: React.FC<CommentsProps & { onEditComment: (commentId: number, co
                                 width: '100%',
                                 boxShadow: '0 1px 4px var(--box-shadow-color)'
                             }}
-                            autoFocus
                         />
                     </div>
                     <button
