@@ -1,0 +1,15 @@
+.form-footer {
+    margin-top: 2rem;
+    font-size: 1.4rem;
+    text-align: center;
+}
+.form-footer a {
+    color: var(--color-purple);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+.form-footer a:hover {
+    color: var(--color-red);
+    text-decoration: underline;
+}

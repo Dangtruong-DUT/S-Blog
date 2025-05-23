@@ -1,0 +1,23 @@
+.categorySelectWrapper {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 600px) {
+    .categorySelectWrapper {
+        margin-bottom: 1rem;
+    }
+}
+
+.label {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.error {
+    color: red;
+    font-size: 1.2rem;
+    margin-top: 0.3rem;
+}

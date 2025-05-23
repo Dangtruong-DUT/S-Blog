@@ -1,0 +1,76 @@
+.container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+.left-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--background-secondary);
+}
+.right-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--background-color);
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+    background: var(--background-color);
+    background-image: url('src/assets/images/backgoundRegister.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: var(--text-default);
+    padding: 4rem;
+}
+
+html[data-theme='dark'] .container {
+    background-image: url('src/assets/images/ThumbnailDark.png');
+}
+
+@media (max-width: 1024px) {
+    .container {
+        flex-direction: column;
+        padding: 0;
+    }
+    .left-section,
+    .right-section {
+        min-width: 0;
+        width: 100vw;
+        box-shadow: none;
+        padding: 2rem 0.5rem;
+    }
+}
+@media (max-width: 600px) {
+    .container {
+        min-height: 100vh;
+        padding: 0;
+    }
+    .left-section,
+    .right-section {
+        padding: 1rem 0.2rem;
+    }
+    .right-section form {
+        padding: 16px 4px 12px 4px;
+        border-radius: 8px;
+        max-width: 100vw;
+    }
+    .right-section input[type='text'],
+    .right-section input[type='email'],
+    .right-section input[type='password'] {
+        font-size: 1.3rem;
+        padding: 0.9rem 1rem;
+        max-width: 100vw;
+    }
+    .right-section button[type='submit'] {
+        font-size: 1.3rem;
+        padding: 1rem 0;
+    }
+}

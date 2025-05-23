@@ -26,7 +26,9 @@ function BlogHeader({ blogId, title, subtitle, authorId }: BlogHeaderProps) {
     return (
         <header className={cx('blog-header')}>
             <div className={cx('blog-header__container')}>
-                <div className={cx('blog-header__toolbar')}>
+                <h1 className={cx('blog-header__title')}>{title}</h1>
+                <h2 className={cx('blog-header__subtitle')}>{subtitle}</h2>
+                <div className={cx('blog-header__toolbar', 'blog-header__toolbar--below')}>
                     <button className={cx('blog-header__icon-button')} onClick={handleBackScreen}>
                         <FaArrowLeft size={'2rem'} />
                     </button>
@@ -36,8 +38,6 @@ function BlogHeader({ blogId, title, subtitle, authorId }: BlogHeaderProps) {
                         </Link>
                     )}
                 </div>
-                <h1 className={cx('blog-header__title')}>{title}</h1>
-                <h2 className={cx('blog-header__subtitle')}>{subtitle}</h2>
             </div>
         </header>
     )

@@ -1,0 +1,31 @@
+.descriptionInputWrapper {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2rem;
+}
+.label {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+.input {
+    background-color: var(--background-second-color);
+    outline: 1px solid var(--border-cl);
+    width: 100%;
+    border-radius: 4px;
+    padding: 0.9rem;
+    font-size: 1.4rem;
+}
+.error {
+    color: red;
+    font-size: 1.2rem;
+    margin-top: 0.3rem;
+}
+@media (max-width: 600px) {
+    .descriptionInputWrapper {
+        margin-bottom: 1rem;
+    }
+    .input {
+        font-size: 1.1rem;
+    }
+}

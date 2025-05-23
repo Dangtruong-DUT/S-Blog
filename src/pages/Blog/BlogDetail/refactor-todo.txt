@@ -1,0 +1,39 @@
+# Kế hoạch Clean Code & Refactor BlogDetail
+
+## Mục tiêu
+- Tách nhỏ các component con (BlogHeader, BlogSidebar, BlogContent, BlogActions, Comments, SEO...)
+- Đưa từng component vào file riêng trong thư mục `pages/Blog/BlogDetail/components/`
+- Không dùng inline JSX phức tạp, ưu tiên tách ra component nhỏ, truyền props rõ ràng
+- Tối ưu performance bằng React.memo, useCallback, useMemo cho các component con
+- Đảm bảo giữ nguyên style, không thay đổi UI/UX
+- Đặt lại tên file, tên component rõ ràng, dễ tìm kiếm, dễ mở rộng
+- Ghi chú lại các bước đã làm, các file đã tách, các props đã truyền, các hook đã tối ưu
+- Luôn kiểm tra lại cấu trúc thư mục, tránh lạc file, lặp code
+
+## Các bước thực hiện
+
+1. Đảm bảo BlogHeader, BlogSidebar, BlogContent, BlogActions, Comments đã tách file (nếu chưa thì tách)
+2. Tạo file BlogDetailLayout.tsx (layout chia trái/phải, nhận children)
+3. Tối ưu từng component: dùng React.memo, useCallback, useMemo nếu cần
+4. Chỉ để logic điều hướng, state chính ở BlogDetail.tsx, còn lại truyền props xuống
+5. Xoá code thừa, tránh lặp lại style, tránh inline JSX phức tạp
+6. Cập nhật lại import/export, kiểm tra lại style, test UI
+7. Ghi chú lại các file đã tách, các props, các hook đã tối ưu vào file này
+
+## Ghi chú
+- Luôn kiểm tra lại cấu trúc thư mục: src/pages/Blog/BlogDetail/components/
+- Đảm bảo không lặp code, không lạc file, không lặp style
+- Nếu có thay đổi lớn, update lại kế hoạch ở file này
+
+---
+# Danh sách file/component đã tách
+- BlogHeader.tsx
+- BlogSidebar.tsx
+- BlogContent.tsx
+- BlogActions.tsx
+- Comments.tsx
+- BlogDetailLayout.tsx
+
+# TODO tiếp theo
+- Refactor từng component nhỏ, test lại UI, tối ưu performance
+- Update lại file này khi hoàn thành từng bước

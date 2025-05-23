@@ -13,3 +13,18 @@
         color: #333;
     }
 }
+
+@media (max-width: 1024px) {
+    .blogContent {
+        max-width: 98vw;
+        padding: 0 8px;
+    }
+}
+
+@media (max-width: 600px) {
+    .blogContent {
+        max-width: 100vw;
+        padding: 0 2px;
+        font-size: 1.3rem;
+    }
+}
