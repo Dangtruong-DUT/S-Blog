@@ -15,6 +15,9 @@ const commentApi = {
     },
     deleteComment(commentId: number) {
         return http.delete(`/comments/${commentId}/`)
+    },
+    editComment(commentId: number, content: string) {
+        return http.put<CommentResponse>(`/comments/${commentId}/`, { content, post: null })
     }
 }
 
