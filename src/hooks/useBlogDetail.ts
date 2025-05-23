@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import blogApi from 'src/apis/blog.api'
 import { getIdFromNameId } from 'src/utils/common.util'

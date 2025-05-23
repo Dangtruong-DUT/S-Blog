@@ -98,9 +98,9 @@ const EditorQuill: ForwardRefRenderFunction<ReactQuill, EditorQuillProps> = ({ v
     }, [value])
 
     const handleChange = (
-        value: string,
-        delta: DeltaStatic,
-        source: Sources,
+        _value: string,
+        _delta: DeltaStatic,
+        _source: Sources,
         editor: ReactQuill.UnprivilegedEditor
     ) => {
         onChange(JSON.stringify(editor.getContents()))

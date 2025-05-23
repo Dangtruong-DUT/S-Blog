@@ -48,11 +48,11 @@ function Profile({ userData, onFollow, onUnfollow, followLoading }: props) {
                 </div>
                 <div className={cx('modal__contacts')}>
                     {userData.social_links?.map((link, index) => {
-                        const { icon, name } = getDomainIconWithColor(link)
+                        const { icon, name } = getDomainIconWithColor(link.link)
                         return (
                             <a
                                 key={index}
-                                href={link}
+                                href={link.link}
                                 target='_blank'
                                 rel='noopener noreferrer'
                                 className={cx('contact-item')}
