@@ -22,8 +22,8 @@ import { routes } from 'src/config'
 import { toast } from 'react-toastify'
 import uploadApi from 'src/apis/upload.api'
 import handleFormError from 'src/utils/handleFormError.util'
-import { Blog, CreateBlogReqBody, UpdateBlogReqBody } from 'src/types/blog.type'
-import SkeletonBlogcard from 'src/components/Skeleton'
+import { CreateBlogReqBody, UpdateBlogReqBody } from 'src/types/blog.type'
+import { SkeletonBlogCard } from 'src/components/Skeleton'
 import { IoArrowBackCircle } from 'react-icons/io5'
 import { AppContext } from 'src/contexts/app.context'
 
@@ -266,7 +266,7 @@ const BlogEditor = () => {
                     </div>
                 </form>
             )}
-            {isLoading && <SkeletonBlogcard />}
+            {isLoading && <SkeletonBlogCard />}
 
             {/* Modal Preview */}
             <Modal

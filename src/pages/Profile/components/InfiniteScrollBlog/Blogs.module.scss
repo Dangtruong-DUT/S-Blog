@@ -1,6 +1,12 @@
 .blogsWrapper {
     width: 100%;
 }
+
+.emptyIcon {
+    width: 50rem;
+    height: 50rem;
+    margin: 0 auto;
+}
 .blogListGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

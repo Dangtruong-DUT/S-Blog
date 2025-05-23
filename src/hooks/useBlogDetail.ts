@@ -12,7 +12,7 @@ export function useBlogDetail() {
     const { nameId } = useParams()
     const id = getIdFromNameId(nameId as string)
 
-    const { data, isLoading } = useQuery({
+    const { data, isLoading, ...rest } = useQuery({
         queryKey: ['blog', id],
         queryFn: () => blogApi.getBlogDetail(id as string)
     })
@@ -36,5 +36,12 @@ export function useBlogDetail() {
         }
     }, [blog?.content])
 
-    return { blog, isLoading, contentHtml, socialLinks, id }
+    return {
+        blog,
+        isLoading,
+        contentHtml,
+        socialLinks,
+        id,
+        ...rest
+    }
 }

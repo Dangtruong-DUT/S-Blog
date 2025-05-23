@@ -3,12 +3,14 @@ import styles from './Blogs.module.scss'
 import { BlogList, BlogListQueryConfig } from 'src/types/blog.type'
 import blogApi from 'src/apis/blog.api'
 import { InfiniteData, keepPreviousData, useInfiniteQuery } from '@tanstack/react-query'
-import Blogcard from 'src/components/Blogcard'
-import SkeletonBlogcard from 'src/components/Skeleton'
+import BlogCard from 'src/components/BlogCard'
+import { SkeletonBlogCard } from 'src/components/Skeleton'
 import { useEffect, useRef, useState } from 'react'
 import Button from 'src/components/Button'
 import { ResponseApi } from 'src/types/utils.type'
 import { RiLoader2Line } from 'react-icons/ri'
+import Lottie from 'lottie-react'
+import emptyDocument from 'src/assets/animations/document_empty.json'
 
 const cx = classNames.bind(styles)
 
@@ -28,58 +30,62 @@ function InfiniteScrollBlog({ queryKey, queryConfig }: BlogListProps) {
         InfiniteData<ResponseApi<BlogList>, number>
     >({
         queryKey: [queryKey, queryConfig],
-        queryFn: async ({ pageParam }) => {
-            const response = await blogApi.getBlogs({ ...queryConfig, page: pageParam as string })
+        queryFn: async ({ pageParam = 1 }) => {
+            const response = await blogApi.getBlogs({ ...queryConfig, page: String(pageParam) })
             return response.data
         },
         getNextPageParam: (lastPage) => {
-            const currentPage = lastPage.data.pagination.page
-            const pageSize = lastPage.data.pagination.total_pages
-            const nextPage = currentPage < pageSize ? currentPage + 1 : undefined
-            return nextPage
+            const { page, total_pages } = lastPage.data.pagination
+            return page < total_pages ? page + 1 : undefined
         },
         initialPageParam: 1,
         placeholderData: keepPreviousData,
         staleTime: 300000
     })
+
     useEffect(() => {
-        if (!isManualLoad || !hasNextPage) return
+        if (!isManualLoad || !hasNextPage || !lastItemRef.current) return
+
         observerRef.current = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting) {
+            ([entry]) => {
+                if (entry.isIntersecting) {
                     fetchNextPage()
-                    console.log('load next page')
                 }
             },
             { root: null, rootMargin: '100px', threshold: 0.1 }
         )
 
-        if (lastItemRef.current) observerRef.current.observe(lastItemRef.current)
+        const currentRef = lastItemRef.current
+        observerRef.current.observe(currentRef)
 
-        return () => observerRef.current?.disconnect()
+        return () => {
+            observerRef.current?.disconnect()
+        }
     }, [hasNextPage, fetchNextPage, isManualLoad])
+
+    const allBlogs = data?.pages.flatMap((page) => page.data.blogs) || []
+    const isEmpty = !isLoading && allBlogs.length === 0
 
     return (
         <div className={cx('blogsWrapper')}>
-            <div className={cx('blogListGrid')}>
-                {isLoading ? (
-                    <>
-                        <SkeletonBlogcard />
-                        <SkeletonBlogcard />
-                        <SkeletonBlogcard />
-                        <SkeletonBlogcard />
-                        <SkeletonBlogcard />
-                    </>
-                ) : (
-                    <>
-                        {data?.pages.map((page) =>
-                            page.data.blogs.map((element) => <Blogcard blog={element} key={element.id} />)
-                        )}
-                        <div ref={lastItemRef}></div>
-                    </>
-                )}
-            </div>
-            {hasNextPage && !isManualLoad && (
+            {isEmpty ? (
+                <Lottie animationData={emptyDocument} loop={true} className={cx('emptyIcon')} />
+            ) : (
+                <div className={cx('blogListGrid')}>
+                    {isLoading ? (
+                        Array.from({ length: 5 }).map((_, index) => <SkeletonBlogCard key={index} />)
+                    ) : (
+                        <>
+                            {allBlogs.map((blog) => (
+                                <BlogCard blog={blog} key={blog.id} />
+                            ))}
+                            <div ref={lastItemRef} />
+                        </>
+                    )}
+                </div>
+            )}
+
+            {hasNextPage && !isManualLoad && !isLoading && (
                 <Button
                     variant='primary'
                     outline
@@ -89,6 +95,7 @@ function InfiniteScrollBlog({ queryKey, queryConfig }: BlogListProps) {
                     Load More
                 </Button>
             )}
+
             {isFetchingNextPage && (
                 <div className={cx('loadingWrapper')}>
                     <span className={cx('loadingIcon')}>

@@ -12,6 +12,7 @@ import searchApi from 'src/apis/Search.api'
 import AccountItem from '../AccountItem'
 import { User } from 'src/types/user.type'
 import { Blog } from 'src/types/blog.type'
+import { generateNameId } from 'src/utils/common.util'
 
 const cx = classNames.bind(styles)
 
@@ -73,9 +74,10 @@ function SearchBar() {
                                         <AccountItem
                                             avatarSize='40px'
                                             avatar={user.avatar}
-                                            username={user.username}
+                                            title={user.email}
                                             nameAccount={`${user.first_name} ${user.last_name}`}
                                             verified={false}
+                                            to={`/@${user.id}`}
                                         />
                                     </li>
                                 ))}
@@ -90,10 +92,11 @@ function SearchBar() {
                                     <li key={post.id}>
                                         <AccountItem
                                             avatarSize='40px'
-                                            avatar={post.feature_image}
-                                            username={post.title}
+                                            avatar={post.featured_image}
+                                            title={post.title}
                                             nameAccount={post.title}
                                             verified={false}
+                                            to={`/blogs/${generateNameId({ name: post.title, id: post.id })}`}
                                         />
                                     </li>
                                 ))}
@@ -105,17 +108,15 @@ function SearchBar() {
         )
     }
 
-    console.log(isExpanded)
-
     const ResultVisible = Boolean(
         isExpanded &&
             ((searchResults?.users?.length && searchResults?.users?.length > 0) ||
                 (searchResults?.posts?.length && searchResults?.posts?.length > 0))
     )
-
     return (
         <Tippy
             visible={ResultVisible}
+            hideOnClick={false}
             interactive
             placement='bottom'
             onClickOutside={() => setIsExpanded(false)}

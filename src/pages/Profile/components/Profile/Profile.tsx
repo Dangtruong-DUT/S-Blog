@@ -16,11 +16,15 @@ import ProfileForm from '../ProfileForm'
 const cx = classNames.bind(styles)
 interface props {
     userData: User
+    onFollow?: () => void
+    onUnfollow?: () => void
+    followLoading?: boolean
+    followSuccess?: boolean | null
 }
-function Profile({ userData }: props) {
+function Profile({ userData, onFollow, onUnfollow, followLoading }: props) {
     const [isModalContactShow, setModalContactShow] = useState<boolean>(false)
     const [isModalEditProfileShow, setModalEditProfileShow] = useState<boolean>(false)
-    const [isFollowing, setFollowing] = useState<boolean | undefined>(userData.isFollowing)
+    const [isFollowing, setFollowing] = useState<boolean | undefined>(userData.is_following)
     const { profile } = useContext(AppContext)
     const navigate = useNavigate()
     const onSettingClick = () => {
@@ -28,6 +32,8 @@ function Profile({ userData }: props) {
     }
     const handleToggleFollow = () => {
         setFollowing((prev) => !prev)
+        if (!isFollowing && onFollow) onFollow()
+        if (isFollowing && onUnfollow) onUnfollow()
     }
     const isCurrentUser = profile?.id == userData.id
 
@@ -89,7 +95,7 @@ function Profile({ userData }: props) {
             </div>
             <div className={cx('profile-right')}>
                 <div className={cx('profile__row')}>
-                    <h1 className={cx('profile__name')}>{userData.username}</h1>
+                    <h1 className={cx('profile__name')}>{userData.email}</h1>
                     <h2 className={cx('profile__username')}>{userData?.first_name + ' ' + userData?.last_name}</h2>
                 </div>
                 <div className={cx('profile__row')}>
@@ -117,8 +123,9 @@ function Profile({ userData }: props) {
                                 variant={!isFollowing ? 'primary' : 'secondary'}
                                 onClick={handleToggleFollow}
                                 className={cx('profile__btn')}
+                                disabled={followLoading}
                             >
-                                {!isFollowing ? 'Follow' : 'Following'}
+                                {!isFollowing ? (followLoading ? 'Following...' : 'Follow') : 'Following'}
                             </Button>
                             <Button
                                 variant='secondary'
@@ -135,10 +142,10 @@ function Profile({ userData }: props) {
                 </div>
                 <div className={cx('stats')}>
                     <span>
-                        <strong>{formatter.format(userData.followers)}</strong> Followers
+                        <strong>{formatter.format(userData.followers_count || 0)}</strong> Followers
                     </span>
                     <span>
-                        <strong>{formatter.format(userData.likes)}</strong> Likes
+                        <strong>{formatter.format(userData.total_likes || 0)}</strong> Likes
                     </span>
                 </div>
                 <h2 className={cx('profile__bio')}>{userData?.bio} </h2>

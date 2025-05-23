@@ -7,6 +7,7 @@ import Button from '../Button'
 import { formatter } from 'src/utils/common.util'
 import { User } from 'src/types/user.type'
 import { AppContext } from 'src/contexts/app.context'
+import { useFollowUser, useUnfollowUser } from 'src/hooks/useFollowUser'
 
 const cx = classNames.bind(styles)
 
@@ -15,18 +16,27 @@ interface ProfileCardProps {
 }
 
 function ProfileCard({ userData }: ProfileCardProps) {
-    const [isFollowing, setFollowing] = useState(false)
+    const [isFollowing, setFollowing] = useState(userData?.is_following)
     const { profile } = useContext(AppContext)
     if (!userData) return null
 
-    const { id, avatar, first_name, last_name, followers = 0, like_count = 0, bio, email } = userData
+    const { id, avatar, first_name, last_name, followers_count = 0, total_likes = 0, bio, email } = userData
     const profileUrl = `/@${encodeURIComponent(id)}`
     const fullName = `${first_name} ${last_name}`
+
+    const { follow, loading: followLoading } = useFollowUser(userData?.id || '')
+    const { unfollow } = useUnfollowUser(userData?.id || '')
 
     const buttonFollowClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.stopPropagation()
         e.preventDefault()
-        setFollowing(!isFollowing)
+        if (!isFollowing) {
+            setFollowing(true)
+            follow()
+        } else {
+            setFollowing(false)
+            unfollow()
+        }
     }
 
     const isAuthor = profile?.id === id
@@ -43,8 +53,9 @@ function ProfileCard({ userData }: ProfileCardProps) {
                         outline
                         className={cx('follow-button', { following: isFollowing })}
                         onClick={buttonFollowClick}
+                        disabled={followLoading}
                     >
-                        {isFollowing ? 'Following' : 'Follow'}
+                        {isFollowing ? 'Following' : followLoading ? 'Following...' : 'Follow'}
                     </Button>
                 )}
             </div>
@@ -57,10 +68,10 @@ function ProfileCard({ userData }: ProfileCardProps) {
 
                 <div className={cx('stats')}>
                     <span>
-                        <strong>{formatter.format(followers || 0)}</strong> Followers
+                        <strong>{formatter.format(followers_count || 0)}</strong> Followers
                     </span>
                     <span>
-                        <strong>{formatter.format(like_count || 0)}</strong> Likes
+                        <strong>{formatter.format(total_likes || 0)}</strong> Likes
                     </span>
                 </div>
 

@@ -7,8 +7,8 @@ import { schema, SchemaType } from 'src/utils/rules.util'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
 import userApi from 'src/apis/user.api'
-import { omit } from 'lodash'
 import handleFormError from 'src/utils/handleFormError.util'
+import { toast } from 'react-toastify'
 
 const cx = classNames.bind(styles)
 
@@ -26,14 +26,19 @@ function ChangePassWord() {
         }
     })
     const { mutate: changePasswordMutate, isPending: isSubmitPending } = useMutation({
-        mutationFn: userApi.updateProfile
+        mutationFn: userApi.changePassword
     })
 
     const onFormSubmit = changePasswordForm.handleSubmit((data) => {
-        const body = omit(data, ['confirm_password'])
+        const body = {
+            old_password: data.old_password,
+            new_password: data.password,
+            confirm_password: data.confirm_password
+        }
         changePasswordMutate(body, {
             onSuccess: () => {
                 changePasswordForm.reset()
+                toast.success('Change password successfully')
             },
             onError: (error) => handleFormError<changePasswordData>(error, changePasswordForm)
         })

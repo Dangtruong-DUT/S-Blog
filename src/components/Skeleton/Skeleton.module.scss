@@ -21,7 +21,6 @@
     fill: var(--skeleton-icon-color);
 }
 
-.skeletonText,
 .skeletonLine {
     height: 0.625rem;
     background-color: var(--skeleton-bg-color);
@@ -29,40 +28,8 @@
     margin-bottom: 0.625rem;
 }
 
-.skeletonText {
-    width: 12rem;
-}
-
 .skeletonLine {
     width: 100%;
-}
-
-.skeletonFooter {
-    display: flex;
-    align-items: center;
-    margin-top: 1rem;
-}
-
-.skeletonAvatar {
-    width: 2.5rem;
-    height: 2.5rem;
-    margin-right: 1rem;
-    fill: var(--skeleton-icon-color);
-}
-
-.skeletonSmall {
-    width: 8rem;
-    height: 0.625rem;
-    background-color: var(--skeleton-bg-color);
-    border-radius: 9999px;
-    margin-bottom: 0.5rem;
-}
-
-.skeletonMedium {
-    width: 12rem;
-    height: 0.5rem;
-    background-color: var(--skeleton-bg-color);
-    border-radius: 9999px;
 }
 
 @keyframes pulse {

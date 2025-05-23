@@ -10,7 +10,7 @@ export interface User {
     is_superuser?: boolean
     date_joined: string
     social_links?: string[]
-    followers: number
-    like_count: number
-    isFollowing?: boolean
+    followers_count: number
+    total_likes: number
+    is_following?: boolean
 }

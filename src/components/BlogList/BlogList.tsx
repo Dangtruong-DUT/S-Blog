@@ -6,8 +6,8 @@ import blogApi from 'src/apis/blog.api'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 import { useParams } from 'react-router-dom'
-import SkeletonBlogCard from '../Skeleton'
 import BlogCard from '../BlogCard'
+import { SkeletonBlogCard } from '../Skeleton'
 
 const cx = classNames.bind(styles)
 

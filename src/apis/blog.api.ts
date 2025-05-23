@@ -35,6 +35,9 @@ const blogApi = {
     },
     getCategoryById(id: string) {
         return http.get<ResponseApi<category>>(`${URL_CATEGORIES}/${id}/`)
+    },
+    likeBlog(id: string) {
+        return http.post<ResponseApi<Blog>>(`${URL}/${id}/like/`)
     }
 }
 

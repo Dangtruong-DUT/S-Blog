@@ -16,6 +16,7 @@ import { FiMoreHorizontal } from 'react-icons/fi'
 import ConfirmDeleteModal from './components/ConfirmDeleteModal'
 import AuthorInfo from './components/AuthorInfo'
 import ActionMenu from './components/ActionMenu'
+import { SkeletonLine, SkeletonWrapper } from '../Skeleton'
 
 const cx = classNames.bind(styles)
 
@@ -33,7 +34,7 @@ function BlogCard({ blog }: BlogCardProps) {
 
     const isAuthor = profile?.id === blog.author_id
 
-    const { data: userRes } = useQuery({
+    const { data: userRes, isLoading } = useQuery({
         queryKey: [`profile:${blog.author_id}`],
         queryFn: () => userApi.getProfile(blog.author_id!)
     })
@@ -118,12 +119,17 @@ function BlogCard({ blog }: BlogCardProps) {
                         )}
                         <img src={blog.featured_image} alt={blog.title} className={cx('blog__image')} />
                     </div>
-
-                    <AuthorInfo
-                        userData={userData}
-                        categoryName={categoryData?.name}
-                        onClickProfile={handleViewProfile}
-                    />
+                    {isLoading ? (
+                        <SkeletonWrapper>
+                            <SkeletonLine height={18} width={150} />
+                        </SkeletonWrapper>
+                    ) : (
+                        <AuthorInfo
+                            userData={userData}
+                            categoryName={categoryData?.name}
+                            onClickProfile={handleViewProfile}
+                        />
+                    )}
 
                     <h2 className={cx('blog__title')}>{blog.title}</h2>
                     <p className={cx('blog__subtitle')}>{blog.subtitle}</p>

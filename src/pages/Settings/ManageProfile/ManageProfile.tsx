@@ -67,7 +67,10 @@ function Profile() {
                 toast.error('An unknown error has occurred. Please try again later.')
             }
         }
-        const body = { ...data, avatar: avatar_url }
+        const body = {
+            ...data,
+            avatar: avatar_url
+        }
         const payload = {
             body,
             userId: currentData?.id as string

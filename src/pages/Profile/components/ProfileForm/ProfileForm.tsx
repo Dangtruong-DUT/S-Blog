@@ -15,8 +15,9 @@ import { toast } from 'react-toastify'
 import handleFormError from 'src/utils/handleFormError.util'
 import { Config } from 'src/config/common'
 import { FaFacebook, FaGithub, FaGlobe, FaInstagram, FaLinkedin, FaTiktok, FaTwitter, FaYoutube } from 'react-icons/fa'
-import { AiOutlineDeleteRow } from 'react-icons/ai'
+import { AiOutlineDelete, AiOutlineClose } from 'react-icons/ai'
 import { useNavigate } from 'react-router-dom'
+import SocialApi from 'src/apis/Socials.api'
 
 type FormData = Pick<SchemaType, 'avatar' | 'bio' | 'social_links'>
 
@@ -34,16 +35,36 @@ const getIcon = (url: string) => {
 }
 
 const cx = classNames.bind(styles)
-interface props {
+
+interface Props {
     userData: User
     onCancel: () => void
 }
-const ProfileForm = ({ userData, onCancel }: props) => {
+
+type SocialField = {
+    id: string // Server ID or local temporary ID
+    link: string
+    isNew?: boolean // Flag to identify unsaved items
+}
+
+const ProfileForm = ({ userData, onCancel }: Props) => {
     const navigate = useNavigate()
     const { setProfile, profile: currentData } = useContext(AppContext)
     const [fileImage, setFileImage] = useState<File>()
-    const previewImage = useMemo(() => (fileImage ? URL.createObjectURL(fileImage) : ''), [fileImage])
+    const previewImage = useMemo(
+        () => (fileImage ? URL.createObjectURL(fileImage) : userData.avatar),
+        [fileImage, userData.avatar]
+    )
     const fileInputRef = useRef<HTMLInputElement>(null)
+
+    // Track editing state per social link
+    const [editingStates, setEditingStates] = useState<{
+        [key: string]: {
+            isEditing: boolean
+            isLoading: boolean
+            error?: string
+        }
+    }>({})
 
     const profileForm = useForm<FormData>({
         defaultValues: {
@@ -54,10 +75,16 @@ const ProfileForm = ({ userData, onCancel }: props) => {
         resolver: yupResolver(FormSchema)
     })
 
-    const { fields, append, remove, replace } = useFieldArray({
+    const { fields, append, remove, replace, update } = useFieldArray({
         control: profileForm.control,
-        name: 'social_links' as never
+        name: 'social_links'
     })
+
+    // Cast fields to SocialField type
+    const socialFields = fields as unknown as SocialField[]
+
+    // Generate stable local IDs for new items
+    const generateLocalId = () => `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
     const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const fileFromLocal = event.target.files?.[0]
@@ -65,7 +92,7 @@ const ProfileForm = ({ userData, onCancel }: props) => {
             fileFromLocal &&
             (fileFromLocal.size >= Config.MAX_SIZE_UPLOAD_IMAGE || !fileFromLocal.type.includes('image'))
         ) {
-            toast.error(`The image exceeds the allowed upload size.`, {
+            toast.error('The image exceeds the allowed upload size.', {
                 position: 'top-center'
             })
         } else {
@@ -80,37 +107,63 @@ const ProfileForm = ({ userData, onCancel }: props) => {
     const { mutate: updateProfileMutate, isPending: submitFormPending } = useMutation({
         mutationFn: userApi.updateProfile
     })
+
+    const { mutate: addSocialMutate } = useMutation({
+        mutationFn: SocialApi.addSocial
+    })
+
+    const { mutate: deleteSocialMutate } = useMutation({
+        mutationFn: SocialApi.deleteSocial
+    })
+
+    const { mutate: updateSocialMutate } = useMutation({
+        mutationFn: ({ id, link }: { id: string; link: string }) => SocialApi.updateSocial(id, { link })
+    })
+
     const uploadAvatarMutation = useMutation({
         mutationFn: uploadApi.uploadImage
     })
 
-    const {
-        data,
-        refetch,
-        isPending: isLoading
-    } = useQuery({
-        queryKey: [`profile: ${currentData?.id}`],
+    const { data: profileRes } = useQuery({
+        queryKey: [`profile:${currentData?.id}`],
         queryFn: () => userApi.getProfile(currentData?.id as string)
     })
-    const profile = data?.data.data
+    const profile = profileRes?.data.data
 
-    const avatar = profileForm.watch('avatar')
-    const bio = profileForm.watch('bio')
+    const { data: socialRes, refetch: refetchSocials } = useQuery({
+        queryKey: ['socials', profile?.id],
+        queryFn: () => SocialApi.getSocials(),
+        enabled: !!profile?.id
+    })
+
+    const socialLinks = socialRes?.data.data
 
     useEffect(() => {
         if (profile) {
             profileForm.setValue('bio', profile.bio)
             profileForm.setValue('avatar', profile.avatar || '')
-            if (profile.social_links && Array.isArray(profile.social_links)) {
-                replace(profile.social_links)
-            } else {
-                replace([])
+        }
+    }, [profile, profileForm])
+
+    // Initialize or update social links from server
+    useEffect(() => {
+        if (socialLinks) {
+            const serverLinks = socialLinks.map((link) => ({
+                id: link.id,
+                link: link.link,
+                isNew: false
+            }))
+
+            // Only replace if there's a significant difference
+            if (JSON.stringify(serverLinks) !== JSON.stringify(socialFields)) {
+                replace(serverLinks)
             }
         }
-    }, [profile, profileForm, replace])
+    }, [socialLinks])
 
     const onFormSubmit = profileForm.handleSubmit(async (data) => {
-        let avatar_url
+        let avatar_url = data.avatar
+
         if (fileImage) {
             try {
                 const form = new FormData()
@@ -120,10 +173,23 @@ const ProfileForm = ({ userData, onCancel }: props) => {
             } catch (error) {
                 console.log(error)
                 toast.error('An unknown error has occurred. Please try again later.')
+                return
             }
         }
-        const body = { ...data, avatar: avatar_url, social_links: data.social_links as string[] }
-        updateProfileMutate(body, {
+
+        const body = {
+            bio: data.bio as string,
+            avatar: avatar_url as string,
+            first_name: profile?.first_name,
+            last_name: profile?.last_name
+        }
+
+        const payload = {
+            body,
+            userId: currentData?.id as string
+        }
+
+        updateProfileMutate(payload, {
             onSuccess: (data) => {
                 toast.success(data.data.message, {
                     position: 'top-center'
@@ -134,16 +200,205 @@ const ProfileForm = ({ userData, onCancel }: props) => {
             },
             onError: (error) => handleFormError<FormData>(error, profileForm)
         })
-        refetch()
     })
+
+    // Validate social link
+    const validateSocialLink = (link: string, currentId?: string): string | undefined => {
+        if (!link.trim()) return 'Link cannot be empty'
+
+        try {
+            const url = new URL(link)
+            if (!['http:', 'https:'].includes(url.protocol)) {
+                return 'URL must start with http:// or https://'
+            }
+        } catch {
+            return 'Invalid URL format'
+        }
+
+        // Check for duplicates (ignore current item)
+        const isDuplicate = socialFields.some(
+            (field) => field.link.trim().toLowerCase() === link.trim().toLowerCase() && field.id !== currentId
+        )
+
+        if (isDuplicate) return 'Duplicate link'
+
+        return undefined
+    }
+
+    const onAddSocial = () => {
+        // Check if there's already an unsaved item being edited
+        const hasUnsavedItem = socialFields.some((field) => field.isNew)
+        if (hasUnsavedItem) {
+            toast.warning('Please save or cancel the current edit before adding a new link.')
+            return
+        }
+
+        const newId = generateLocalId()
+        append({ id: newId, link: '', isNew: true })
+
+        setEditingStates((prev) => ({
+            ...prev,
+            [newId]: {
+                isEditing: true,
+                isLoading: false,
+                error: undefined
+            }
+        }))
+    }
+
+    const onEditSocial = (id: string) => {
+        setEditingStates((prev) => ({
+            ...prev,
+            [id]: {
+                ...prev[id],
+                isEditing: true,
+                error: undefined
+            }
+        }))
+    }
+
+    const onCancelEdit = (id: string, index: number) => {
+        const field = socialFields[index]
+
+        if (field.isNew) {
+            // Remove new unsaved item
+            remove(index)
+        } else {
+            // Reset to original value
+            const serverLink = socialLinks?.find((link) => link.id === id)
+            if (serverLink) {
+                update(index, { id, link: serverLink.link, isNew: false })
+            }
+        }
+
+        setEditingStates((prev) => {
+            const newState = { ...prev }
+            delete newState[id]
+            return newState
+        })
+    }
+
+    const onSaveSocial = async (id: string, index: number) => {
+        const field = socialFields[index]
+        const link = field.link.trim()
+
+        // Validate
+        const error = validateSocialLink(link, id)
+        if (error) {
+            setEditingStates((prev) => ({
+                ...prev,
+                [id]: {
+                    ...prev[id],
+                    error
+                }
+            }))
+            return
+        }
+
+        setEditingStates((prev) => ({
+            ...prev,
+            [id]: {
+                ...prev[id],
+                isLoading: true,
+                error: undefined
+            }
+        }))
+
+        try {
+            if (field.isNew) {
+                // Add new social link
+                const response = await addSocialMutate({ link })
+                const newSocial = response.data.data
+
+                // Update local state with server ID
+                update(index, { id: newSocial.id, link: newSocial.link, isNew: false })
+
+                toast.success('Social link added!')
+            } else {
+                // Update existing social link
+                await updateSocialMutate({ id, link })
+                toast.success('Social link updated!')
+            }
+
+            setEditingStates((prev) => ({
+                ...prev,
+                [id]: {
+                    ...prev[id],
+                    isEditing: false,
+                    isLoading: false
+                }
+            }))
+
+            // Refresh social links
+            await refetchSocials()
+        } catch (error) {
+            setEditingStates((prev) => ({
+                ...prev,
+                [id]: {
+                    ...prev[id],
+                    isLoading: false,
+                    error: 'Failed to save social link'
+                }
+            }))
+            toast.error('Failed to save social link')
+        }
+    }
+
+    const onDeleteSocial = async (id: string, index: number) => {
+        const field = socialFields[index]
+
+        if (field.isNew) {
+            // Just remove if it's a new unsaved item
+            remove(index)
+            setEditingStates((prev) => {
+                const newState = { ...prev }
+                delete newState[id]
+                return newState
+            })
+            return
+        }
+
+        setEditingStates((prev) => ({
+            ...prev,
+            [id]: {
+                ...prev[id],
+                isLoading: true
+            }
+        }))
+
+        try {
+            await deleteSocialMutate(id)
+            remove(index)
+            toast.success('Social link deleted!')
+
+            setEditingStates((prev) => {
+                const newState = { ...prev }
+                delete newState[id]
+                return newState
+            })
+
+            // Refresh social links
+            await refetchSocials()
+        } catch (error) {
+            setEditingStates((prev) => ({
+                ...prev,
+                [id]: {
+                    ...prev[id],
+                    isLoading: false,
+                    error: 'Failed to delete social link'
+                }
+            }))
+            toast.error('Failed to delete social link')
+        }
+    }
 
     return (
         <form className={cx('formContainer')} method='post' onSubmit={onFormSubmit}>
             <div className={cx('formGroup')}>
                 <label>Profile photo</label>
                 <div className={cx('input-wrapper')}>
-                    <button className={cx('avatar')} onClick={handleUpload}>
-                        <img src={previewImage || avatar} alt={userData.first_name} />
+                    <button type='button' className={cx('avatar')} onClick={handleUpload}>
+                        <img src={previewImage} alt={userData.first_name} />
                         <span className={cx('editIcon')}>
                             <FiEdit3 />
                         </span>
@@ -155,7 +410,6 @@ const ProfileForm = ({ userData, onCancel }: props) => {
                         ref={fileInputRef}
                         onChange={onFileChange}
                         onClick={(event) => {
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             ;(event.target as any).value = null
                         }}
                     />
@@ -165,44 +419,117 @@ const ProfileForm = ({ userData, onCancel }: props) => {
             <div className={cx('formGroup')}>
                 <label>Socials</label>
                 <div className={cx('input-wrapper')}>
-                    {fields.map((link, index) => {
-                        const value = profileForm.watch(`social_links.${index}`) || ''
+                    {socialFields.map((field, index) => {
+                        const { id, link } = field
+                        const editingState = editingStates[id] || {
+                            isEditing: false,
+                            isLoading: false,
+                            error: undefined
+                        }
+
+                        const formError = profileForm.formState.errors.social_links?.[index] as { message?: string }
+                        const errorMsg = editingState.error || formError?.message
 
                         return (
-                            <div className={cx('input-wrapper')}>
-                                <div key={link.id} className={cx('social-input')}>
-                                    <div className={cx('social-icon')}>{getIcon(value)}</div>
+                            <div key={id} className={cx('input-wrapper')}>
+                                <div className={cx('social-input')}>
+                                    {getIcon(link)}
                                     <input
                                         type='text'
+                                        placeholder='Enter social media URL (e.g., https://facebook.com/username)'
                                         className={cx('txt-input', 'social-link', {
-                                            'input--error': profileForm.formState.errors.social_links?.[index]?.message
+                                            'input--error': !!errorMsg
                                         })}
-                                        {...profileForm.register(`social_links.${index}`)}
+                                        value={link}
+                                        disabled={!editingState.isEditing || editingState.isLoading}
+                                        onChange={(e) => {
+                                            update(index, { ...field, link: e.target.value })
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' && editingState.isEditing) {
+                                                e.preventDefault()
+                                                onSaveSocial(id, index)
+                                            } else if (e.key === 'Escape' && editingState.isEditing) {
+                                                e.preventDefault()
+                                                onCancelEdit(id, index)
+                                            }
+                                        }}
                                     />
-                                    <button type='button' className={cx('social-icon')} onClick={() => remove(index)}>
-                                        <AiOutlineDeleteRow />
+                                    {editingState.isEditing ? (
+                                        <>
+                                            <button
+                                                type='button'
+                                                className={cx('icon-btn')}
+                                                onClick={() => onSaveSocial(id, index)}
+                                                disabled={editingState.isLoading}
+                                                title='Save (Enter)'
+                                            >
+                                                {editingState.isLoading ? 'Saving...' : <FiEdit3 />}
+                                            </button>
+                                            <button
+                                                type='button'
+                                                className={cx('icon-btn')}
+                                                onClick={() => onCancelEdit(id, index)}
+                                                disabled={editingState.isLoading}
+                                                title='Cancel (Escape)'
+                                            >
+                                                <AiOutlineClose />
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <button
+                                            type='button'
+                                            className={cx('icon-btn')}
+                                            onClick={() => onEditSocial(id)}
+                                            disabled={
+                                                editingState.isLoading ||
+                                                Object.values(editingStates).some((s) => s.isEditing)
+                                            }
+                                            title='Edit'
+                                        >
+                                            <FiEdit3 />
+                                        </button>
+                                    )}
+                                    <button
+                                        type='button'
+                                        className={cx('icon-btn')}
+                                        onClick={() => onDeleteSocial(id, index)}
+                                        disabled={editingState.isLoading}
+                                        title='Delete'
+                                    >
+                                        {editingState.isLoading ? 'Deleting...' : <AiOutlineDelete />}
                                     </button>
                                 </div>
-                                {profileForm.formState.errors.social_links?.[index]?.message && (
-                                    <span className={cx('error')}>
-                                        {profileForm.formState.errors.social_links[index]?.message}
-                                    </span>
-                                )}
+                                {errorMsg && <span className={cx('error')}>{errorMsg}</span>}
                             </div>
                         )
                     })}
-                    <button type='button' className={cx('add-social-btn')} onClick={() => append('')}>
+                    <button
+                        type='button'
+                        className={cx('add-social-btn')}
+                        onClick={onAddSocial}
+                        disabled={Object.values(editingStates).some((s) => s.isEditing)}
+                        title={
+                            Object.values(editingStates).some((s) => s.isEditing)
+                                ? 'Save current edit before adding new link'
+                                : 'Add Social Link'
+                        }
+                    >
                         + Add Social Link
                     </button>
                     {profileForm.formState.errors.social_links &&
                         !Array.isArray(profileForm.formState.errors.social_links) && (
-                            <span className={cx('error')}>{profileForm.formState.errors.social_links?.message}</span>
+                            <span className={cx('error')}>
+                                {String((profileForm.formState.errors.social_links as { message?: string })?.message)}
+                            </span>
                         )}
                     <small>
-                        This input field allows users to enter contact links to their personal or business websites
+                        This input field allows users to enter contact links to their personal or business websites.
+                        Press Enter to save, Escape to cancel.
                     </small>
                 </div>
             </div>
+
             <div className={cx('formGroup')} style={{ border: 'none' }}>
                 <label htmlFor='bio'>Bio</label>
                 <div className={cx('input-wrapper')}>
@@ -219,7 +546,7 @@ const ProfileForm = ({ userData, onCancel }: props) => {
                             'txt-error': profileForm.formState.errors.bio?.message
                         })}
                     >
-                        {bio?.length || 0}/80
+                        {profileForm.watch('bio')?.length || 0}/80
                     </small>
                 </div>
             </div>
