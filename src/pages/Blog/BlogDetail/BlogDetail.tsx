@@ -8,13 +8,16 @@ import BlogContent from './components/BlogContent'
 import BlogActions from './components/BlogActions'
 import { useBlogDetail } from 'src/hooks/useBlogDetail'
 import useLikeBlog from 'src/hooks/useLikeBlog'
-import { useCallback } from 'react'
+import { useCallback, useContext } from 'react'
+import Comments from 'src/components/Comments/Comments'
+import { AppContext } from 'src/contexts/app.context'
 
 const cx = classNames.bind(styles)
 
 export default function BlogDetail() {
     const { blog, isLoading, contentHtml, socialLinks, id, refetch } = useBlogDetail()
     const { handleLikeBlog } = useLikeBlog({ id })
+    const { profile } = useContext(AppContext)
 
     const handleLike = useCallback(() => {
         handleLikeBlog({
@@ -51,7 +54,21 @@ export default function BlogDetail() {
                     handleLike={handleLike}
                 />
             </div>
-            <div className={cx('blog-detail__comments')}>{/* Future: <Comments /> */}</div>
+            <div className={cx('blogDetail__comments')}>
+                <Comments
+                    postId={Number(id)}
+                    currentUser={
+                        profile
+                            ? {
+                                  id: Number(profile.id),
+                                  fullName: `${profile.first_name} ${profile.last_name}`,
+                                  avatar: profile.avatar || ''
+                              }
+                            : undefined
+                    }
+                    postAuthorId={Number(blog.author_id)}
+                />
+            </div>
         </section>
     )
 }
