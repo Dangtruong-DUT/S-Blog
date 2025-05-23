@@ -1,133 +1,118 @@
-// Pagination.tsx
+import { isUndefined, omitBy } from 'lodash'
+import { BlogListQueryConfig } from 'src/types/blog.type'
 import classNames from 'classnames/bind'
-import { Link, createSearchParams } from 'react-router-dom'
-import { QueryConfig } from 'src/pages/Blog/BlogList/BlogList'
 import styles from './Pagination.module.scss'
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
+import PageItem from './PageItem'
+import Dots from './Dots'
+import Arrow from './Arrow'
 
 const cx = classNames.bind(styles)
 
 interface Props {
-    queryConfig: QueryConfig
+    queryConfig: BlogListQueryConfig
     pageSize: number
     path: string
 }
 
 const RANGE = 2
+
 export default function Pagination({ queryConfig, pageSize, path }: Props) {
+    const currentPage = Number(queryConfig.page)
+
     const handleScroll = () => {
         window.scrollTo({ top: 150, behavior: 'smooth' })
     }
-    const page = Number(queryConfig.page)
 
-    const renderPagination = () => {
-        let dotAfter = false
-        let dotBefore = false
+    const getFilteredQueryConfig = (): Record<string, string> => {
+        return omitBy(
+            {
+                page: queryConfig.page || '1',
+                limit: queryConfig.limit?.toString(),
+                sort_by: queryConfig.sort_by,
+                author: queryConfig.author,
+                category: queryConfig.category,
+                exclude: queryConfig.exclude,
+                order: queryConfig.order,
+                liked: queryConfig.liked?.toString()
+            },
+            isUndefined
+        ) as Record<string, string>
+    }
 
-        const renderDotBefore = (index: number) => {
-            if (!dotBefore) {
-                dotBefore = true
-                return (
-                    <span key={index} className={cx('dots')}>
-                        <span />
-                        <span />
-                        <span />
-                    </span>
-                )
-            }
-            return null
-        }
+    const filteredQueryConfig = getFilteredQueryConfig()
 
-        const renderDotAfter = (index: number) => {
-            if (!dotAfter) {
-                dotAfter = true
-                return (
-                    <span key={index} className={cx('dots')}>
-                        <span />
-                        <span />
-                        <span />
-                    </span>
-                )
-            }
-            return null
-        }
+    const renderPaginationItems = () => {
+        let dotBeforeShown = false
+        let dotAfterShown = false
 
-        return Array(pageSize)
-            .fill(0)
-            .map((_, index) => {
-                const pageNumber = index + 1
-                if (page <= RANGE * 2 + 1 && pageNumber > page + RANGE && pageNumber < pageSize - RANGE + 1) {
-                    return renderDotAfter(index)
-                } else if (page > RANGE * 2 + 1 && page < pageSize - RANGE * 2) {
-                    if (pageNumber < page - RANGE && pageNumber > RANGE) {
-                        return renderDotBefore(index)
-                    } else if (pageNumber > page + RANGE && pageNumber < pageSize - RANGE + 1) {
-                        return renderDotAfter(index)
-                    }
-                } else if (page >= pageSize - RANGE * 2 && pageNumber > RANGE && pageNumber < page - RANGE) {
-                    return renderDotBefore(index)
+        return Array.from({ length: pageSize }, (_, index) => {
+            const pageNumber = index + 1
+
+            if (currentPage <= RANGE * 2 + 1 && pageNumber > currentPage + RANGE && pageNumber < pageSize - RANGE + 1) {
+                if (!dotAfterShown) {
+                    dotAfterShown = true
+                    return <Dots keyId={index} />
                 }
+                return null
+            }
 
-                return (
-                    <Link
-                        to={{
-                            pathname: path,
-                            search: createSearchParams({
-                                ...queryConfig,
-                                page: pageNumber.toString()
-                            }).toString()
-                        }}
-                        key={index}
-                        className={cx('pageItem', { active: pageNumber === page })}
-                        onClick={handleScroll}
-                    >
-                        {pageNumber}
-                    </Link>
-                )
-            })
+            if (currentPage > RANGE * 2 + 1 && currentPage < pageSize - RANGE * 2) {
+                if (pageNumber < currentPage - RANGE && pageNumber > RANGE) {
+                    if (!dotBeforeShown) {
+                        dotBeforeShown = true
+                        return <Dots keyId={index} />
+                    }
+                    return null
+                }
+                if (pageNumber > currentPage + RANGE && pageNumber < pageSize - RANGE + 1) {
+                    if (!dotAfterShown) {
+                        dotAfterShown = true
+                        return <Dots keyId={index} />
+                    }
+                    return null
+                }
+            }
+
+            if (currentPage >= pageSize - RANGE * 2 && pageNumber > RANGE && pageNumber < currentPage - RANGE) {
+                if (!dotBeforeShown) {
+                    dotBeforeShown = true
+                    return <Dots keyId={index} />
+                }
+                return null
+            }
+
+            return (
+                <PageItem
+                    key={pageNumber}
+                    pageNumber={pageNumber}
+                    currentPage={currentPage}
+                    path={path}
+                    queryParams={filteredQueryConfig}
+                    onClick={handleScroll}
+                />
+            )
+        })
     }
 
     return (
         <div className={cx('pagination')}>
-            {page === 1 ? (
-                <span className={cx('pageItem', 'disabled')}>
-                    <FaChevronLeft />
-                </span>
-            ) : (
-                <Link
-                    to={{
-                        pathname: path,
-                        search: createSearchParams({
-                            ...queryConfig,
-                            page: (page - 1).toString()
-                        }).toString()
-                    }}
-                    className={cx('pageItem')}
-                    onClick={handleScroll}
-                >
-                    <FaChevronLeft />
-                </Link>
-            )}
-            {renderPagination()}
-            {page === pageSize ? (
-                <span className={cx('pageItem', 'disabled')}>
-                    <FaChevronRight />
-                </span>
-            ) : (
-                <Link
-                    to={{
-                        pathname: path,
-                        search: createSearchParams({
-                            ...queryConfig,
-                            page: (page + 1).toString()
-                        }).toString()
-                    }}
-                    className={cx('pageItem')}
-                    onClick={handleScroll}
-                >
-                    <FaChevronRight />
-                </Link>
-            )}
+            <Arrow
+                direction='prev'
+                currentPage={currentPage}
+                pageSize={pageSize}
+                path={path}
+                queryParams={filteredQueryConfig}
+                onClick={handleScroll}
+            />
+            {renderPaginationItems()}
+            <Arrow
+                direction='next'
+                currentPage={currentPage}
+                pageSize={pageSize}
+                path={path}
+                queryParams={filteredQueryConfig}
+                onClick={handleScroll}
+            />
         </div>
     )
 }

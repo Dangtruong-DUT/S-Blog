@@ -1,0 +1,74 @@
+.ql-toolbar {
+    background-color: var(--background-secondary);
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 4px var(--box-shadow-color);
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.ql-toolbar button {
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    padding: 8px;
+    color: var(--text-default);
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+.ql-toolbar button svg .ql-stroke {
+    stroke: var(--text-default);
+}
+.ql-toolbar button svg .ql-fill {
+    fill: var(--text-default);
+}
+
+.ql-toolbar .ql-picker {
+    font-size: 14px;
+}
+
+.ql-toolbar .ql-color-picker {
+    color: var(--color-blue);
+}
+
+.ql-toolbar .ql-picker-options {
+    background-color: var(--background-color);
+    border-radius: 5px;
+    border: 1px solid var(--border-cl);
+}
+
+.ql-toolbar .ql-picker-label {
+    color: var(--text-default);
+}
+
+.ql-toolbar .ql-formats {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+}
+.ql-container.ql-snow {
+    border: none;
+    margin-top: 12px;
+}
+.ql-editor:not(.htmlConverter) {
+    width: 100%;
+    min-height: 200px;
+    background-color: var(--background-second-color);
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+    outline: 1px solid var(--border-cl);
+}
+
+.ql-editor:focus {
+    outline: 2px solid hsla(345, 100%, 66%, 0.656);
+}
+
+.ql-editor.error {
+    background-color: var(--background-error);
+    border-color: var(--color-red);
+}

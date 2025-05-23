@@ -18,7 +18,7 @@ import authApi from 'src/apis/auth.api'
 
 export function useMenuItems() {
     const { state, dispatch } = useContext(SettingsContext)
-    const { isAuthenticated, setAuthenticated, setProfile } = useContext(AppContext)
+    const { isAuthenticated, setAuthenticated, setProfile, profile } = useContext(AppContext)
     const navigate = useNavigate()
     const logoutMutation = useMutation({
         mutationFn: () => authApi.logout(),
@@ -38,7 +38,7 @@ export function useMenuItems() {
             {
                 icon: <MdPersonOutline size='1em' />,
                 title: 'View profile',
-                to: routes.me
+                to: `/@${encodeURIComponent(profile?.id || '')}`
             },
             {
                 icon: <MdSettings size='1em' />,

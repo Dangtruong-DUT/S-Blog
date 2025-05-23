@@ -1,0 +1,24 @@
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    &-item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        font-size: 18px;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 999px;
+        background-color: var(--text-Gray-Soft);
+        color: var(--background-second-color);
+        transition: color 0.3s;
+
+        &:hover {
+            background-color: var(--color-red);
+            box-shadow: var(--box-shadow-hover);
+        }
+    }
+}

@@ -1,0 +1,45 @@
+.skeleton {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 360px;
+    animation: pulse 1.5s infinite ease-in-out;
+
+    &__line {
+        height: 10px;
+        background-color: var(--skeleton-bg-color);
+        border-radius: 4px;
+    }
+
+    &__line--w-48 {
+        width: 192px;
+    }
+    &__line--w-360 {
+        width: 360px;
+    }
+    &__line--w-330 {
+        width: 330px;
+    }
+    &__line--w-300 {
+        width: 300px;
+    }
+    &__line--mb-4 {
+        margin-bottom: 16px;
+    }
+    &__line--mb-2_5 {
+        margin-bottom: 10px;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+    100% {
+        opacity: 1;
+    }
+}

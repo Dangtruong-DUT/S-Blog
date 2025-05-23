@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosError, AxiosInstance, HttpStatusCode } from 'axios'
-import { toast } from 'react-toastify'
 import { AuthResponse, RefreshTokenResponse } from 'src/types/auth.type'
 import {
     clearLS,
@@ -9,8 +8,9 @@ import {
     saveAccessTokenToLS,
     saveProfileToLS,
     saveRefreshTokenToLS
-} from './aut.util'
+} from './auth.util'
 import { URL_LOGIN, URL_LOGOUT, URL_REFRESH_TOKEN, URL_REGISTER } from 'src/apis/auth.api'
+import { Config } from 'src/config/common'
 
 class Http {
     instance: AxiosInstance
@@ -20,8 +20,8 @@ class Http {
     constructor() {
         this.accessToken = getAccessToken()
         this.instance = axios.create({
-            baseURL: 'http://localhost:5000',
-            timeout: 10000,
+            baseURL: Config.BASE_URL,
+            timeout: 20000,
             headers: { 'Content-Type': 'application/json' }
         })
         this.refreshTokenRequest = null
@@ -40,10 +40,10 @@ class Http {
             (response) => {
                 const { url } = response.config
                 if (url === URL_LOGIN || url === URL_REGISTER) {
-                    const { accessToken, refreshToken, user } = (response.data as AuthResponse).data
-                    this.accessToken = accessToken
-                    saveAccessTokenToLS(accessToken)
-                    saveRefreshTokenToLS(refreshToken)
+                    const { access_token, refresh_token, user } = (response.data as AuthResponse).data
+                    this.accessToken = access_token
+                    saveAccessTokenToLS(access_token)
+                    saveRefreshTokenToLS(refresh_token)
                     saveProfileToLS(user)
                 } else if (url === URL_LOGOUT) {
                     clearLS()
@@ -55,7 +55,7 @@ class Http {
 
                 if (
                     error.response?.status === HttpStatusCode.Unauthorized &&
-                    (error.response?.data as any)?.message === 'EXPIRED_ACCESS_TOKEN' &&
+                    (error.response?.data as any)?.message === 'Unauthorized' &&
                     originalRequest
                 ) {
                     if (!this.refreshTokenRequest) {
@@ -77,7 +77,7 @@ class Http {
 
                 if (error.response?.status !== HttpStatusCode.UnprocessableEntity) {
                     const message = (error.response?.data as any)?.message || error.message
-                    toast.error(message)
+                    console.log(message)
                 }
                 return Promise.reject(error)
             }
@@ -90,14 +90,15 @@ const http = new Http().instance
 const refreshToken = async (): Promise<string> => {
     const refresh_token = getRefreshToken()
     if (!refresh_token) {
+        clearLS()
         throw new Error('No refresh token available')
     }
 
     try {
         const res = await http.post<RefreshTokenResponse>(URL_REFRESH_TOKEN, { refresh_token })
-        const { accessToken } = res.data.data
-        saveAccessTokenToLS(accessToken)
-        return accessToken
+        const { access_token } = res.data.data
+        saveAccessTokenToLS(access_token)
+        return access_token
     } catch (error) {
         clearLS()
         throw (error as AxiosError).response

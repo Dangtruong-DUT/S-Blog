@@ -1,18 +1,21 @@
 import { Navigate, Outlet, useRoutes } from 'react-router-dom'
 import Home from '../pages/Home'
 import { routes } from 'src/config'
-import BlogList from 'src/pages/Blog/BlogList'
+import BlogList from 'src/pages/Blog/BlogsPage'
 import BlogDetail from 'src/pages/Blog/BlogDetail'
-import Profile from 'src/pages/User/Profile'
+import ManageProfile from 'src/pages/Settings/ManageProfile'
 import CreateBlog from 'src/pages/Blog/CreateBlog'
 import MainLayout from 'src/layouts/MainLayout'
 import NotFound from 'src/pages/NotFound'
 import UserAccess from 'src/pages/Auth/UserAccess'
 import FullWidthLayout from 'src/layouts/FullWidthLayout'
-import Topics from 'src/pages/Blog/Topics'
+import Category from 'src/pages/Blog/Category'
 import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.context'
 import AuthLayout from 'src/layouts/AuthLayout'
+import SettingLayout from 'src/layouts/SettingLayout'
+import Profile from 'src/pages/Profile'
+import ChangePassWord from 'src/pages/Settings/ChangePassword'
 
 export function ProtectedRoute() {
     const { isAuthenticated } = useContext(AppContext)
@@ -36,6 +39,24 @@ function useRouteElements() {
             )
         },
         {
+            path: routes.category,
+            element: (
+                <MainLayout>
+                    <Category />
+                </MainLayout>
+            ),
+            children: [
+                {
+                    path: routes.blogsOfCategory,
+                    element: <BlogList />
+                },
+                {
+                    path: routes.category,
+                    element: <BlogList />
+                }
+            ]
+        },
+        {
             path: routes.blogList,
             element: (
                 <MainLayout>
@@ -43,6 +64,7 @@ function useRouteElements() {
                 </MainLayout>
             )
         },
+
         {
             path: routes.blogDetail,
             element: (
@@ -56,14 +78,6 @@ function useRouteElements() {
             element: (
                 <MainLayout>
                     <Profile />
-                </MainLayout>
-            )
-        },
-        {
-            path: routes.topicsList,
-            element: (
-                <MainLayout>
-                    <Topics />
                 </MainLayout>
             )
         },
@@ -94,19 +108,27 @@ function useRouteElements() {
             element: <ProtectedRoute />,
             children: [
                 {
-                    path: routes.me,
+                    path: routes.settingProfile,
                     element: (
-                        <MainLayout>
-                            <Profile />
-                        </MainLayout>
+                        <SettingLayout>
+                            <ManageProfile />
+                        </SettingLayout>
+                    )
+                },
+                {
+                    path: routes.changePassword,
+                    element: (
+                        <SettingLayout>
+                            <ChangePassWord />
+                        </SettingLayout>
                     )
                 },
                 {
                     path: routes.createBlog,
                     element: (
-                        <FullWidthLayout>
+                        <MainLayout>
                             <CreateBlog />
-                        </FullWidthLayout>
+                        </MainLayout>
                     )
                 },
                 {

@@ -1,20 +1,25 @@
 import http from 'src/utils/https.util'
-import { AuthResponse } from 'src/types/auth.type'
+import { AuthResponse, LoginReqBody, RegisterReqBody } from 'src/types/auth.type'
+import { getRefreshToken } from 'src/utils/auth.util'
 
-export const URL_LOGIN = '/auth/login'
-export const URL_REGISTER = '/auth/register'
-export const URL_LOGOUT = '/auth/logout'
-export const URL_REFRESH_TOKEN = '/refresh-token'
+export const URL_LOGIN = import.meta.env.VITE_API_URL_LOGIN
+export const URL_REGISTER = import.meta.env.VITE_API_URL_REGISTER
+export const URL_LOGOUT = import.meta.env.VITE_API_URL_LOGOUT
+export const URL_REFRESH_TOKEN = import.meta.env.VITE_API_URL_REFRESH_TOKEN
+
 const authApi = {
-    registerAccount(body: { firstName: string; lastName: string; email: string; password: string }) {
-        return http.post<AuthResponse>(URL_LOGIN, body)
+    registerAccount(body: RegisterReqBody) {
+        return http.post<AuthResponse>(URL_REGISTER, body)
     },
-    login(body: { email: string; password: string }) {
+    login(body: LoginReqBody) {
         return http.post<AuthResponse>(URL_LOGIN, body)
     },
 
     logout() {
-        return http.post(URL_LOGOUT)
+        const refresh_token = getRefreshToken()
+        return http.post(URL_LOGOUT, {
+            refresh_token
+        })
     }
 }
 

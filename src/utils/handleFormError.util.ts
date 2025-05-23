@@ -3,6 +3,7 @@ import { ResponseApi } from 'src/types/utils.type'
 import { isAxiosUnprocessableEntityError } from './common.util'
 
 import { FieldValues } from 'react-hook-form'
+import { toast } from 'react-toastify'
 
 export default function handleFormError<T extends FieldValues>(error: unknown, form: UseFormReturn<T>) {
     if (isAxiosUnprocessableEntityError<ResponseApi<T>>(error)) {
@@ -15,6 +16,8 @@ export default function handleFormError<T extends FieldValues>(error: unknown, f
                     type: 'Server'
                 })
             })
+        } else {
+            toast.error(error.response?.data.message)
         }
     }
 }

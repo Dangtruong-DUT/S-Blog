@@ -1,0 +1,25 @@
+.skeleton-tabs {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.skeleton-tab {
+    width: 100px;
+    height: 30px;
+    background: var(--skeleton-bg-color);
+    border-radius: 6px;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}

@@ -1,0 +1,44 @@
+.blogsWrapper {
+    width: 100%;
+}
+
+.emptyIcon {
+    width: 50rem;
+    height: 50rem;
+    margin: 0 auto;
+}
+.blogListGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 32px;
+    row-gap: 51px;
+}
+@media screen and (max-width: 768px) {
+    .blogListGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.button-load-more {
+    margin: 0 auto;
+}
+
+.loadingWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 16px;
+}
+
+.loadingIcon {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}

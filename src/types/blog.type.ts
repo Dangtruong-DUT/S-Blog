@@ -1,24 +1,24 @@
 export interface Blog {
     id: string
-    featureImage: string
+    featured_image: string
     content: string
     title: string
-    subTitle: string
-    author: string
-    slug: string
+    subtitle: string
+    author_id: string
     created_at: string
     updated_at: string
-    categories: string[]
-    like: number
-    watched: number
+    category: string
+    likes_count: number
+    watch_count: number
+    is_liked?: boolean
 }
 
 export interface BlogList {
-    Blogs: Blog[]
+    blogs: Blog[]
     pagination: {
         page: number
         limit: number
-        page_size: number
+        total_pages: number //
     }
 }
 
@@ -30,4 +30,28 @@ export interface BlogListQueryConfig {
     exclude?: string
     author?: string
     category?: string
+    liked?: boolean
+}
+
+export interface Categories {
+    categories: category[]
+}
+
+export interface category {
+    id: string
+    name: string
+}
+
+export type CreateBlogReqBody = Omit<
+    Blog,
+    'id' | 'url' | 'author_id' | 'created_at' | 'updated_at' | 'likes_count' | 'watch_count' | 'is_liked'
+> & {
+    status: 'draft' | 'published'
+}
+
+export type UpdateBlogReqBody = Omit<
+    Blog,
+    'id' | 'url' | 'author_id' | 'created_at' | 'updated_at' | 'likes_count' | 'watch_count' | 'is_liked'
+> & {
+    status: 'draft' | 'published'
 }

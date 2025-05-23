@@ -1,0 +1,15 @@
+.blogContent {
+    justify-self: center;
+    max-width: 1021px;
+    flex: 1;
+
+    &__image {
+        width: 100%;
+        border-radius: 10px;
+    }
+
+    &__text {
+        font-size: 1.4rem;
+        color: #333;
+    }
+}

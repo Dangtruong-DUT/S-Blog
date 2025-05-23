@@ -3,8 +3,9 @@
     max-height: min(-156px + 100vh, 734px);
     overflow: hidden overlay;
     background: var(--background-secondary);
-    box-shadow: rgba(0, 0, 0, 0.12) 0px 2px 12px;
+    box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.12);
     border-radius: 8px;
     min-height: 100px;
     padding-top: 8px;
+    z-index: 10;
 }

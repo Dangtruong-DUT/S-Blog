@@ -2,8 +2,11 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    background-color: var(--background-secondary);
+    background-color: rgba(var(--background-secondary), 0.7);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     padding: 7px 0;
+    max-height: 64px;
 
     .header {
         margin: 0 auto;

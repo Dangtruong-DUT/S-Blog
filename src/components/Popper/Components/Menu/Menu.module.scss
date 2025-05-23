@@ -21,8 +21,6 @@
     }
 
     & &__item {
-        justify-content: flex-start;
-        align-items: center;
         width: 100%;
         margin-left: 0;
         white-space: nowrap;
@@ -35,6 +33,10 @@
         border-radius: 0;
         .icon {
             margin-right: 16px;
+        }
+        .itemInner {
+            justify-content: flex-start !important;
+            align-items: center;
         }
     }
 
@@ -62,7 +64,6 @@
 .list-items__item:hover {
     color: var(--text-hover);
 }
-
 .header__btn-back {
     display: inline-flex;
     align-items: center;

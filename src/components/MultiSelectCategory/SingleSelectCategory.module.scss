@@ -1,0 +1,52 @@
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.category {
+    padding: 8px 16px;
+    background: var(--background-second-color);
+    border-radius: 16px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s;
+    box-shadow: 0px 0px 8px var(--box-shadow-color);
+}
+
+.category.selected {
+    background: #7d5fff;
+    color: white;
+}
+
+.category:hover {
+    box-shadow: var(--box-shadow-hover);
+}
+
+.skeleton-container {
+    display: flex;
+    gap: 12px;
+
+    .skeleton-btn {
+        width: 80px;
+        height: 32px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite linear;
+    }
+
+    .small {
+        width: 60px;
+    }
+
+    @keyframes loading {
+        0% {
+            background-position: 200% 0;
+        }
+        100% {
+            background-position: -200% 0;
+        }
+    }
+}

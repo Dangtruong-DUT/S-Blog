@@ -47,7 +47,7 @@ function Input({
                 {...register(name, rules)}
             />
             <label htmlFor={id}>{label}</label>
-            <div className={cx('formMessage')}>{errorMessage}</div>
+            <span className={cx('formMessage')}>{errorMessage}</span>
             {isPassword && (
                 <button
                     type='button'

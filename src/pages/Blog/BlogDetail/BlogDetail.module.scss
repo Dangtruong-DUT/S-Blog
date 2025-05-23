@@ -1,127 +1,20 @@
-.blog-detail {
+.blogDetail {
     width: 100%;
     margin: 0 auto;
 
-    &__header {
-        text-align: left;
-        background-color: var(--background-secondary);
-        padding: 34px;
-        margin-bottom: 20px;
-        .blog-header-inner {
-            margin: 0 auto;
-            max-width: 1170px;
-        }
-        &-title {
-            font-size: 3.6rem;
-            font-weight: 700;
-            line-height: 1.6;
-            letter-spacing: -0.225px;
-            color: var(--text-dark-gray);
-        }
-
-        &-subtitle {
-            font-size: 1.8rem;
-            font-weight: 600;
-            line-height: 1.7;
-            color: var(--text-default);
-            letter-spacing: -0.112px;
-        }
-    }
-
-    &__content-wrapper {
+    &__contentWrapper {
         display: flex;
         align-items: flex-start;
         justify-content: center;
         column-gap: 21px;
     }
 
-    &__sidebar {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-
-        &-item {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-decoration: none;
-            font-size: 18px;
-            width: 3rem;
-            height: 3rem;
-            border-radius: 999px;
-            background-color: var(--text-Gray-Soft);
-            color: var(--background-second-color);
-            transition: color 0.3s;
-        }
-        &-item:hover {
-            background-color: var(--color-red);
-            box-shadow: var(--box-shadow-hover);
-        }
-    }
-
-    &__content {
-        justify-self: center;
-        max-width: 1021px;
-        flex: 1;
-
-        &-image {
-            width: 100%;
-            border-radius: 10px;
-        }
-
-        &-text {
-            font-size: 14px;
-            color: #333;
-        }
-    }
-
-    &__actions {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-        font-size: 1.6rem;
-        font-weight: 500;
-        color: var(--text-default);
-
-        &-like,
-        &-view {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-        }
-        .likeBtn {
-            padding: 0.5rem;
-            border-radius: 999px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.2 ease-in;
-            color: var(--text-dark-gray);
-            &.active svg {
-                color: var(--color-red);
-                animation: heartbeat 0.5s ease-in-out;
-            }
-        }
-    }
-
     &__comments {
+        margin: 0 auto;
         margin-top: 20px;
         padding: 40px 0;
         border-top: 1px solid #ddd;
-    }
-}
-
-@keyframes heartbeat {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.3);
-    }
-    100% {
-        transform: scale(1);
+        width: 100%;
+        max-width: 1170px;
     }
 }

@@ -71,6 +71,7 @@ body {
 [data-theme='light'] {
     --background-color: #f9f9fb;
     --background-secondary: #ffffff;
+    --background-input: rgba(22, 24, 35, 0.06);
     --color-red: #ff5480;
     --color-purple: #9283e0;
     --color-orange: #ffa599;
@@ -83,6 +84,7 @@ body {
     --text-passive: #9b9b9b;
     --text-quote: #9283e0;
     --text-Nightfall: #111210;
+    --heading-color: #111210;
     --text-Deep-Black: #131313;
     --text-Gray-Soft: #9b9b9b;
     --text-hover: #ff5480;
@@ -104,6 +106,7 @@ body {
     /* Dark Mode Colors */
     --background-color: #121212;
     --background-secondary: #1e1e1e;
+    --background-input: rgba(255, 255, 255, 0.1);
     --color-red: #ff85a9;
     --color-purple: #b1a2f0;
     --color-orange: #ffb9ad;
@@ -118,6 +121,7 @@ body {
     --text-hover: #ff85a9;
     --text-Nightfall: #ededed;
     --text-Nightfall-Dark: #e5e5e5;
+    --heading-color: #d3d3d3;
     --text-Deep-Black-Dark: #eeeeee;
     --text-Gray-Soft: #c4c4c4;
     --thumb-cl: rgba(164, 164, 164, 0.06);
@@ -160,4 +164,114 @@ html *::-webkit-scrollbar-track {
 ::selection {
     background: var(--text-hover);
     color: white;
+}
+
+.block-quote {
+    font-style: italic;
+    color: #9283e0;
+    margin: 10px 0;
+    quotes: '“' '”' '‘' '’';
+    font-size: 2.4rem;
+    line-height: 1.5;
+}
+
+.block-quote:before {
+    content: open-quote;
+}
+
+.block-quote:after {
+    content: close-quote;
+}
+.ql-image {
+    max-width: 100%;
+    border-radius: 4px;
+    display: inline-block;
+    margin: 4px auto;
+    vertical-align: middle;
+}
+
+.ql-image::after {
+    content: '';
+    display: inline-block;
+    width: 100%;
+}
+
+.ql-image + .ql-image {
+    margin-left: 1rem;
+}
+
+.ql-video {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+}
+.ql-editor h1 {
+    font-size: 2.5em;
+    line-height: 1.2;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+    color: var(--heading-color);
+}
+
+.ql-editor h2 {
+    font-size: 2em;
+    line-height: 1.3;
+    margin-top: 1.2em;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+    color: var(--heading-color);
+}
+
+.ql-editor h3 {
+    font-size: 1.75em;
+    line-height: 1.4;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+    color: var(--heading-color);
+}
+
+.ql-editor h4 {
+    font-size: 1.5em;
+    line-height: 1.5;
+    margin-top: 0.8em;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+    color: var(--heading-color);
+}
+
+.ql-editor h5 {
+    font-size: 1.25em;
+    line-height: 1.6;
+    margin-top: 0.6em;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+    color: var(--heading-color);
+}
+
+.ql-editor h6 {
+    font-size: 1em;
+    line-height: 1.7;
+    margin-top: 0.4em;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+    color: var(--heading-color);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.ql-editor {
+    font-size: 2rem;
+    color: var(--text-dark-gray);
+    font-weight: 400;
+    line-height: 2;
+}
+
+.ql-editor a {
+    color: var(--color-blue);
+}
+
+/* Modal appears above all other elements inside #root */
+.ReactModalPortal {
+    position: relative;
+    z-index: 1000;
 }

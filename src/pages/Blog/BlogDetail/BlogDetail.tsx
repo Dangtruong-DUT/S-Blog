@@ -1,101 +1,57 @@
-import { useQuery } from '@tanstack/react-query'
+import SEO from 'src/components/SeoHelmet'
+import SkeletonBlogDetail from './components/SkeletonBlogDetail'
 import styles from './BlogDetail.module.scss'
 import classNames from 'classnames/bind'
-import { useState } from 'react'
-import { FaFacebookF, FaTwitter, FaHeart, FaEye, FaTelegram } from 'react-icons/fa'
-import { useParams } from 'react-router-dom'
-import { formatter, getIdFromNameId } from 'src/utils/common.util'
-import blogApi from 'src/apis/blog.api'
-import SkeletonBlogDetail from './components/SkeletonBlogDetail'
-import SEO from 'src/components/SeoHelmet'
-import createSocialLink from 'src/utils/socialLink'
+import BlogHeader from './components/BlogHeader'
+import BlogSidebar from './components/BlogSidebar'
+import BlogContent from './components/BlogContent'
+import BlogActions from './components/BlogActions'
+import { useBlogDetail } from 'src/hooks/useBlogDetail'
+import useLikeBlog from 'src/hooks/useLikeBlog'
+import { useCallback } from 'react'
+
 const cx = classNames.bind(styles)
 
-function BlogDetail() {
-    const { nameId } = useParams()
-    const id = getIdFromNameId(nameId as string)
-    const { data: blogData, isLoading } = useQuery({
-        queryKey: ['blog', id],
-        queryFn: () => blogApi.getBlogDetail(id as string)
-    })
-    const blog = blogData?.data.data
-    const [isLiked, setLiked] = useState<boolean>(false)
-    const handleOnClickLike = () => {
-        setLiked((prev) => !prev)
-    }
-    let social
-    if (blog) {
-        social = createSocialLink({ title: blog?.title, url: nameId as string })
-    }
+export default function BlogDetail() {
+    const { blog, isLoading, contentHtml, socialLinks, id, refetch } = useBlogDetail()
+    const { handleLikeBlog } = useLikeBlog({ id })
+
+    const handleLike = useCallback(() => {
+        handleLikeBlog({
+            onSuccess: () => {
+                refetch()
+            },
+            onError: () => {
+                refetch()
+            }
+        })
+    }, [handleLikeBlog, refetch])
+
+    if (isLoading && !blog) return <SkeletonBlogDetail />
+
+    if (!blog) return null
+
     return (
         <section className={cx('blog-detail')}>
-            {blog && !isLoading && (
-                <>
-                    <SEO
-                        description={blog.subTitle}
-                        title={blog.subTitle}
-                        path={nameId as string}
-                        image='https://vione.ai/wp-content/uploads/2022/03/tri-tue-nhan-tao.jpg'
-                        type='article'
-                    />
-                    <header className={cx('blog-detail__header')}>
-                        <div className={cx('blog-header-inner')}>
-                            <h1 className={cx('blog-detail__header-title')}>{blog.title}</h1>
-                            <h2 className={cx('blog-detail__header-subtitle')}>{blog.subTitle}</h2>
-                        </div>
-                    </header>
-
-                    <div className={cx('blog-detail__content-wrapper')}>
-                        <aside className={cx('blog-detail__sidebar')}>
-                            <a href={social?.facebook} className={cx('blog-detail__sidebar-item')}>
-                                <FaFacebookF size={'2rem'} />
-                            </a>
-                            <a href={social?.twitter} className={cx('blog-detail__sidebar-item')}>
-                                <FaTwitter size={'2rem'} />
-                            </a>
-                            <a href={social?.telegram} className={cx('blog-detail__sidebar-item')}>
-                                <FaTelegram size={'2rem'} />
-                            </a>
-                        </aside>
-
-                        <div className={cx('blog-detail__content')}>
-                            <img
-                                src='https://example.com/post1.jpg'
-                                alt='Blog Post'
-                                className={cx('blog-detail__content-image')}
-                            />
-                            <p className={cx('blog-detail__content-text')}>{blog.content}</p>
-                        </div>
-
-                        <div className={cx('blog-detail__actions')}>
-                            <div className={cx('blog-detail__actions-like')}>
-                                <button
-                                    className={cx('likeBtn', {
-                                        active: isLiked
-                                    })}
-                                    onClick={handleOnClickLike}
-                                >
-                                    <FaHeart size={'2.4rem'} />
-                                </button>
-                                {formatter.format(blog.like)}
-                            </div>
-                            <div className={cx('blog-detail__actions-view')}>
-                                <FaEye size={'2.4rem'} />
-                                {formatter.format(blog.watched)}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className={cx('blog-detail__comments')}></div>
-                </>
-            )}
-            {isLoading && !blogData && (
-                <>
-                    <SkeletonBlogDetail />
-                </>
-            )}
+            <SEO
+                description={blog.subtitle}
+                title={blog.subtitle}
+                path={id}
+                image='https://vione.ai/wp-content/uploads/2022/03/tri-tue-nhan-tao.jpg'
+                type='article'
+            />
+            <BlogHeader blogId={id} title={blog.title} subtitle={blog.subtitle} authorId={blog.author_id} />
+            <div className={cx('blogDetail__contentWrapper')}>
+                <BlogSidebar social={socialLinks} />
+                <BlogContent html={contentHtml} />
+                <BlogActions
+                    likes={blog.likes_count}
+                    views={blog.watch_count}
+                    isLiked={blog.is_liked}
+                    handleLike={handleLike}
+                />
+            </div>
+            <div className={cx('blog-detail__comments')}>{/* Future: <Comments /> */}</div>
         </section>
     )
 }
-
-export default BlogDetail
