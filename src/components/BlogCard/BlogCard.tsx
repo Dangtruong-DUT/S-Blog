@@ -17,6 +17,7 @@ import ConfirmDeleteModal from './components/ConfirmDeleteModal'
 import AuthorInfo from './components/AuthorInfo'
 import ActionMenu from './components/ActionMenu'
 import { SkeletonLine, SkeletonWrapper } from '../Skeleton'
+import useIsMobile from 'src/hooks/useIsMobile'
 
 const cx = classNames.bind(styles)
 
@@ -28,6 +29,7 @@ function BlogCard({ blog }: BlogCardProps) {
     const { profile } = useContext(AppContext)
     const navigate = useNavigate()
     const queryClient = useQueryClient()
+    const isMobile = useIsMobile(768) // Sử dụng hook useIsMobile để kiểm tra thiết bị
 
     const [isShowDeleteModal, setShowDeleteModal] = useState(false)
     const [isMenuOpen, setMenuOpen] = useState(false)
@@ -69,33 +71,54 @@ function BlogCard({ blog }: BlogCardProps) {
                 toast.error(err.message)
             }
         })
-    }, [])
-    const handleConfirmDelete = useCallback((e: React.MouseEvent) => {
-        handleStopPropagation(e)
-        setMenuOpen(false)
-        setShowDeleteModal(true)
-    }, [])
+    }, [blog.id, deleteMutation, queryClient])
 
-    const handleViewProfile = useCallback((e: React.MouseEvent) => {
-        handleStopPropagation(e)
-        navigate(`/@${blog.id}`)
-    }, [])
+    const handleConfirmDelete = useCallback(
+        (e: React.MouseEvent) => {
+            handleStopPropagation(e)
+            setMenuOpen(false)
+            setShowDeleteModal(true)
+        },
+        [handleStopPropagation]
+    )
+
+    const handleViewProfile = useCallback(
+        (e: React.MouseEvent) => {
+            handleStopPropagation(e)
+            navigate(`/@${blog.id}`)
+        },
+        [blog.id, handleStopPropagation, navigate]
+    )
 
     const toggleModalDeletePostVisibility = useCallback(() => {
         setShowDeleteModal((prev) => !prev)
     }, [])
 
+    // Xử lý sự kiện touch cho thiết bị cảm ứng
+    const handleTouchMove = useCallback(
+        (e: React.TouchEvent) => {
+            // Ngăn chặn scroll nếu đang tương tác với menu
+            if (isMenuOpen) {
+                e.stopPropagation()
+            }
+        },
+        [isMenuOpen]
+    )
+
     return (
         <>
             <Link to={`/blogs/${generateNameId({ name: blog.title, id: blog.id })}`}>
-                <article className={cx('BlogCardWrapper')}>
+                <article
+                    className={cx('BlogCardWrapper', { 'touch-feedback': isMobile })}
+                    onTouchMove={handleTouchMove}
+                >
                     <div className={cx('featureImageWrapper')}>
                         {isAuthor && (
                             <Tippy
                                 visible={isMenuOpen}
                                 onClickOutside={() => setMenuOpen(false)}
                                 interactive
-                                placement='bottom-start'
+                                placement={isMobile ? 'bottom' : 'bottom-start'}
                                 appendTo='parent'
                                 render={(attrs) => (
                                     <div className={cx('more-action-blog')} tabIndex={-1} {...attrs}>
@@ -112,12 +135,13 @@ function BlogCard({ blog }: BlogCardProps) {
                                         e.stopPropagation()
                                         setMenuOpen(!isMenuOpen)
                                     }}
+                                    aria-label='Thêm tùy chọn'
                                 >
-                                    <FiMoreHorizontal size='2.5rem' />
+                                    <FiMoreHorizontal size={isMobile ? '2rem' : '2.5rem'} />
                                 </button>
                             </Tippy>
                         )}
-                        <img src={blog.featured_image} alt={blog.title} className={cx('blog__image')} />
+                        <img src={blog.featured_image} alt={blog.title} className={cx('blog__image')} loading='lazy' />
                     </div>
                     {isLoading ? (
                         <SkeletonWrapper>

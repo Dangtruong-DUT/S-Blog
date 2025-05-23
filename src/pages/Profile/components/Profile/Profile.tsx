@@ -92,13 +92,16 @@ function Profile({ userData, onFollow, onUnfollow, followLoading }: props) {
         <div className={cx('profileWrapper')}>
             <div className={cx('profile-left')}>
                 <img src={userData.avatar} alt='' className={cx('profile__img')} />
-            </div>
+            </div>{' '}
             <div className={cx('profile-right')}>
-                <div className={cx('profile__row')}>
-                    <h1 className={cx('profile__name')}>{userData.email}</h1>
-                    <h2 className={cx('profile__username')}>{userData?.first_name + ' ' + userData?.last_name}</h2>
+                {' '}
+                <div className={cx('profile__row', 'profile__info-row')}>
+                    <div className={cx('profile__info-wrapper')}>
+                        <h1 className={cx('profile__name')}>{userData.email}</h1>
+                        <h2 className={cx('profile__username')}>{userData?.first_name + ' ' + userData?.last_name}</h2>
+                    </div>
                 </div>
-                <div className={cx('profile__row')}>
+                <div className={cx('profile__row', 'profile__buttons-row')}>
                     {isCurrentUser ? (
                         <>
                             <Button
@@ -108,12 +111,12 @@ function Profile({ userData, onFollow, onUnfollow, followLoading }: props) {
                                     setModalEditProfileShow(true)
                                 }}
                             >
-                                Edit Profile
+                                Edit
                             </Button>
                             <Button variant='secondary' onClick={onSettingClick} className={cx('profile__btn')}>
                                 Setting
                             </Button>
-                            <Button variant='secondary' className={cx('profile__btn')}>
+                            <Button variant='secondary' className={cx('profile__btn')} title='Share Profile'>
                                 <PiShareFat size={'2.2rem'} />
                             </Button>
                         </>
@@ -125,7 +128,7 @@ function Profile({ userData, onFollow, onUnfollow, followLoading }: props) {
                                 className={cx('profile__btn')}
                                 disabled={followLoading}
                             >
-                                {!isFollowing ? (followLoading ? 'Following...' : 'Follow') : 'Following'}
+                                {!isFollowing ? (followLoading ? 'Loading...' : 'Follow') : 'Following'}
                             </Button>
                             <Button
                                 variant='secondary'
@@ -134,7 +137,7 @@ function Profile({ userData, onFollow, onUnfollow, followLoading }: props) {
                             >
                                 Contact
                             </Button>
-                            <Button variant='secondary' className={cx('profile__btn')}>
+                            <Button variant='secondary' className={cx('profile__btn')} title='Share Profile'>
                                 <PiShareFat size={'2.2rem'} />
                             </Button>
                         </>
@@ -161,7 +164,6 @@ function Profile({ userData, onFollow, onUnfollow, followLoading }: props) {
             >
                 {renderModalContact()}
             </Modal>
-
             <Modal
                 isOpen={isModalEditProfileShow}
                 onRequestClose={() => {

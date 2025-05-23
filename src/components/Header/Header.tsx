@@ -8,7 +8,7 @@ import { MdMoreVert } from 'react-icons/md'
 import { useMenuItems } from 'src/hooks/useMenuItem'
 import { useState } from 'react'
 import useIsMobile from 'src/hooks/useIsMobile'
-import DrawerMenu from './DrawerMenu'
+import DrawerMenuNew from './DrawerMenuNew'
 import HeaderNav from './HeaderNav'
 
 const cx = classNames.bind(styles)
@@ -29,7 +29,7 @@ function Header() {
                         <button className={cx('nav__btn')} onClick={() => setDrawerOpen(true)} aria-label='Open menu'>
                             <MdMoreVert size={'2rem'} />
                         </button>
-                        <DrawerMenu open={drawerOpen} onClose={() => setDrawerOpen(false)} menuItems={MENU_ITEMS} />
+                        <DrawerMenuNew open={drawerOpen} onClose={() => setDrawerOpen(false)} menuItems={MENU_ITEMS} />
                     </>
                 ) : (
                     <HeaderNav isNewPage={!!isNewPage} menuItems={MENU_ITEMS} />

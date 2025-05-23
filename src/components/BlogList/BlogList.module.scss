@@ -23,8 +23,38 @@
     justify-self: center;
 }
 
+@media screen and (max-width: 1200px) {
+    .blogListGrid {
+        grid-template-columns: 1fr 1fr;
+        column-gap: 20px;
+        row-gap: 36px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .blogListGrid {
+        grid-template-columns: 1fr;
+        column-gap: 0;
+        row-gap: 28px;
+        padding: 0 1rem;
+    }
+}
+
 @media screen and (max-width: 768px) {
     .blogListGrid {
         grid-template-columns: 1fr;
+        padding: 0 1rem;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .blogListGrid {
+        grid-template-columns: 1fr;
+        padding: 0 0.5rem;
+        row-gap: 18px;
+    }
+    .blogsLabel {
+        font-size: 1.1rem;
+        margin-bottom: 8px;
     }
 }

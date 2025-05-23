@@ -9,17 +9,83 @@
     letter-spacing: -0.1px;
     margin-bottom: 10px;
     text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+
     strong {
         display: inline-block;
         color: var(--text-default);
         padding: 0 4px;
         font-weight: 300;
     }
+
+    /* Responsive cho màn hình nhỏ */
+    @media screen and (max-width: 768px) {
+        font-size: 1.2rem;
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
+}
+
+.by-label,
+.category-label {
+    display: inline-flex;
+    align-items: center;
+}
+
+.author-container {
+    padding: 0 !important;
+    margin: 0 2px;
+}
+
+.link-button {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    display: inline-block;
+
+    /* Tăng đáng kể vùng chạm cho thiết bị cảm ứng */
+    @media (hover: none) and (pointer: coarse) {
+        padding: 6px 8px;
+        margin: 0 -8px; /* Negative margin để giữ nguyên vị trí mặc dù padding đã tăng */
+        position: relative;
+    }
 }
 
 .link {
     cursor: pointer;
+    position: relative;
+    display: inline-block;
+
+    /* Thêm gợi ý trực quan cho vùng chạm */
+    @media (hover: none) and (pointer: coarse) {
+        text-decoration: underline dotted var(--text-default);
+    }
 }
+
 .link:hover {
     text-decoration: underline solid var(--text-default);
+}
+
+/* Vùng bấm lớn hơn cho thiết bị cảm ứng */
+@media (hover: none) and (pointer: coarse) {
+    .link-button:active {
+        background-color: rgba(0, 0, 0, 0.05);
+        border-radius: 4px;
+    }
+
+    /* Styling cho popover trên thiết bị cảm ứng */
+    .popover {
+        max-width: 90vw;
+    }
+
+    .popover__wrapper {
+        margin: 0 10px;
+    }
 }

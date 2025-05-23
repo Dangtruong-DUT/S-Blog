@@ -5,18 +5,33 @@
     background-color: var(--background-secondary);
     padding: 7px 0;
     box-shadow: 0 4px 10px #0000001f;
+
     .header {
         margin: 0 auto;
         display: flex;
         align-items: center;
         justify-content: space-between;
         max-width: 1170px;
+        padding: 0 20px; // Thêm padding ngang cho mobile
+
+        @media (max-width: 768px) {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
     }
 }
+
 .header__logo {
     display: inline-block;
     color: var(--text-default);
+    font-size: 24px;
+
+    @media (max-width: 768px) {
+        font-size: 20px;
+    }
 }
+
 .theme-toggle {
     display: flex;
     align-items: center;
@@ -25,4 +40,9 @@
     border: 1px solid var(--border-cl);
     padding: 8px;
     transition: all 0.3s ease-in-out;
+
+    @media (max-width: 768px) {
+        padding: 6px;
+        order: -1;
+    }
 }

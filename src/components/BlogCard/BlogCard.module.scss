@@ -30,6 +30,25 @@
         text-overflow: ellipsis;
         word-break: break-word;
     }
+
+    /* Hiệu ứng khi chạm vào trên thiết bị cảm ứng */
+    @media (hover: none) and (pointer: coarse) {
+        &:active {
+            transform: scale(0.98);
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+    }
+
+    /* Responsive cho màn hình nhỏ */
+    @media screen and (max-width: 768px) {
+        .blog__title {
+            font-size: 1.8rem;
+            margin-top: 8px;
+        }
+        .blog__subtitle {
+            font-size: 1.3rem;
+        }
+    }
 }
 .featureImageWrapper {
     position: relative;
@@ -48,6 +67,12 @@
         border-radius: 999px;
         background-color: transparent;
         color: white;
+        /* Tăng kích thước cho vùng chạm trên thiết bị cảm ứng */
+        @media (hover: none) and (pointer: coarse) {
+            padding: 1.8rem;
+            min-width: 4.5rem;
+            min-height: 4.5rem;
+        }
     }
     .more-button:hover {
         background-color: #e8e6e663;
@@ -60,6 +85,17 @@
         object-fit: cover;
         background-color: var(--skeleton-bg-color);
     }
+
+    /* Adjust height for mobile screens */
+    @media screen and (max-width: 768px) {
+        height: 240px;
+        margin-bottom: 12px;
+    }
+
+    /* Even smaller for very small screens */
+    @media screen and (max-width: 480px) {
+        height: 200px;
+    }
 }
 
 .link {
@@ -67,4 +103,38 @@
 }
 .link:hover {
     text-decoration: underline solid var(--text-default);
+}
+
+/* Menu action styling for touch devices */
+.more-action-blog {
+    @media (hover: none) and (pointer: coarse) {
+        .menu-wrapper {
+            padding: 10px 0;
+        }
+    }
+}
+
+/* Add touch feedback */
+@media (hover: none) and (pointer: coarse) {
+    .touch-feedback {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .touch-feedback::after {
+        content: '';
+        display: block;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background-color: rgba(0, 0, 0, 0.05);
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .touch-feedback:active::after {
+        opacity: 1;
+    }
 }

@@ -1,53 +1,39 @@
-.wrapper {
-    display: flex;
-    flex-direction: row;
-    position: relative;
-}
-
 .tabBar {
     display: flex;
+    flex-wrap: wrap; // Cho phép xuống hàng
     flex-direction: row;
     flex-grow: 1;
     border-bottom: 1px solid var(--border-cl);
-    @media (max-width: 991px) {
-        justify-content: center;
-    }
+    justify-content: flex-start;
+    gap: 8px; // Khoảng cách giữa các tab, optional
 
     .tabFeed {
         font-weight: 600;
-        font-size: 2.5rem;
+        font-size: 2.2rem;
         line-height: 1.334;
+        white-space: nowrap;
         display: flex;
         align-items: center;
         justify-content: center;
         height: 44px;
-        padding: 0px 32px;
+        padding: 0 24px;
         cursor: pointer;
         text-align: center;
         color: var(--text-default);
         column-gap: 4px;
+        transition: color 0.2s;
 
         @media (max-width: 991px) {
-            padding: 0px 16px;
-            flex-grow: 1;
+            font-size: 1.6rem;
+            padding: 0 16px;
+        }
+
+        &:hover {
+            color: var(--color-red);
         }
     }
 
     & .active {
         color: var(--color-red);
     }
-
-    &:hover {
-        color: gray;
-    }
-}
-
-.underline {
-    position: absolute;
-    height: 2px;
-    background: var(--color-red);
-    bottom: 0px;
-    transition:
-        left 0.3s ease,
-        width 0.3s ease;
 }
