@@ -21,7 +21,12 @@ export const schema = yup.object({
     old_password: yup.string().required('Old password is required'),
     bio: yup.string().trim().max(80, 'Length from 0-80 characters'),
     avatar: yup.string().trim(),
-    social_links: yup.array().of(yup.string().trim().url('Invalid URL format'))
+    social_links: yup.array().of(
+        yup.object({
+            id: yup.string().required(),
+            link: yup.string().trim().url('Invalid URL format').required('Link is required')
+        })
+    )
 })
 export const blogSchema = yup.object({
     title: yup

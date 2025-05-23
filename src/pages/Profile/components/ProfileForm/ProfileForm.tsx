@@ -41,12 +41,6 @@ interface Props {
     onCancel: () => void
 }
 
-type SocialField = {
-    id: string // Server ID or local temporary ID
-    link: string
-    isNew?: boolean // Flag to identify unsaved items
-}
-
 const ProfileForm = ({ userData, onCancel }: Props) => {
     const navigate = useNavigate()
     const { setProfile, profile: currentData } = useContext(AppContext)
@@ -80,8 +74,8 @@ const ProfileForm = ({ userData, onCancel }: Props) => {
         name: 'social_links'
     })
 
-    // Cast fields to SocialField type
-    const socialFields = fields as unknown as SocialField[]
+    // Remove SocialField type and use correct type
+    const socialFields = fields as { id: string; link: string }[]
 
     // Generate stable local IDs for new items
     const generateLocalId = () => `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
@@ -150,16 +144,13 @@ const ProfileForm = ({ userData, onCancel }: Props) => {
         if (socialLinks) {
             const serverLinks = socialLinks.map((link) => ({
                 id: link.id,
-                link: link.link,
-                isNew: false
+                link: link.link
             }))
-
-            // Only replace if there's a significant difference
             if (JSON.stringify(serverLinks) !== JSON.stringify(socialFields)) {
                 replace(serverLinks)
             }
         }
-    }, [socialLinks])
+    }, [socialLinks, replace, socialFields])
 
     const onFormSubmit = profileForm.handleSubmit(async (data) => {
         let avatar_url = data.avatar
@@ -170,8 +161,7 @@ const ProfileForm = ({ userData, onCancel }: Props) => {
                 form.append('image', fileImage)
                 const response = await uploadAvatarMutation.mutateAsync(form)
                 avatar_url = response.data.data.url
-            } catch (error) {
-                console.log(error)
+            } catch {
                 toast.error('An unknown error has occurred. Please try again later.')
                 return
             }
@@ -227,15 +217,9 @@ const ProfileForm = ({ userData, onCancel }: Props) => {
 
     const onAddSocial = () => {
         // Check if there's already an unsaved item being edited
-        const hasUnsavedItem = socialFields.some((field) => field.isNew)
-        if (hasUnsavedItem) {
-            toast.warning('Please save or cancel the current edit before adding a new link.')
-            return
-        }
-
+        // (No longer using isNew, so just allow adding)
         const newId = generateLocalId()
-        append({ id: newId, link: '', isNew: true })
-
+        append({ id: newId, link: '' })
         setEditingStates((prev) => ({
             ...prev,
             [newId]: {
@@ -258,19 +242,17 @@ const ProfileForm = ({ userData, onCancel }: Props) => {
     }
 
     const onCancelEdit = (id: string, index: number) => {
+        // Remove if empty (new unsaved item)
         const field = socialFields[index]
-
-        if (field.isNew) {
-            // Remove new unsaved item
+        if (!field.link) {
             remove(index)
         } else {
             // Reset to original value
             const serverLink = socialLinks?.find((link) => link.id === id)
             if (serverLink) {
-                update(index, { id, link: serverLink.link, isNew: false })
+                update(index, { id, link: serverLink.link })
             }
         }
-
         setEditingStates((prev) => {
             const newState = { ...prev }
             delete newState[id]
@@ -281,7 +263,6 @@ const ProfileForm = ({ userData, onCancel }: Props) => {
     const onSaveSocial = async (id: string, index: number) => {
         const field = socialFields[index]
         const link = field.link.trim()
-
         // Validate
         const error = validateSocialLink(link, id)
         if (error) {
@@ -294,7 +275,6 @@ const ProfileForm = ({ userData, onCancel }: Props) => {
             }))
             return
         }
-
         setEditingStates((prev) => ({
             ...prev,
             [id]: {
@@ -303,52 +283,75 @@ const ProfileForm = ({ userData, onCancel }: Props) => {
                 error: undefined
             }
         }))
-
-        try {
-            if (field.isNew) {
-                // Add new social link
-                const response = await addSocialMutate({ link })
-                const newSocial = response.data.data
-
-                // Update local state with server ID
-                update(index, { id: newSocial.id, link: newSocial.link, isNew: false })
-
-                toast.success('Social link added!')
-            } else {
-                // Update existing social link
-                await updateSocialMutate({ id, link })
-                toast.success('Social link updated!')
-            }
-
-            setEditingStates((prev) => ({
-                ...prev,
-                [id]: {
-                    ...prev[id],
-                    isEditing: false,
-                    isLoading: false
+        // If the id is not in the server, treat as add
+        const isNew = !socialLinks?.some((l) => l.id === id)
+        if (isNew) {
+            addSocialMutate(
+                { link },
+                {
+                    onSuccess: (response) => {
+                        const newSocial = response.data.data
+                        update(index, { id: newSocial.id, link: newSocial.link })
+                        setEditingStates((prev) => ({
+                            ...prev,
+                            [id]: {
+                                ...prev[id],
+                                isEditing: false,
+                                isLoading: false
+                            }
+                        }))
+                        toast.success('Social link added!')
+                        refetchSocials()
+                    },
+                    onError: () => {
+                        setEditingStates((prev) => ({
+                            ...prev,
+                            [id]: {
+                                ...prev[id],
+                                isLoading: false,
+                                error: 'Failed to add social link'
+                            }
+                        }))
+                        toast.error('Failed to add social link')
+                    }
                 }
-            }))
-
-            // Refresh social links
-            await refetchSocials()
-        } catch (error) {
-            setEditingStates((prev) => ({
-                ...prev,
-                [id]: {
-                    ...prev[id],
-                    isLoading: false,
-                    error: 'Failed to save social link'
+            )
+        } else {
+            updateSocialMutate(
+                { id, link },
+                {
+                    onSuccess: () => {
+                        setEditingStates((prev) => ({
+                            ...prev,
+                            [id]: {
+                                ...prev[id],
+                                isEditing: false,
+                                isLoading: false
+                            }
+                        }))
+                        toast.success('Social link updated!')
+                        refetchSocials()
+                    },
+                    onError: () => {
+                        setEditingStates((prev) => ({
+                            ...prev,
+                            [id]: {
+                                ...prev[id],
+                                isLoading: false,
+                                error: 'Failed to update social link'
+                            }
+                        }))
+                        toast.error('Failed to update social link')
+                    }
                 }
-            }))
-            toast.error('Failed to save social link')
+            )
         }
     }
 
     const onDeleteSocial = async (id: string, index: number) => {
+        // Remove if the field is empty (previously checked isNew)
         const field = socialFields[index]
-
-        if (field.isNew) {
-            // Just remove if it's a new unsaved item
+        if (!field.link) {
             remove(index)
             setEditingStates((prev) => {
                 const newState = { ...prev }
@@ -357,7 +360,6 @@ const ProfileForm = ({ userData, onCancel }: Props) => {
             })
             return
         }
-
         setEditingStates((prev) => ({
             ...prev,
             [id]: {
@@ -379,7 +381,7 @@ const ProfileForm = ({ userData, onCancel }: Props) => {
 
             // Refresh social links
             await refetchSocials()
-        } catch (error) {
+        } catch {
             setEditingStates((prev) => ({
                 ...prev,
                 [id]: {
@@ -410,7 +412,7 @@ const ProfileForm = ({ userData, onCancel }: Props) => {
                         ref={fileInputRef}
                         onChange={onFileChange}
                         onClick={(event) => {
-                            ;(event.target as any).value = null
+                            ;(event.target as HTMLInputElement).value = ''
                         }}
                     />
                 </div>
