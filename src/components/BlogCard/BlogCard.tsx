@@ -5,7 +5,7 @@ import { useCallback, useContext, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
 
-import styles from './Blogcard.module.scss'
+import styles from './BlogCard.module.scss'
 import { Blog } from 'src/types/blog.type'
 import { generateNameId } from 'src/utils/common.util'
 import { AppContext } from 'src/contexts/app.context'
