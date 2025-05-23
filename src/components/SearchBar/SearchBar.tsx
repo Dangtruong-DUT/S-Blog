@@ -61,11 +61,15 @@ function SearchBar() {
     const renderSearchResults = () => {
         if (!searchResults) return null
 
+        const hasUsers = typeof searchResults.users?.length === 'number' && searchResults.users?.length > 0
+        const hasPosts = typeof searchResults.posts?.length === 'number' && searchResults.posts?.length > 0
+        const hasNoResults = !hasUsers && !hasPosts
+
         return (
             <PopperWrapper>
                 <div className={cx('search-results-wrapper')}>
                     <h4 className={cx('search-title')}>Search results</h4>
-                    {searchResults.users?.length && searchResults.users?.length > 0 && (
+                    {hasUsers && (
                         <section>
                             <h4 className={cx('search-title')}>Accounts</h4>
                             <ul>
@@ -84,11 +88,11 @@ function SearchBar() {
                             </ul>
                         </section>
                     )}
-                    {searchResults.posts?.length && searchResults.posts?.length > 0 && (
+                    {hasPosts && (
                         <section>
                             <h4 className={cx('search-title')}>Posts</h4>
                             <ul>
-                                {searchResults.posts.map((post) => (
+                                {(searchResults.posts || []).map((post) => (
                                     <li key={post.id}>
                                         <AccountItem
                                             avatarSize='40px'
@@ -103,6 +107,7 @@ function SearchBar() {
                             </ul>
                         </section>
                     )}
+                    {hasNoResults && <div className={cx('no-result')}>No results found.</div>}
                 </div>
             </PopperWrapper>
         )

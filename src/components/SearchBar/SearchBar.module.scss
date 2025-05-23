@@ -65,8 +65,9 @@
     }
 }
 
-.search_results-wrapper {
+.search-results-wrapper {
     padding: 10px 0;
+    min-width: 40vw;
 }
 
 .search-bar--expanded {
@@ -75,6 +76,20 @@
 
 .search-title {
     padding-left: 10px;
+}
+
+.no-result {
+    padding: 24px 0;
+    text-align: center;
+    color: #888;
+    font-size: 1.2rem;
+    font-weight: 500;
+    opacity: 0.85;
+    letter-spacing: 0.5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 @keyframes spin {
