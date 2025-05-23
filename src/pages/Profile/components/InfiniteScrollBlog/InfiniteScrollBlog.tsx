@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from 'react'
 import Button from 'src/components/Button'
 import { ResponseApi } from 'src/types/utils.type'
 import { RiLoader2Line } from 'react-icons/ri'
-import Lottie from 'lottie-react'
+import EmptyState from 'src/components/EmptyState'
 import emptyDocument from 'src/assets/animations/document_empty.json'
 
 const cx = classNames.bind(styles)
@@ -69,7 +69,7 @@ function InfiniteScrollBlog({ queryKey, queryConfig }: BlogListProps) {
     return (
         <div className={cx('blogsWrapper')}>
             {isEmpty ? (
-                <Lottie animationData={emptyDocument} loop={true} className={cx('emptyIcon')} />
+                <EmptyState animationData={emptyDocument} message='Không có bài viết nào' />
             ) : (
                 <div className={cx('blogListGrid')}>
                     {isLoading ? (

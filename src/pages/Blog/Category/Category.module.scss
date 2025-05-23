@@ -6,3 +6,20 @@
     align-items: center;
     gap: 12px;
 }
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .heading {
+        font-size: 2.5rem;
+        margin: 3rem 0;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .heading {
+        font-size: 2rem;
+        margin: 2.5rem 0;
+        gap: 10px;
+    }
+}

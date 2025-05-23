@@ -5,17 +5,51 @@
     padding: 32px;
     border-radius: 8px;
     gap: 20px;
+    /* Giữ nguyên style ban đầu ở màn hình lớn, không cần box-shadow và background-color */
+
+    @media (max-width: 992px) {
+        padding: 24px;
+    }
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        padding: 20px;
+    }
 }
+
 .profile-left {
     width: 250px;
     height: 250px;
+    position: relative;
+
+    @media (max-width: 992px) {
+        width: 200px;
+        height: 200px;
+    }
+
+    @media (max-width: 768px) {
+        width: 180px;
+        height: 180px;
+        margin-bottom: 10px;
+    }
+
+    @media (max-width: 576px) {
+        width: 150px;
+        height: 150px;
+    }
+
     .profile__img {
         display: inline-block;
         border-radius: 999px;
         width: 100%;
         height: 100%;
         object-fit: cover;
-        border: 1px solid var(--border-cl);
+        border: 2px solid var(--border-cl);
+        transition: transform 0.3s ease;
+
+        &:hover {
+            transform: scale(1.02);
+        }
     }
 }
 
@@ -24,30 +58,105 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    flex: 1;
+
+    @media (max-width: 768px) {
+        width: 100%;
+        align-items: center;
+        text-align: center;
+    }
     .profile__row {
         display: flex;
         align-items: center;
         gap: 12px;
+        flex-wrap: wrap;
+        justify-content: flex-start; // Đảm bảo tất cả căn lề trái
+
+        // Thêm class riêng cho row chứa thông tin
+        &.profile__info-row {
+            flex-direction: row; // Trên desktop, email và username nằm trên cùng một dòng
+        }
+
+        // Thêm class riêng cho row chứa các buttons
+        &.profile__buttons-row {
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            justify-content: center;
+        }
+
+        // Trên màn hình nhỏ, tất cả thành column trừ buttons row
+        @media (max-width: 576px) {
+            flex-direction: column;
+            gap: 8px;
+
+            &.profile__buttons-row {
+                flex-direction: row;
+                gap: 6px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            &.profile__buttons-row {
+                gap: 4px; // Giảm khoảng cách giữa các nút khi màn hình rất nhỏ
+            }
+        }
     }
+    .profile__info-wrapper {
+        display: flex;
+        flex-direction: row; // Desktop: Hiển thị tên và email trên cùng một dòng
+        align-items: center;
+        gap: 12px;
+
+        @media (max-width: 768px) {
+            flex-direction: column; // Mobile: Hiển thị dưới dạng cột
+            align-items: center;
+        }
+    }
+
     .profile__name {
         margin: 0;
         font-size: 2.4rem;
         font-weight: 600;
         letter-spacing: -0.112px;
         color: var(--text-default);
+
+        @media (max-width: 576px) {
+            font-size: 2rem;
+        }
     }
+
     .profile__username {
         font-size: 2.1rem;
         font-weight: 400;
         letter-spacing: -0.112px;
         color: var(--text-default);
+        margin: 0;
+
+        @media (max-width: 576px) {
+            font-size: 1.8rem;
+        }
     }
+
     .stats {
         display: flex;
-        gap: 10px;
+        gap: 15px;
         font-size: 1.6rem;
+
+        @media (max-width: 768px) {
+            justify-content: center;
+        }
+
         span {
             color: var(--primary-text-cl);
+            transition: transform 0.2s ease;
+
+            &:hover {
+                transform: translateY(-2px);
+            }
+
             strong {
                 font-weight: 600 !important;
             }
@@ -59,24 +168,65 @@
         font-size: 1.6rem;
         font-weight: 400;
         color: var(--text-default);
-        max-width: 300px;
+        max-width: 600px;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
-    }
+        line-height: 1.5;
 
+        @media (max-width: 768px) {
+            max-width: 100%;
+        }
+
+        @media (max-width: 576px) {
+            font-size: 1.4rem;
+            -webkit-line-clamp: 3;
+        }
+    }
     .profile__btn {
         border-radius: 6px;
         font-weight: 500;
         font-size: 1.8rem;
         min-height: 51px;
+        transition: all 0.2s ease;
+
+        @media (max-width: 768px) {
+            font-size: 1.7rem;
+            min-height: 48px;
+        }
+
+        @media (max-width: 576px) {
+            font-size: 1.5rem;
+            min-height: 42px;
+            padding: 6px 12px;
+            flex: 0 1 auto; // Allow buttons to shrink if needed but not grow
+            min-width: 0; // Allow button to be smaller than content if necessary
+            white-space: nowrap; // Prevent text wrapping inside buttons
+        }
+
+        @media (max-width: 380px) {
+            font-size: 1.3rem;
+            min-height: 38px;
+            padding: 5px 10px;
+        }
+
+        &:hover {
+            transform: translateY(-2px);
+        }
     }
 }
 
 .modal {
     margin: auto;
     display: flex;
+    width: 90%;
+    max-width: 600px;
+
+    @media (max-width: 576px) {
+        width: 95%;
+    }
+
     &__content {
         background: var(--background-second-color);
         border-radius: 12px;
@@ -84,20 +234,45 @@
         box-shadow: 0px 4px 10px var(--box-shadow-color);
         max-height: 80vh;
         overflow-y: auto;
+        width: 100%;
     }
+
     .modal__header {
         display: flex;
         align-items: center;
         justify-content: space-between;
         border-bottom: 1px solid var(--border-cl);
         padding: 24px 24px 12px;
+
+        @media (max-width: 576px) {
+            padding: 18px 16px 10px;
+        }
     }
+
     .modal__heading {
         margin: 0;
         font-size: 2.4rem;
         font-weight: 600;
+
+        @media (max-width: 576px) {
+            font-size: 2rem;
+        }
     }
+
     .modal__btn-close {
+        cursor: pointer;
+        background: transparent;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px;
+        border-radius: 50%;
+        transition: background-color 0.2s;
+
+        &:hover {
+            background-color: var(--btn-hover-cl);
+        }
     }
 }
 
@@ -108,8 +283,20 @@
     background: rgba(0, 0, 0, 0.5);
 }
 .modal__contacts {
-    padding: 2rem 64px 2rem;
+    padding: 2rem 64px;
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+
+    @media (max-width: 768px) {
+        padding: 1.5rem 30px;
+    }
+
+    @media (max-width: 576px) {
+        padding: 1rem 15px;
+    }
+
     .contact-item {
         padding: 1rem;
         display: flex;
@@ -118,18 +305,29 @@
         align-items: center;
         gap: 12px;
         border-radius: 6px;
-        transition: background-color 0.3 ease-in;
+        transition: background-color 0.3s ease-in;
         min-width: 90px;
+
+        @media (max-width: 576px) {
+            min-width: 70px;
+            padding: 0.8rem;
+        }
     }
+
     .contact-item:hover {
         background-color: var(--btn-hover-cl);
     }
+
     .contact-name {
         font-size: 1.5rem;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         text-align: center;
+
+        @media (max-width: 576px) {
+            font-size: 1.3rem;
+        }
     }
 }
 

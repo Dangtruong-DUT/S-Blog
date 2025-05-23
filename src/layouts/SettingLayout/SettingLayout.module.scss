@@ -4,14 +4,34 @@
     height: calc(100vh - 64px);
     max-width: 1170px;
     column-gap: 16px;
+    padding: 0 1rem;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        padding: 0 0.5rem;
+        height: auto;
+        min-height: calc(100vh - 64px);
+    }
 }
 .settingSidebar {
     padding-top: 16px;
     flex: 1;
     height: calc(100vh - 64px);
+
+    @media (max-width: 768px) {
+        height: auto;
+        padding-top: 8px;
+    }
 }
 .settingContent {
     padding-top: 16px;
     flex: 2;
     height: calc(100vh - 64px);
+    overflow: auto;
+
+    @media (max-width: 768px) {
+        height: auto;
+        padding-top: 8px;
+        flex: 1;
+    }
 }

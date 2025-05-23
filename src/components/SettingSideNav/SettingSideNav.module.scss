@@ -3,12 +3,23 @@
     background-color: var(--background-secondary);
     border-radius: 16px;
     height: 100%;
+
+    @media (max-width: 768px) {
+        padding: 8px;
+    }
+
     &__menu {
+        @media (max-width: 768px) {
+            display: flex;
+            justify-content: space-around;
+            gap: 8px;
+        }
+
         &-item {
             display: flex;
-            align-items: flex-end;
+            align-items: center;
             text-transform: capitalize;
-            transition: color 0.2s;
+            transition: all 0.2s ease;
             color: var(--text-default);
             text-decoration: none;
             padding: 14px 24px;
@@ -16,8 +27,58 @@
             font-weight: 400;
             line-height: 1;
             gap: 10px;
+            border-radius: 8px;
+
+            @media (max-width: 768px) {
+                flex: 1;
+                font-size: 1.6rem;
+                padding: 12px;
+                flex-direction: column;
+                justify-content: center;
+                text-align: center;
+                gap: 8px;
+            }
+
+            @media (max-width: 480px) {
+                font-size: 1.4rem;
+                padding: 10px;
+            }
+
+            // Hover effect chỉ trên desktop
+            @media (min-width: 769px) {
+                &:hover {
+                    color: var(--color-red);
+                }
+            }
+
+            // Style active khác nhau giữa desktop và mobile
             &--active {
-                color: var(--color-red);
+                @media (min-width: 769px) {
+                    color: var(--color-red);
+                    font-weight: 500;
+                    position: relative;
+
+                    &::before {
+                        content: '';
+                        position: absolute;
+                        left: 0;
+                        width: 3px;
+                        height: 60%;
+                        background-color: var(--color-red);
+                        border-radius: 0 4px 4px 0;
+                    }
+                }
+
+                @media (max-width: 768px) {
+                    color: var(--color-red);
+                    background-color: var(--background-color);
+                }
+            }
+
+            span {
+                @media (max-width: 480px) {
+                    font-size: 1.2rem;
+                }
             }
         }
     }

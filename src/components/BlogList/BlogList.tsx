@@ -18,7 +18,7 @@ interface BlogListProps {
 }
 
 function BlogList({ queryKey, queryConfig, path }: BlogListProps) {
-    const { data, isLoading, isFetching } = useQuery({
+    const { data, isLoading } = useQuery({
         queryKey: [queryKey, queryConfig],
         queryFn: () => blogApi.getBlogs(queryConfig)
     })
@@ -27,10 +27,7 @@ function BlogList({ queryKey, queryConfig, path }: BlogListProps) {
     const blogList = data?.data.data.blogs || []
     const totalPages = data?.data.data.pagination.total_pages || 0
 
-    const renderBlogs = useCallback(
-        () => blogList.map((blog) => <BlogCard blog={blog} key={blog.id} />),
-        [isFetching, isLoading]
-    )
+    const renderBlogs = useCallback(() => blogList.map((blog) => <BlogCard blog={blog} key={blog.id} />), [blogList])
 
     const renderSkeletons = useCallback(
         () => Array.from({ length: 5 }).map((_, index) => <SkeletonBlogCard key={index} />),
