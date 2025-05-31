@@ -75,12 +75,7 @@ function Profile({ userData, onFollow, onUnfollow, followLoading }: props) {
                     </button>
                 </div>
                 <div className={cx('modal__form')}>
-                    <ProfileForm
-                        onCancel={() => {
-                            setModalEditProfileShow(false)
-                        }}
-                        userData={userData}
-                    />
+                    <ProfileForm />
                 </div>
             </div>
         )
