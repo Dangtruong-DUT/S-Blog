@@ -36,8 +36,9 @@ function ProfilePage() {
     username = username?.slice(1)
 
     const { data } = useQuery({
-        queryKey: [`profile: ${username}`],
-        queryFn: () => userApi.getProfile(username as string)
+        queryKey: [`profile:${username}`],
+        queryFn: () => userApi.getProfile(username as string),
+        staleTime: 5 * 60 * 1000
     })
 
     const userData = data?.data.data

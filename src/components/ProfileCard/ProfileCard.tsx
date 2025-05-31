@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { memo, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames/bind'
 
@@ -16,25 +16,23 @@ interface ProfileCardProps {
 }
 
 function ProfileCard({ userData }: ProfileCardProps) {
-    const [isFollowing, setFollowing] = useState(userData?.is_following)
     const { profile } = useContext(AppContext)
+
+    const { follow, loading: followLoading } = useFollowUser(userData?.id || '')
+    const { unfollow } = useUnfollowUser(userData?.id || '')
+
     if (!userData) return null
 
     const { id, avatar, first_name, last_name, followers_count = 0, total_likes = 0, bio, email } = userData
     const profileUrl = `/@${encodeURIComponent(id)}`
     const fullName = `${first_name} ${last_name}`
 
-    const { follow, loading: followLoading } = useFollowUser(userData?.id || '')
-    const { unfollow } = useUnfollowUser(userData?.id || '')
-
     const buttonFollowClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.stopPropagation()
         e.preventDefault()
-        if (!isFollowing) {
-            setFollowing(true)
+        if (!userData.is_following) {
             follow()
         } else {
-            setFollowing(false)
             unfollow()
         }
     }
@@ -51,11 +49,11 @@ function ProfileCard({ userData }: ProfileCardProps) {
                     <Button
                         variant='primary'
                         outline
-                        className={cx('follow-button', { following: isFollowing })}
+                        className={cx('follow-button', { following: userData.is_following })}
                         onClick={buttonFollowClick}
                         disabled={followLoading}
                     >
-                        {isFollowing ? 'Following' : followLoading ? 'Following...' : 'Follow'}
+                        {userData.is_following ? 'Following' : followLoading ? 'Following...' : 'Follow'}
                     </Button>
                 )}
             </div>
@@ -81,4 +79,9 @@ function ProfileCard({ userData }: ProfileCardProps) {
     )
 }
 
-export default ProfileCard
+export default memo(ProfileCard, (prevProps, nextProps) => {
+    return (
+        prevProps.userData?.id === nextProps.userData?.id &&
+        prevProps.userData?.is_following === nextProps.userData?.is_following
+    )
+})

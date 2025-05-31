@@ -41,7 +41,7 @@ const AuthorInfo = ({ userData, categoryName, onClickProfile }: Props) => {
                     placement={isMobile ? 'bottom' : 'bottom-start'}
                     appendTo='parent'
                     render={renderProfileCard}
-                    touch={['hold', 500]} // Trên thiết bị cảm ứng, giữ 500ms để hiển thị profile card
+                    touch={['hold', 500]}
                 >
                     <button
                         onClick={onClickProfile}
@@ -59,4 +59,10 @@ const AuthorInfo = ({ userData, categoryName, onClickProfile }: Props) => {
     )
 }
 
-export default memo(AuthorInfo)
+export default memo(AuthorInfo, (prevProps, nextProps) => {
+    return (
+        prevProps.userData?.id === nextProps.userData?.id &&
+        prevProps.categoryName === nextProps.categoryName &&
+        prevProps.userData?.is_following === nextProps.userData?.is_following
+    )
+})

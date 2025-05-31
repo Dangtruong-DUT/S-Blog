@@ -21,6 +21,12 @@
         max-width: 1170px;
     }
 }
+.header_mobile {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
 .header__logo {
     display: inline-block;
     color: var(--text-default);
@@ -74,8 +80,8 @@
 .drawer-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 2000;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
     display: flex;
     justify-content: flex-end;
 }

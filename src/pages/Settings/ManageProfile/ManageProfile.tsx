@@ -41,7 +41,8 @@ function ManageProfile() {
     })
     const { data, refetch, isLoading } = useQuery({
         queryKey: [`profile: ${currentData?.id}`],
-        queryFn: () => userApi.getProfile(currentData?.id as string)
+        queryFn: () => userApi.getProfile(currentData?.id as string),
+        staleTime: 5 * 60 * 1000
     })
     const profile = data?.data.data
 
@@ -81,7 +82,8 @@ function ManageProfile() {
                 toast.success(data.data.message, {
                     position: 'top-center'
                 })
-                setProfile(data.data.data)
+                const updatedProfile = data.data.data
+                setProfile({ ...currentData, ...updatedProfile })
             },
             onError: (error) => handleFormError<FormData>(error, profileForm)
         })
@@ -163,7 +165,7 @@ function ManageProfile() {
                                     />
                                 </div>
                                 <InputFile onChange={setFileImage} />
-                                <span className={cx('chooseImage-desc')}>Maximum file size: 1 MB</span>
+                                <span className={cx('chooseImage-desc')}>Maximum file size: 10 MB</span>
                                 <span className={cx('chooseImage-desc')}>Formats: .JPEG, .PNG</span>
                             </div>
                         </div>

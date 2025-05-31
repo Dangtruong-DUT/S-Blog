@@ -6,7 +6,7 @@ import { PiShareFat } from 'react-icons/pi'
 import { useNavigate } from 'react-router-dom'
 import { routes } from 'src/config'
 import { User } from 'src/types/user.type'
-import { useContext, useState } from 'react'
+import { memo, useContext, useState } from 'react'
 import { AppContext } from 'src/contexts/app.context'
 import { formatter, getDomainIconWithColor } from 'src/utils/common.util'
 
@@ -24,16 +24,14 @@ interface props {
 function Profile({ userData, onFollow, onUnfollow, followLoading }: props) {
     const [isModalContactShow, setModalContactShow] = useState<boolean>(false)
     const [isModalEditProfileShow, setModalEditProfileShow] = useState<boolean>(false)
-    const [isFollowing, setFollowing] = useState<boolean | undefined>(userData.is_following)
     const { profile } = useContext(AppContext)
     const navigate = useNavigate()
     const onSettingClick = () => {
         navigate(routes.setting)
     }
     const handleToggleFollow = () => {
-        setFollowing((prev) => !prev)
-        if (!isFollowing && onFollow) onFollow()
-        if (isFollowing && onUnfollow) onUnfollow()
+        if (!userData.is_following && onFollow) onFollow()
+        if (userData.is_following && onUnfollow) onUnfollow()
     }
     const isCurrentUser = profile?.id == userData.id
 
@@ -123,12 +121,12 @@ function Profile({ userData, onFollow, onUnfollow, followLoading }: props) {
                     ) : (
                         <>
                             <Button
-                                variant={!isFollowing ? 'primary' : 'secondary'}
+                                variant={!userData.is_following ? 'primary' : 'secondary'}
                                 onClick={handleToggleFollow}
                                 className={cx('profile__btn')}
                                 disabled={followLoading}
                             >
-                                {!isFollowing ? (followLoading ? 'Loading...' : 'Follow') : 'Following'}
+                                {!userData.is_following ? (followLoading ? 'Loading...' : 'Follow') : 'Following'}
                             </Button>
                             <Button
                                 variant='secondary'
@@ -178,4 +176,7 @@ function Profile({ userData, onFollow, onUnfollow, followLoading }: props) {
     )
 }
 
-export default Profile
+export default memo(
+    Profile,
+    (prev, nex) => prev.userData.id === nex.userData.id && prev.userData.is_following === nex.userData.is_following
+)
