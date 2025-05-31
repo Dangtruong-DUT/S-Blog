@@ -38,7 +38,8 @@ function BlogCard({ blog }: BlogCardProps) {
 
     const { data: userRes, isLoading } = useQuery({
         queryKey: [`profile:${blog.author_id}`],
-        queryFn: () => userApi.getProfile(blog.author_id!)
+        queryFn: () => userApi.getProfile(blog.author_id!),
+        staleTime: 5 * 60 * 1000
     })
 
     const { data: categoryRes } = useQuery({
