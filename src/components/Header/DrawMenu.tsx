@@ -5,13 +5,11 @@ import { AiOutlineClose } from 'react-icons/ai'
 import { MdKeyboardArrowRight, MdKeyboardArrowLeft } from 'react-icons/md'
 
 import styles from './Header.module.scss'
-import drawerStyles from './DrawerMenu.module.scss'
 import { routes } from 'src/config'
 import SearchBar from '../SearchBar'
 import { MenuItem as MenuItemType } from 'src/types/Menu.type'
 
 const cx = classNames.bind(styles)
-const dx = classNames.bind(drawerStyles)
 
 interface DrawerMenuProps {
     open: boolean
@@ -26,7 +24,7 @@ interface MenuStack {
 
 // ======== Sub-Components ========
 
-const ArrowIcon: FC = memo(() => <MdKeyboardArrowRight size='2rem' className={dx('arrow-icon')} />)
+const ArrowIcon: FC = memo(() => <MdKeyboardArrowRight size='2rem' className={cx('arrow-icon')} />)
 
 const getNavLinkClass = (isActive: boolean) => cx('nav__link', { 'nav__link--active': isActive })
 
@@ -40,7 +38,7 @@ const NavigationLinks: FC<{ onClose: () => void }> = memo(({ onClose }) => {
     return (
         <ul className={cx('nav_list', 'drawer__list')}>
             {links.map(({ to, label }) => (
-                <li key={to}>
+                <li key={to} className={cx('nav__item')}>
                     <NavLink to={to} onClick={onClose} className={({ isActive }) => getNavLinkClass(isActive)}>
                         {label}
                     </NavLink>
@@ -53,12 +51,13 @@ const NavigationLinks: FC<{ onClose: () => void }> = memo(({ onClose }) => {
 const MenuHeader: FC<{ title: string; hasParent: boolean; onBack: () => void }> = memo(
     ({ title, hasParent, onBack }) => {
         if (!hasParent) return null
+
         return (
-            <div className={dx('drawer-menu-header')}>
-                <button className={dx('back-button')} onClick={onBack} aria-label='Back to previous menu'>
+            <div className={cx('drawer-menu-header')}>
+                <button className={cx('back-button')} onClick={onBack} aria-label='Back to previous menu'>
                     <MdKeyboardArrowLeft size='2rem' />
                 </button>
-                <h3 className={dx('menu-title')}>{title}</h3>
+                <h3 className={cx('menu-title')}>{title}</h3>
             </div>
         )
     }
@@ -67,13 +66,9 @@ const MenuHeader: FC<{ title: string; hasParent: boolean; onBack: () => void }> 
 const MenuItem: FC<{ item: MenuItemType; onClick: (item: MenuItemType) => void }> = memo(({ item, onClick }) => {
     const handleClick = () => onClick(item)
 
-    const itemClass = cx('nav__link', dx('menu-item-base'), {
-        'nav__link--active': item.active
-    })
-
     if (item.to) {
         return (
-            <Link to={item.to} className={itemClass} onClick={handleClick}>
+            <Link to={item.to} className={cx('nav__link')} onClick={handleClick}>
                 {item.title}
                 {item.children && <ArrowIcon />}
             </Link>
@@ -81,12 +76,7 @@ const MenuItem: FC<{ item: MenuItemType; onClick: (item: MenuItemType) => void }
     }
 
     return (
-        <button
-            className={cx('nav__link', dx('menu-item-button'), {
-                'nav__link--active': item.active
-            })}
-            onClick={handleClick}
-        >
+        <button className={cx('nav__link', 'menu-item-button')} onClick={handleClick}>
             {item.title}
             {item.children && <ArrowIcon />}
         </button>
@@ -104,7 +94,7 @@ const DrawerMenu: FC<DrawerMenuProps> = ({ open, onClose, menuItems }) => {
     useEffect(() => {
         if (!open) {
             const timer = setTimeout(() => {
-                setMenuStack(initialMenuStack)
+                setMenuStack([{ title: '', menuItems }])
             }, 300)
             return () => clearTimeout(timer)
         }
@@ -146,7 +136,7 @@ const DrawerMenu: FC<DrawerMenuProps> = ({ open, onClose, menuItems }) => {
                     <MenuHeader title={currentMenu.title} hasParent={hasParent} onBack={handleBackClick} />
                     <ul className={cx('drawer__list')}>
                         {currentMenu.menuItems.map((item, index) => (
-                            <li key={`${item.title}-${index}`}>
+                            <li className={cx('nav__item')} key={`${item.title}-${index}`}>
                                 <MenuItem item={item} onClick={handleItemClick} />
                             </li>
                         ))}
