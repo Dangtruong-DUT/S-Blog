@@ -165,7 +165,7 @@ function ManageProfile() {
                                     />
                                 </div>
                                 <InputFile onChange={setFileImage} />
-                                <span className={cx('chooseImage-desc')}>Maximum file size: 1 MB</span>
+                                <span className={cx('chooseImage-desc')}>Maximum file size: 10 MB</span>
                                 <span className={cx('chooseImage-desc')}>Formats: .JPEG, .PNG</span>
                             </div>
                         </div>
