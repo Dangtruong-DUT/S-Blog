@@ -40,9 +40,9 @@
     border: 1px solid var(--border-cl);
     padding: 8px;
     transition: all 0.3s ease-in-out;
+    aspect-ratio: 1/1;
 
     @media (max-width: 768px) {
-        padding: 6px;
         order: -1;
     }
 }

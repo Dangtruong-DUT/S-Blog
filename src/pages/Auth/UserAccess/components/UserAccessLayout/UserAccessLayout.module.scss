@@ -57,6 +57,10 @@ html[data-theme='dark'] .container {
     .right-section {
         padding: 1rem 0.2rem;
     }
+
+    .left-section {
+        order: 1;
+    }
     .right-section form {
         padding: 16px 4px 12px 4px;
         border-radius: 8px;
