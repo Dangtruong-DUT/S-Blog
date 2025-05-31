@@ -143,24 +143,21 @@ const VirtualAssistant = ({ className }: VirtualAssistantProps) => {
         }
     }
 
-    const handleMouseMove = useCallback(
-        (e: MouseEvent) => {
-            if (isDragging && !isOpen) {
-                const newX = e.clientX - dragOffset.x
-                const newY = e.clientY - dragOffset.y
+    const handleMouseMove = useCallback((e: MouseEvent) => {
+        if (isDragging && !isOpen) {
+            const newX = e.clientX - dragOffset.x
+            const newY = e.clientY - dragOffset.y
 
-                // Keep within viewport bounds
-                const maxX = window.innerWidth - 60
-                const maxY = window.innerHeight - 60
+            // Keep within viewport bounds
+            const maxX = window.innerWidth - 60
+            const maxY = window.innerHeight - 60
 
-                setPosition({
-                    x: Math.max(0, Math.min(newX, maxX)),
-                    y: Math.max(0, Math.min(newY, maxY))
-                })
-            }
-        },
-        [isDragging, isOpen, dragOffset]
-    )
+            setPosition({
+                x: Math.max(0, Math.min(newX, maxX)),
+                y: Math.max(0, Math.min(newY, maxY))
+            })
+        }
+    }, [isDragging, isOpen, dragOffset])
 
     const handleMouseUp = () => {
         setIsDragging(false)
@@ -231,7 +228,7 @@ const VirtualAssistant = ({ className }: VirtualAssistantProps) => {
                                     {message.text.split('\n').map((line, index) => (
                                         <span key={index}>
                                             {line}
-                                            {index < message.text.split('\n').length - 1 && <br />}
+                                            {index < message.text.split('\\n').length - 1 && <br />}
                                         </span>
                                     ))}
                                 </div>

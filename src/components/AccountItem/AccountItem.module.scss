@@ -22,7 +22,6 @@
     min-width: 0;
 
     @media (max-width: 480px) {
-        flex-direction: column;
         align-items: flex-start;
         gap: 4px;
     }
