@@ -12,7 +12,11 @@ interface Props {
 export default function ThumbnailUpload({ value, onChange, error, setFileImage }: Props) {
     return (
         <div className={styles.thumbnailWrapper}>
-            <img src={value || thumbnailDefault} className={styles.imageReview} alt='' />
+            <img
+                src={value || thumbnailDefault}
+                className={styles.imageReview}
+                alt={value ? 'Thumbnail preview của bài viết' : 'Thumbnail mặc định'}
+            />
             <div className={styles.inputFileWrapper}>
                 <InputFile
                     textInnerButton='Choose Thumbnail'

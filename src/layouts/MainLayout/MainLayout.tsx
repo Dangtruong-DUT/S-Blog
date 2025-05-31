@@ -1,5 +1,6 @@
 import Footer from 'src/components/Footer'
 import Header from 'src/components/Header'
+import VirtualAssistant from 'src/components/VirtualAssistant'
 import classNames from 'classnames/bind'
 import styles from './MainLayout.module.scss'
 
@@ -13,6 +14,7 @@ function MainLayout({ children }: props) {
             <Header />
             <main className={cx('container')}>{children}</main>
             <Footer />
+            <VirtualAssistant />
         </>
     )
 }

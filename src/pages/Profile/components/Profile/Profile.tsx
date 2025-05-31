@@ -69,7 +69,7 @@ function Profile({ userData, onFollow, onUnfollow, followLoading }: props) {
         return (
             <div className={cx('modal__content')}>
                 <div className={cx('modal__header')}>
-                    <h1 className={cx('modal__heading')}>Edit profile </h1>
+                    <h1 className={cx('modal__heading')}>Social Links</h1>
                     <button className={cx('modal__btn-close')} onClick={() => setModalEditProfileShow(false)}>
                         <IoCloseOutline size={'2.4rem'} />
                     </button>
@@ -89,10 +89,13 @@ function Profile({ userData, onFollow, onUnfollow, followLoading }: props) {
     return (
         <div className={cx('profileWrapper')}>
             <div className={cx('profile-left')}>
-                <img src={userData.avatar} alt='' className={cx('profile__img')} />
-            </div>{' '}
+                <img
+                    src={userData.avatar}
+                    alt={`Ảnh đại diện của ${userData.first_name} ${userData.last_name}`}
+                    className={cx('profile__img')}
+                />
+            </div>
             <div className={cx('profile-right')}>
-                {' '}
                 <div className={cx('profile__row', 'profile__info-row')}>
                     <div className={cx('profile__info-wrapper')}>
                         <h1 className={cx('profile__name')}>{userData.email}</h1>
@@ -109,7 +112,7 @@ function Profile({ userData, onFollow, onUnfollow, followLoading }: props) {
                                     setModalEditProfileShow(true)
                                 }}
                             >
-                                Edit
+                                Social Links
                             </Button>
                             <Button variant='secondary' onClick={onSettingClick} className={cx('profile__btn')}>
                                 Setting

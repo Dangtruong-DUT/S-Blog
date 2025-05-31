@@ -60,7 +60,11 @@ const CommentItem: React.FC<CommentItemProps> = ({
 
     return (
         <div className={level === 0 ? styles.comment : styles.comment__reply_list}>
-            <img src={comment.user.avatar || 'default-avatar.png'} alt='avatar' className={styles.comment__avatar} />
+            <img
+                src={comment.user.avatar || 'default-avatar.png'}
+                alt={`Ảnh đại diện của ${comment.user.first_name || 'người dùng'}`}
+                className={styles.comment__avatar}
+            />
 
             <div className={styles.comment__body}>
                 <div className={styles.comment__header}>
@@ -274,11 +278,14 @@ const Comments: React.FC<CommentsProps & { onEditComment: (commentId: number, co
 
     return (
         <div className={styles.comments_wrapper}>
-            <h4>Bình luận</h4>
-
+            <h4>Bình luận</h4>{' '}
             {currentUser ? (
                 <div className={styles.form}>
-                    <img src={currentUser.avatar || 'default-avatar.png'} alt='avatar' className={styles.imgdefault} />
+                    <img
+                        src={currentUser.avatar || 'default-avatar.png'}
+                        alt={`Ảnh đại diện của ${currentUser.fullName}`}
+                        className={styles.imgdefault}
+                    />
                     <div style={{ flex: 1 }}>
                         <input
                             value={text}
@@ -311,7 +318,6 @@ const Comments: React.FC<CommentsProps & { onEditComment: (commentId: number, co
                     </div>
                 </div>
             )}
-
             <div className={styles['comments-container']}>
                 {commentsWithParentUser.length === 0 ? (
                     <div style={{ color: 'var(--text-dark-gray)', textAlign: 'center', margin: '24px 0' }}>
