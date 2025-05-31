@@ -70,9 +70,10 @@ function ProfilePage() {
     return (
         <>
             <SEO
-                title='Trang cá nhân | S-Blog'
-                description='Trang cá nhân, thông tin, bài viết và hoạt động của thành viên trên S-Blog.'
-                path='/profile'
+                title={`${(userData?.first_name ?? '') + ' ' + (userData?.last_name ?? '')} | S-Blog`}
+                description={`Khám phá trang cá nhân của ${userData?.first_name ?? ''} ${userData?.last_name ?? ''} – ${userData?.bio || 'một người dùng nổi bật trên S-Blog'}. Đã nhận được ${userData?.total_likes ?? 0} lượt thích và ${userData?.followers_count ?? 0} lượt theo dõi  từ cộng đồng.`}
+                path={`/@${username}`}
+                image={userData?.avatar || ''}
             />
             <div className={cx('container')}>
                 <div className={cx('profile')}>

@@ -12,6 +12,7 @@ import Comments from 'src/components/Comments/Comments'
 import { AppContext } from 'src/contexts/app.context'
 import BlogDetailLayout from './components/BlogDetailLayout'
 import { useBlogLikeHandler } from './hooks/useBlogLikeHandler'
+import { generateNameId } from 'src/utils/common.util'
 
 const cx = classNames.bind(styles)
 
@@ -60,7 +61,7 @@ export default function BlogDetail() {
             <SEO
                 description={blog.subtitle}
                 title={blog.subtitle}
-                path={id}
+                path={`/blogs/${generateNameId({ name: blog.title, id: blog.id })}`}
                 image={blog.featured_image}
                 type='article'
             />

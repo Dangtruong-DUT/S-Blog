@@ -8,6 +8,7 @@ import { useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import BlogCard from '../BlogCard'
 import { SkeletonBlogCard } from '../Skeleton'
+import { useMemo } from 'react'
 
 const cx = classNames.bind(styles)
 
@@ -20,11 +21,13 @@ interface BlogListProps {
 function BlogList({ queryKey, queryConfig, path }: BlogListProps) {
     const { data, isLoading } = useQuery({
         queryKey: [queryKey, queryConfig],
-        queryFn: () => blogApi.getBlogs(queryConfig)
+        queryFn: () => blogApi.getBlogs(queryConfig),
+        staleTime: 5 * 60 * 1000 // 5 minutes
     })
     const { category: categoryName } = useParams()
     const category = categoryName || 'ALL POST'
-    const blogList = data?.data.data.blogs || []
+
+    const blogList = useMemo(() => data?.data.data.blogs || [], [data])
     const totalPages = data?.data.data.pagination.total_pages || 0
 
     const renderBlogs = useCallback(() => blogList.map((blog) => <BlogCard blog={blog} key={blog.id} />), [blogList])
