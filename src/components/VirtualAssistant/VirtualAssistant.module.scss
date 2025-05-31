@@ -380,18 +380,6 @@
             border-bottom-left-radius: 8px;
             border: 1px solid var(--border-cl);
             position: relative;
-
-            &::after {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: -9px;
-                width: 0;
-                height: 0;
-                border: 8px solid transparent;
-                border-right-color: var(--background-secondary);
-                border-left: none;
-            }
         }
     }
 
