@@ -88,8 +88,13 @@ function Profile({ userData, onFollow, onUnfollow, followLoading }: props) {
 
     return (
         <div className={cx('profileWrapper')}>
+            {' '}
             <div className={cx('profile-left')}>
-                <img src={userData.avatar} alt='' className={cx('profile__img')} />
+                <img
+                    src={userData.avatar}
+                    alt={`Ảnh đại diện của ${userData.first_name} ${userData.last_name}`}
+                    className={cx('profile__img')}
+                />
             </div>{' '}
             <div className={cx('profile-right')}>
                 {' '}

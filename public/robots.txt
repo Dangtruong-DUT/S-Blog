@@ -1,2 +1,25 @@
+User-agent: *
+Allow: /
+
+# SEO-friendly routes
+Allow: /blogs
+Allow: /blogs/*
+Allow: /auth
+Allow: /
+
+# Block admin routes
+Disallow: /admin
+Disallow: /api
+
+# Special crawlers
 User-agent: facebookexternalhit
 Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+# Sitemap location
+Sitemap: https://www.sblog.tech/sitemap.xml

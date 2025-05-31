@@ -66,15 +66,19 @@ function ProfilePage() {
 
         return {}
     }, [tabActiveIndex, userData, filterParam])
-
     return (
         <>
-            <SEO
-                title={`${(userData?.first_name ?? '') + ' ' + (userData?.last_name ?? '')} | S-Blog`}
-                description={`Khám phá trang cá nhân của ${userData?.first_name ?? ''} ${userData?.last_name ?? ''} – ${userData?.bio || 'một người dùng nổi bật trên S-Blog'}. Đã nhận được ${userData?.total_likes ?? 0} lượt thích và ${userData?.followers_count ?? 0} lượt theo dõi  từ cộng đồng.`}
-                path={`/@${username}`}
-                image={userData?.avatar || ''}
-            />
+            {userData && (
+                <SEO
+                    title={`${userData.first_name} ${userData.last_name} | S-Blog`}
+                    description={`Khám phá trang cá nhân của ${userData.first_name} ${userData.last_name} – ${userData.bio || 'một người dùng nổi bật trên S-Blog'}. Đã nhận được ${userData.total_likes ?? 0} lượt thích và ${userData.followers_count ?? 0} lượt theo dõi từ cộng đồng.`}
+                    path={`/@${username}`}
+                    image={userData.avatar || ''}
+                    type='profile'
+                    keywords={`${userData.first_name} ${userData.last_name}, profile, tác giả, S-Blog, blogger, ${userData.bio ? 'chuyên gia, ' : ''}viết blog`}
+                    author={`${userData.first_name} ${userData.last_name}`}
+                />
+            )}
             <div className={cx('container')}>
                 <div className={cx('profile')}>
                     {userData ? (

@@ -1,25 +1,76 @@
 <!doctype html>
-<html lang="en">
+<html lang="vi">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="/src/styles.css" rel="stylesheet" />
+
+        <!-- Preload Critical Resources -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link rel="dns-prefetch" href="https://www.sblog.tech" />
+
+        <!-- Fonts -->
         <link
             href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
             rel="stylesheet"
         />
+
+        <!-- Favicon and App Icons -->
         <link rel="apple-touch-icon" sizes="180x180" href="/icon/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/icon/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/icon/favicon-16x16.png" />
         <link rel="manifest" href="/icon/site.webmanifest" />
-        <title>S-blog | TaplamIT</title>
+
+        <!-- SEO Meta Tags -->
+        <title>S-Blog | Nền tảng chia sẻ tri thức và blog cá nhân</title>
         <meta
             name="description"
-            content="A platform for everyone to write blogs and share their experiences."
-            data-rh="true"
+            content="S-Blog - Nền tảng chia sẻ blog và tri thức hàng đầu Việt Nam. Viết blog, chia sẻ kiến thức, kết nối cộng đồng yêu thích học hỏi và phát triển bản thân."
         />
+        <meta
+            name="keywords"
+            content="blog, chia sẻ tri thức, viết blog, cộng đồng, kiến thức, học tập, phát triển bản thân, công nghệ"
+        />
+        <meta name="author" content="S-Blog Team" />
+
+        <!-- Open Graph Meta Tags -->
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="S-Blog | Nền tảng chia sẻ tri thức và blog cá nhân" />
+        <meta
+            property="og:description"
+            content="S-Blog - Nền tảng chia sẻ blog và tri thức hàng đầu Việt Nam. Viết blog, chia sẻ kiến thức, kết nối cộng đồng yêu thích học hỏi và phát triển bản thân."
+        />
+        <meta property="og:image" content="/images/Thumbnail.png" />
+        <meta property="og:url" content="https://www.sblog.tech" />
+        <meta property="og:site_name" content="S-Blog" />
+        <meta property="og:locale" content="vi_VN" />
+
+        <!-- Twitter Meta Tags -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="S-Blog | Nền tảng chia sẻ tri thức và blog cá nhân" />
+        <meta name="twitter:description" content="S-Blog - Nền tảng chia sẻ blog và tri thức hàng đầu Việt Nam." />
+        <meta name="twitter:image" content="/images/Thumbnail.png" />
+
+        <!-- Additional SEO -->
+        <meta name="robots" content="index, follow, max-image-preview:large" />
+        <meta name="googlebot" content="index, follow" />
+        <meta name="theme-color" content="#ff5480" />
+
+        <!-- Structured Data -->
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "name": "S-Blog",
+                "url": "https://www.sblog.tech",
+                "description": "Nền tảng chia sẻ blog và tri thức hàng đầu Việt Nam",
+                "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": "https://www.sblog.tech/blogs?search={search_term_string}",
+                    "query-input": "required name=search_term_string"
+                }
+            }
+        </script>
     </head>
     <body>
         <div id="root"></div>
