@@ -1,7 +1,8 @@
 .virtual-assistant {
     position: fixed;
     z-index: 9999;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    // Remove automatic transition to prevent unwanted animation on mount
+    // transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     &.minimized {
         animation: float 3s ease-in-out infinite;

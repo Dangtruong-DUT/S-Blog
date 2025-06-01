@@ -32,7 +32,10 @@ const VirtualAssistant = ({ className }: VirtualAssistantProps) => {
     ])
     const [inputValue, setInputValue] = useState('')
     const [isTyping, setIsTyping] = useState(false)
-    const [position, setPosition] = useState({ x: 20, y: 20 })
+    const [position, setPosition] = useState(() => ({
+        x: typeof window !== 'undefined' ? window.innerWidth - 80 : 20,
+        y: typeof window !== 'undefined' ? window.innerHeight - 100 : 20
+    }))
     const [isDragging, setIsDragging] = useState(false)
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
     const [isConnected, setIsConnected] = useState(true)
@@ -143,26 +146,28 @@ const VirtualAssistant = ({ className }: VirtualAssistantProps) => {
         }
     }
 
-    const handleMouseMove = useCallback((e: MouseEvent) => {
-        if (isDragging && !isOpen) {
-            const newX = e.clientX - dragOffset.x
-            const newY = e.clientY - dragOffset.y
+    const handleMouseMove = useCallback(
+        (e: MouseEvent) => {
+            if (isDragging && !isOpen) {
+                const newX = e.clientX - dragOffset.x
+                const newY = e.clientY - dragOffset.y
 
-            // Keep within viewport bounds
-            const maxX = window.innerWidth - 60
-            const maxY = window.innerHeight - 60
+                // Keep within viewport bounds
+                const maxX = window.innerWidth - 60
+                const maxY = window.innerHeight - 60
 
-            setPosition({
-                x: Math.max(0, Math.min(newX, maxX)),
-                y: Math.max(0, Math.min(newY, maxY))
-            })
-        }
-    }, [isDragging, isOpen, dragOffset])
+                setPosition({
+                    x: Math.max(0, Math.min(newX, maxX)),
+                    y: Math.max(0, Math.min(newY, maxY))
+                })
+            }
+        },
+        [isDragging, isOpen, dragOffset]
+    )
 
     const handleMouseUp = () => {
         setIsDragging(false)
     }
-
     useEffect(() => {
         if (isDragging) {
             document.addEventListener('mousemove', handleMouseMove)
@@ -175,12 +180,17 @@ const VirtualAssistant = ({ className }: VirtualAssistantProps) => {
         }
     }, [isDragging, handleMouseMove])
 
-    // Set initial position to bottom right
+    // Handle window resize to keep assistant in bounds
     useEffect(() => {
-        setPosition({
-            x: window.innerWidth - 80,
-            y: window.innerHeight - 100
-        })
+        const handleResize = () => {
+            setPosition((prevPosition) => ({
+                x: Math.min(prevPosition.x, window.innerWidth - 80),
+                y: Math.min(prevPosition.y, window.innerHeight - 100)
+            }))
+        }
+
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
     }, [])
 
     return (
@@ -191,7 +201,8 @@ const VirtualAssistant = ({ className }: VirtualAssistantProps) => {
                 position: 'fixed',
                 right: isOpen ? '20px' : `${window.innerWidth - position.x - 60}px`,
                 bottom: isOpen ? '20px' : `${window.innerHeight - position.y - 60}px`,
-                zIndex: 9999
+                zIndex: 9999,
+                transition: isDragging ? 'none' : 'right 0.3s ease, bottom 0.3s ease'
             }}
         >
             {/* Chat Window */}
