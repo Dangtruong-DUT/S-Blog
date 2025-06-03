@@ -30,6 +30,8 @@ import DescriptionInput from './components/DescriptionInput'
 import ContentEditor from './components/ContentEditor'
 import FormFooter from './components/FormFooter'
 import PreviewModal from './components/PreviewModal'
+import ChatAIAssistant from 'src/components/ChatAIAssistant'
+import { HiSparkles } from 'react-icons/hi2'
 
 Modal.setAppElement('#root')
 
@@ -46,6 +48,7 @@ const BlogEditor = () => {
     const quillRef = useRef<ReactQuill>(null)
     const [isPreviewOpen, setIsPreviewOpen] = useState(false)
     const [fileImage, setFileImage] = useState<File>()
+    const [isChatAIOpen, setIsChatAIOpen] = useState(false)
     const navigate = useNavigate()
     const handleBackScreen = () => {
         navigate(-1)
@@ -110,6 +113,66 @@ const BlogEditor = () => {
             blogForm.setValue('category', blog.category)
         }
     }, [blog, blogForm])
+
+    // Enhanced ChatAI helper functions with flexible content insertion
+    const handleApplyToField = (
+        field: 'title' | 'description' | 'content',
+        value: string,
+        mode: 'replace' | 'append' = 'replace'
+    ) => {
+        switch (field) {
+            case 'title':
+                blogForm.setValue('title', value)
+                break
+            case 'description':
+                if (mode === 'append') {
+                    const currentDesc = blogForm.watch('subtitle') || ''
+                    blogForm.setValue('subtitle', currentDesc + ' ' + value)
+                } else {
+                    blogForm.setValue('subtitle', value)
+                }
+                break
+            case 'content':
+                // Set form value first (this will trigger Quill update through controlled component)
+                blogForm.setValue('content', value)
+
+                if (mode === 'append') {
+                    const currentContent = blogForm.watch('content') || ''
+                    blogForm.setValue('content', currentContent + '\n\n' + value)
+                } else {
+                    blogForm.setValue('content', value)
+                }
+
+                break
+        }
+    }
+
+    const getFormData = () => {
+        // Get content as plain text for AI analysis
+        let contentText = ''
+        if (quillRef.current) {
+            const quillEditor = quillRef.current.getEditor()
+            contentText = quillEditor.getText()
+        } else {
+            // Fallback: try to parse Delta JSON to text
+            const contentDelta = blogForm.watch('content') as string
+            if (contentDelta) {
+                try {
+                    const delta = JSON.parse(contentDelta) as { ops?: Array<{ insert?: string }> }
+                    contentText = delta.ops?.map((op) => op.insert || '').join('') || ''
+                } catch {
+                    contentText = contentDelta
+                }
+            }
+        }
+
+        return {
+            title: blogForm.watch('title'),
+            description: blogForm.watch('subtitle'), // subtitle is the description field
+            content: contentText,
+            category: blogForm.watch('category')
+        }
+    }
 
     const handleOnSubmit = blogForm.handleSubmit(async (data) => {
         let thumbnail_url
@@ -201,7 +264,7 @@ const BlogEditor = () => {
                                     setFileImage={setFileImage}
                                 />
                             )}
-                        />
+                        />{' '}
                         <TitleInput
                             register={blogForm.register}
                             error={blogForm.formState.errors?.title?.message || ''}
@@ -230,6 +293,23 @@ const BlogEditor = () => {
                     </form>
                 )}
                 {isLoading && <SkeletonBlogCard />}
+
+                {/* AI Chat Assistant Toggle Button */}
+                <button
+                    className={cx('ai-toggle-btn')}
+                    onClick={() => setIsChatAIOpen(!isChatAIOpen)}
+                    title='Open AI Assistant'
+                >
+                    <HiSparkles />
+                </button>
+
+                {/* AI Chat Assistant */}
+                <ChatAIAssistant
+                    isOpen={isChatAIOpen}
+                    onToggle={() => setIsChatAIOpen(!isChatAIOpen)}
+                    formData={getFormData()}
+                    onApplyToField={handleApplyToField}
+                />
                 <PreviewModal
                     isOpen={isPreviewOpen}
                     onRequestClose={() => setIsPreviewOpen(false)}
