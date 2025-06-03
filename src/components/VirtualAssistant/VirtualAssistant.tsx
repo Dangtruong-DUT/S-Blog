@@ -6,6 +6,7 @@ import { RiRobot2Fill } from 'react-icons/ri'
 import { geminiService } from 'src/apis/gemini.api'
 import useIsMobile from 'src/hooks/useIsMobile'
 import { generateFallbackResponse } from 'src/utils/virtualAssistant.util'
+import MarkdownRenderer from 'src/components/MarkdownRenderer'
 
 const cx = classNames.bind(styles)
 
@@ -235,13 +236,9 @@ const VirtualAssistant = ({ className }: VirtualAssistantProps) => {
                                     'bot-message': !message.isUser
                                 })}
                             >
+                                {' '}
                                 <div className={cx('message-content')}>
-                                    {message.text.split('\n').map((line, index) => (
-                                        <span key={index}>
-                                            {line}
-                                            {index < message.text.split('\\n').length - 1 && <br />}
-                                        </span>
-                                    ))}
+                                    <MarkdownRenderer content={message.text} />
                                 </div>
                                 <div className={cx('message-time')}>
                                     {message.timestamp.toLocaleTimeString('vi-VN', {
