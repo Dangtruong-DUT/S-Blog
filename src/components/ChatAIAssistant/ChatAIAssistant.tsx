@@ -568,6 +568,11 @@ Câu hỏi: ${inputValue.trim()}`
     const handleApplySuggestion = (suggestion: AIResponse, mode: 'replace' | 'append' = 'replace') => {
         let contentToApply = suggestion.content
 
+        // Đảm bảo mode append chỉ áp dụng cho content
+        if (mode === 'append' && suggestion.field !== 'content') {
+            mode = 'replace'
+        }
+
         // Xử lý cho trường content
         if (suggestion.field === 'content') {
             // Chuyển đổi nội dung mới sang Quill Delta nếu chưa phải
@@ -719,13 +724,16 @@ Câu hỏi: ${inputValue.trim()}`
                                             >
                                                 <HiCheck /> Áp dụng
                                             </button>
-                                            <button
-                                                className={cx('apply-btn', 'append')}
-                                                onClick={() => handleApplySuggestion(suggestion, 'append')}
-                                                title='Thêm vào nội dung hiện tại'
-                                            >
-                                                <HiArrowPath /> Thêm vào
-                                            </button>
+                                            {/* Chỉ hiện nút "Thêm vào" cho phần content */}
+                                            {suggestion.field === 'content' && (
+                                                <button
+                                                    className={cx('apply-btn', 'append')}
+                                                    onClick={() => handleApplySuggestion(suggestion, 'append')}
+                                                    title='Thêm vào nội dung hiện tại'
+                                                >
+                                                    <HiArrowPath /> Thêm vào
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 ))}
