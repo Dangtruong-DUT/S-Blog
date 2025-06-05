@@ -66,14 +66,25 @@ const ChatAIAssistant = ({ isOpen, onToggle, formData, onApplyToField }: ChatAIA
         }
     }, [isOpen]) // Helper function to format AI response for display
     const formatAIResponseForDisplay = (content: string): string => {
-        // Remove any content within brackets for display
-        const displayContent = content.replace(/\[([^\]]+)\]/g, (_, innerContent) => {
-            // Check if this looks like a suggestion we want to keep visible
-            if (innerContent.length < 100 && !innerContent.includes('\n')) {
-                return innerContent
+        // Ẩn phần "--- NỘI DUNG ÁP DỤNG ---" và nội dung sau đó khỏi display
+        const separatorPatterns = [
+            /---\s*NỘI DUNG ÁP DỤNG\s*---/i,
+            /---\s*ÁP DỤNG\s*---/i,
+            /---\s*CONTENT\s*---/i,
+            /NỘI DUNG ÁP DỤNG:/i,
+            /ÁP DỤNG:/i
+        ]
+
+        let displayContent = content
+
+        for (const pattern of separatorPatterns) {
+            const match = content.match(pattern)
+            if (match) {
+                // Chỉ hiển thị phần trước separator
+                displayContent = content.slice(0, match.index).trim()
+                break
             }
-            return innerContent
-        })
+        }
 
         return displayContent
     } // Helper function to check if content is Quill Delta format
@@ -109,128 +120,210 @@ const ChatAIAssistant = ({ isOpen, onToggle, formData, onApplyToField }: ChatAIA
 
         // For title and description, show as is
         return <p className={cx('suggestion-text')}>{suggestion.content}</p>
-    }
-
-    // Enhanced AI response parsing with multiple strategies
+    } // Improved AI response parsing to better separate analysis from applicable content
     const parseAIResponse = (content: string): AIResponse[] => {
         const responses: AIResponse[] = []
 
-        // Strategy 1: Extract content in brackets [content]
-        const bracketMatches = content.match(/\[([^\]]+)\]/g)
-        if (bracketMatches) {
-            bracketMatches.forEach((match: string) => {
-                const extractedContent = match.slice(1, -1).trim()
-                // Chỉ xử lý nội dung có ý nghĩa
-                if (extractedContent.length > 10) {
-                    const field = detectContentField(extractedContent, content)
-                    const action = detectAction(content)
-
-                    // Kiểm tra xem nội dung có phù hợp với field không
-                    const isValidContent = validateContentForField(extractedContent, field)
-                    if (isValidContent) {
-                        responses.push({
-                            field,
-                            content: extractedContent,
-                            action,
-                            reasoning: `AI suggestion for ${field}`
-                        })
-                    }
-                }
-            })
-        }
-
-        // Strategy 2: Extract field-specific content with labels
-        const fieldPatterns = [
-            { pattern: /(?:tiêu đề|title):\s*(.+?)(?:\n|$)/gi, field: 'title' as const },
-            { pattern: /(?:mô tả|description):\s*(.+?)(?:\n|$)/gi, field: 'description' as const }
+        // Find either the explicit section separator or analyze content structure
+        const separatorPatterns = [
+            /---+\s*(?:NỘI DUNG ÁP DỤNG|ÁP DỤNG|CONTENT)\s*---+/i,
+            /(?:NỘI DUNG ÁP DỤNG|ÁP DỤNG|CONTENT)\s*:/i
         ]
 
-        fieldPatterns.forEach(({ pattern, field }) => {
-            let match
-            while ((match = pattern.exec(content)) !== null) {
-                const extractedContent = match[1].trim()
-                if (extractedContent.length > 5) {
-                    const action = detectAction(content)
+        // Try to find content after known separator patterns first
+        let applicableContent = ''
+        let foundSeparator = false
+
+        // First try to find explicit sections with separators
+        for (const pattern of separatorPatterns) {
+            const match = content.match(pattern)
+            if (match) {
+                const splitIndex = match.index! + match[0].length
+                applicableContent = content.slice(splitIndex).trim()
+                foundSeparator = true
+                break
+            }
+        } // Nếu tìm thấy phần nội dung áp dụng
+        if (foundSeparator && applicableContent.length > 10) {
+            const field = detectContentField(applicableContent, content)
+            const action = detectAction(content)
+
+            // Xử lý nhiều gợi ý cho title và description (mỗi dòng là một gợi ý)
+            if (field === 'title' || field === 'description') {
+                // Tách các dòng và tìm các suggestions
+                const lines = applicableContent
+                    .split('\n')
+                    .map((line) => line.trim())
+                    .filter((line) => line.length > 0)
+
+                // Lọc ra các dòng là suggestions thực sự (không phải metadata)
+                const suggestions = lines.filter((line) => {
+                    // Bỏ qua các dòng metadata                // First check if the line is metadata or separator
+                    const metadataPatterns = [
+                        /^(?:---|===)/, // Section dividers
+                        /^[#*•-]\s/, // List markers and headers
+                        /^(?:gợi ý|áp dụng|nội dung|phân tích|tiêu đề|mô tả|ví dụ|lưu ý|chú ý|suggestion|note):/i,
+                        /^(?:gợi ý|áp dụng|nội dung|phân tích|tiêu đề|mô tả)\s+(?:về|cho|của)/i
+                    ]
+
+                    // Skip metadata lines and very short lines
+                    if (line.length < 15 || metadataPatterns.some((pattern) => pattern.test(line.toLowerCase()))) {
+                        return false
+                    }
+
+                    // Kiểm tra độ dài phù hợp với field
+                    if (field === 'title') {
+                        return line.length >= 20 && line.length <= 100
+                    } else if (field === 'description') {
+                        return line.length >= 50 && line.length <= 300
+                    }
+
+                    return true
+                })
+
+                // Thêm từng suggestion hợp lệ
+                suggestions.forEach((suggestion, index) => {
+                    if (validateContentForField(suggestion, field)) {
+                        responses.push({
+                            field,
+                            content: suggestion,
+                            action,
+                            reasoning: `AI suggestion ${index + 1} for ${field}`
+                        })
+                    }
+                })
+
+                // Nếu không tìm thấy suggestions trong lines, thử lấy toàn bộ nội dung
+                if (responses.length === 0 && validateContentForField(applicableContent, field)) {
                     responses.push({
                         field,
-                        content: extractedContent,
+                        content: applicableContent,
+                        action,
+                        reasoning: `AI suggestion for ${field}`
+                    })
+                }
+            } else {
+                // Cho content field, sử dụng toàn bộ nội dung
+                if (validateContentForField(applicableContent, field)) {
+                    responses.push({
+                        field,
+                        content: applicableContent,
                         action,
                         reasoning: `AI suggestion for ${field}`
                     })
                 }
             }
-        })
+        } // Try to extract content from quotes in the analysis section if no separator found
+        if (responses.length === 0 && !foundSeparator) {
+            // Look for content in quotes that appears to be suggestions
+            const quotedContentPattern = /"([^"]{15,})"|`([^`]{15,})`|'([^']{15,})'/g
+            const matches = [...content.matchAll(quotedContentPattern)]
 
-        // Strategy 3: Extract long-form content with markdown headers for content field
-        const contentPatterns = [
-            /(?:nội dung|content):\s*([\s\S]+?)(?:\n\n|$)/gi,
-            /(?:bài viết|article):\s*([\s\S]+?)(?:\n\n|$)/gi
-        ]
+            for (const match of matches) {
+                const extractedContent = (match[1] || match[2] || match[3]).trim()
 
-        contentPatterns.forEach((pattern) => {
-            let match
-            while ((match = pattern.exec(content)) !== null) {
-                const extractedContent = match[1].trim()
-                if (extractedContent.length > 50) {
-                    const action = detectAction(content)
+                // Skip if it looks like analysis text rather than a suggestion
+                if (
+                    extractedContent.toLowerCase().includes('ví dụ') ||
+                    extractedContent.toLowerCase().includes('như là') ||
+                    extractedContent.toLowerCase().includes('phân tích') ||
+                    extractedContent.toLowerCase().includes('gợi ý')
+                ) {
+                    continue
+                }
+
+                const field = detectContentField(extractedContent, content)
+                const action = detectAction(content)
+
+                if (validateContentForField(extractedContent, field)) {
                     responses.push({
-                        field: 'content',
+                        field,
                         content: extractedContent,
                         action,
-                        reasoning: 'AI suggestion for content'
+                        reasoning: `AI suggestion found in quotes for ${field}`
                     })
                 }
             }
-        })
-
-        // Strategy 4: Fallback - if no specific patterns found, try to detect content type
+        } // Fallback: Tìm nội dung trong dấu ngoặc vuông [content] nếu không có separator
         if (responses.length === 0) {
-            const isContentResponse =
-                content.toLowerCase().includes('nội dung') ||
-                content.toLowerCase().includes('content') ||
-                content.toLowerCase().includes('bài viết') ||
-                content.includes('##') ||
-                content.includes('###') ||
-                content.length > 300
+            const bracketMatches = content.match(/\[([^\]]+)\]/g)
+            if (bracketMatches) {
+                bracketMatches.forEach((match: string) => {
+                    const extractedContent = match.slice(1, -1).trim()
+                    if (extractedContent.length > 10) {
+                        const field = detectContentField(extractedContent, content)
+                        const action = detectAction(content)
 
-            if (isContentResponse) {
-                let cleanContent = content
-                // Remove common AI prefixes
-                cleanContent = cleanContent.replace(/^(đây là|here is|nội dung|content)[:\s]*/i, '')
-
-                responses.push({
-                    field: 'content',
-                    content: cleanContent.trim(),
-                    action: detectAction(content),
-                    reasoning: 'AI generated content'
+                        if (validateContentForField(extractedContent, field)) {
+                            responses.push({
+                                field,
+                                content: extractedContent,
+                                action,
+                                reasoning: `AI suggestion for ${field}`
+                            })
+                        }
+                    }
                 })
+            }
+        } // Final fallback: Try to identify usable content blocks based on structure
+        if (responses.length === 0) {
+            const paragraphs = content.split('\n\n').map((p) => p.trim())
+
+            for (const paragraph of paragraphs) {
+                // Skip very short paragraphs and those that look like analysis
+                if (
+                    paragraph.length < 40 ||
+                    /^(?:phân tích|gợi ý|nhận xét|lưu ý|chú ý):/i.test(paragraph) ||
+                    paragraph.startsWith('-') ||
+                    paragraph.startsWith('*')
+                ) {
+                    continue
+                }
+
+                // Look for structured content (markdown headers, long paragraphs)
+                if (
+                    paragraph.includes('##') ||
+                    paragraph.includes('###') ||
+                    paragraph.length > 200 ||
+                    /^[A-Z0-9][^.!?]+[.!?]/.test(paragraph)
+                ) {
+                    const cleanContent = paragraph.replace(/^(đây là|here is|nội dung|content)[:\s]*/i, '').trim()
+
+                    const field = detectContentField(cleanContent, content)
+                    if (validateContentForField(cleanContent, field)) {
+                        responses.push({
+                            field,
+                            content: cleanContent,
+                            action: detectAction(content),
+                            reasoning: 'Detected structured content block'
+                        })
+                        break // Only use the first good content block
+                    }
+                }
             }
         }
 
-        // Remove duplicates and sort by priority
+        // Loại bỏ trùng lặp và sắp xếp theo độ ưu tiên
         const uniqueResponses = responses.filter(
             (response, index, self) =>
                 index === self.findIndex((r) => r.field === response.field && r.content === response.content)
         )
 
-        // Sort by field priority and quality score
         return uniqueResponses.sort((a, b) => {
             const priorityOrder = { content: 3, title: 2, description: 1 }
             const priorityDiff = priorityOrder[b.field] - priorityOrder[a.field]
             if (priorityDiff !== 0) return priorityDiff
             return getContentQualityScore(b) - getContentQualityScore(a)
         })
-    }
-
-    // Validate content for specific field
+    } // Validate content for specific field
     const validateContentForField = (content: string, field: 'title' | 'description' | 'content'): boolean => {
         switch (field) {
             case 'title':
-                return content.length >= 30 && content.length <= 70
+                return content.length >= 20 && content.length <= 100
             case 'description':
-                return content.length >= 100 && content.length <= 180
+                return content.length >= 50 && content.length <= 300
             case 'content':
-                return content.length >= 200 && (content.includes('#') || content.includes('\n'))
+                return content.length >= 100
             default:
                 return true
         }
@@ -331,61 +424,59 @@ const ChatAIAssistant = ({ isOpen, onToggle, formData, onApplyToField }: ChatAIA
         }
 
         return 'suggest'
-    }
-
-    // Hệ thống prompt cho từng loại nội dung
+    } // Hệ thống prompt cho từng loại nội dung
     const getFieldSpecificPrompt = (field: ContentField) => {
         const basePrompt = `Bạn là một AI assistant chuyên hỗ trợ viết blog. Hãy luôn trả lời bằng tiếng Việt và đưa ra các gợi ý cụ thể.
 
-QUAN TRỌNG: 
-1. Khi đưa ra nội dung cần áp dụng, hãy luôn đặt trong dấu ngoặc vuông [nội dung] để dễ nhận diện
-2. Phân tích yêu cầu của người dùng trước khi đưa ra gợi ý
-3. Nếu người dùng chưa cung cấp đủ thông tin, hãy đặt câu hỏi để làm rõ
-4. Tất cả các gợi ý phải theo đúng format của trường dữ liệu`
+QUAN TRỌNG - CẤU TRÚC PHẢN HỒI:
+Bạn PHẢI chia phản hồi thành 2 phần riêng biệt:
+
+**PHẦN 1 - PHÂN TÍCH & GỢI Ý:**
+- Phân tích yêu cầu của người dùng
+- Đưa ra các nhận xét, gợi ý chung
+- Giải thích lý do lựa chọn
+- Đặt câu hỏi nếu cần thêm thông tin
+
+**PHẦN 2 - NỘI DUNG ÁP DỤNG:**
+Sau khi hoàn thành phần 1, bạn PHẢI viết dòng:
+"--- NỘI DUNG ÁP DỤNG ---"
+
+Rồi đưa ra nội dung CỤ THỂ có thể áp dụng trực tiếp vào form, KHÔNG có thêm bất kỳ giải thích nào khác.
+Nội dung này phải:
+- Chỉ là nội dung thuần túy để điền vào trường
+- Không có tiêu đề phụ, không có giải thích thêm
+- Sẵn sàng copy-paste vào form`
 
         const fieldPrompts = {
             title: `${basePrompt}
 
-Bạn đang hỗ trợ viết TIÊU ĐỀ blog. Mọi gợi ý phải:
+Bạn đang hỗ trợ viết TIÊU ĐỀ blog. Trong phần NỘI DUNG ÁP DỤNG, hãy đưa ra 3-5 gợi ý tiêu đề, mỗi tiêu đề trên một dòng riêng biệt. Mỗi tiêu đề phải:
 - Độ dài 40-60 ký tự
-- Có từ khóa chính theo chủ đề
+- Chứa từ khóa chính  
 - Tạo sự tò mò cho người đọc
 - Tối ưu SEO
-- Phù hợp xu hướng tìm kiếm
 
-Format phản hồi:
-1. Phân tích yêu cầu ngắn gọn
-2. Đưa ra 3-5 gợi ý tiêu đề trong dấu [], mỗi tiêu đề một dòng
-3. Giải thích ngắn gọn về mỗi gợi ý`,
+Ví dụ format phần áp dụng:
+Design Pattern Java: Bí mật code sạch đẹp
+Java Design Pattern: Từ cơ bản đến thành thạo  
+Làm chủ Design Pattern Java trong 30 ngày`,
 
             description: `${basePrompt}
 
-Bạn đang hỗ trợ viết MÔ TẢ blog. Mọi gợi ý phải:
+Bạn đang hỗ trợ viết MÔ TẢ blog. Trong phần NỘI DUNG ÁP DỤNG, hãy đưa ra 2-3 gợi ý mô tả, mỗi mô tả trên một dòng riêng. Mỗi mô tả phải:
 - Độ dài 120-160 ký tự
-- Tóm tắt được điểm chính của bài viết
+- Tóm tắt nội dung chính
 - Có call-to-action thu hút
-- Chứa từ khóa chính tự nhiên
-- Tối ưu cho SEO
-
-Format phản hồi:
-1. Phân tích yêu cầu ngắn gọn
-2. Đưa ra 2-3 gợi ý mô tả trong dấu []
-3. Giải thích điểm mạnh của mỗi gợi ý`,
+- Chứa từ khóa tự nhiên`,
 
             content: `${basePrompt}
 
-Bạn đang hỗ trợ viết NỘI DUNG blog. Mọi gợi ý phải:
-- Có cấu trúc rõ ràng với heading H2, H3
+Bạn đang hỗ trợ viết NỘI DUNG blog. Trong phần NỘI DUNG ÁP DỤNG, hãy đưa ra nội dung hoàn chỉnh với:
+- Cấu trúc heading rõ ràng (H2, H3)
 - Độ dài tối thiểu 800 từ
-- Đầy đủ phần mở đầu, thân bài, kết luận
-- Có ví dụ minh họa cụ thể
-- Có call-to-action ở cuối bài
-
-Format phản hồi:
-1. Phân tích yêu cầu và đề xuất cấu trúc
-2. Nếu người dùng đồng ý, đặt toàn bộ nội dung chi tiết trong dấu []
-3. Nội dung phải định dạng Markdown chuẩn
-4. Có thể chia thành nhiều phần nếu nội dung dài`
+- Phần mở đầu, thân bài, kết luận
+- Ví dụ minh họa cụ thể
+- Format Markdown chuẩn`
         }
 
         return fieldPrompts[field]
@@ -477,11 +568,15 @@ Câu hỏi: ${inputValue.trim()}`
     const handleApplySuggestion = (suggestion: AIResponse, mode: 'replace' | 'append' = 'replace') => {
         let contentToApply = suggestion.content
 
-        // Nếu là trường content, chuyển đổi sang định dạng Quill Delta string
-        if (suggestion.field === 'content' && !isQuillContent(suggestion.content)) {
-            contentToApply = JSON.stringify(convertMarkdownToQuill(suggestion.content))
+        // Xử lý cho trường content
+        if (suggestion.field === 'content') {
+            // Chuyển đổi nội dung mới sang Quill Delta nếu chưa phải
+            if (!isQuillContent(suggestion.content)) {
+                contentToApply = JSON.stringify(convertMarkdownToQuill(suggestion.content))
+            }
         }
 
+        // Gọi callback để áp dụng nội dung
         onApplyToField(suggestion.field, contentToApply, mode)
     }
 
@@ -643,7 +738,6 @@ Câu hỏi: ${inputValue.trim()}`
                     <div className={cx('message', 'ai', 'loading')}>
                         <div className={cx('message-content')}>
                             <div className={cx('loading-indicator')}>
-                                <span>Đang xử lý...</span>
                                 <div className={cx('typing-indicator')}>
                                     <span></span>
                                     <span></span>

@@ -32,6 +32,7 @@ import FormFooter from './components/FormFooter'
 import PreviewModal from './components/PreviewModal'
 import ChatAIAssistant from 'src/components/ChatAIAssistant'
 import { HiSparkles } from 'react-icons/hi2'
+import { mergeQuillDeltas } from 'src/utils/convertMarkdownToQuill'
 
 Modal.setAppElement('#root')
 
@@ -133,12 +134,10 @@ const BlogEditor = () => {
                 }
                 break
             case 'content':
-                // Set form value first (this will trigger Quill update through controlled component)
-                blogForm.setValue('content', value)
-
                 if (mode === 'append') {
                     const currentContent = blogForm.watch('content') || ''
-                    blogForm.setValue('content', currentContent + '\n\n' + value)
+                    const newDeltas = mergeQuillDeltas(currentContent, value)
+                    blogForm.setValue('content', newDeltas)
                 } else {
                     blogForm.setValue('content', value)
                 }
