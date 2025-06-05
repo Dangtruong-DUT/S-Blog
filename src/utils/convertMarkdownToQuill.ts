@@ -171,41 +171,197 @@ export function validateAndSanitizeQuillDelta(input: unknown): QuillDelta {
 
 export function convertMarkdownToQuill(markdown: string): QuillDelta {
     try {
+        // Remove outer markdown wrapper if present
+        let processedMarkdown = markdown
+        const lines = processedMarkdown.split('\n')
+        if (lines.length > 2) {
+            const firstLine = lines[0].trim()
+            const lastLine = lines[lines.length - 1].trim()
+            if (firstLine === '```markdown' && lastLine === '```') {
+                processedMarkdown = lines.slice(1, -1).join('\n')
+            }
+        }
+
         const ops: QuillOp[] = []
-        const lines = markdown.split('\n')
+        const contentLines = processedMarkdown.split('\n')
+        let inCodeBlock = false
+        let codeBlockContent = ''
+        let codeBlockLanguage = ''
 
-        for (const line of lines) {
-            const h1Match = line.match(/^# (.+)$/)
-            const h2Match = line.match(/^## (.+)$/)
-            const h3Match = line.match(/^### (.+)$/)
+        // Set of supported programming languages
+        const programmingLanguages = new Set([
+            'javascript',
+            'typescript',
+            'python',
+            'java',
+            'c',
+            'cpp',
+            'csharp',
+            'ruby',
+            'php',
+            'swift',
+            'kotlin',
+            'rust',
+            'go',
+            'scala',
+            'r',
+            'html',
+            'css',
+            'sql',
+            'shell',
+            'bash',
+            'powershell',
+            'dockerfile',
+            'json',
+            'yaml',
+            'markdown',
+            'xml'
+        ])
 
-            if (h1Match) {
-                ops.push({ insert: h1Match[1] }, { attributes: { header: 1 }, insert: '\n' }, { insert: '\n' })
+        const processCodeBlock = (content: string, language?: string) => {
+            if (!content.trim()) return
+
+            // Xử lý nội dung code block
+            let formattedContent = content
+                .replace(/^```[\w]*\s*\n?/, '') // Loại bỏ khai báo ngôn ngữ ở đầu
+                .replace(/```\s*$/, '') // Loại bỏ dấu đóng code block
+
+            // Chuẩn hóa khoảng trắng và indentation
+            const lines = formattedContent.split('\n')
+
+            // Tìm mức indent chung nhỏ nhất cho các dòng không trống
+            const nonEmptyLines = lines.filter((line) => line.trim())
+            const minIndent =
+                nonEmptyLines.length > 0
+                    ? Math.min(
+                          ...nonEmptyLines.map((line) => {
+                              const match = line.match(/^\s*/)
+                              return match ? match[0].length : 0
+                          })
+                      )
+                    : 0
+
+            // Xử lý từng dòng
+            formattedContent = lines
+                .map((line) => {
+                    // Giữ lại dòng trống
+                    if (!line.trim()) return ''
+
+                    // Loại bỏ khoảng trắng chung nhưng giữ indentation tương đối
+                    const match = line.match(/^\s*/)
+                    const currentIndent = match ? match[0].length : 0
+                    return line.slice(Math.min(currentIndent, minIndent))
+                })
+                .join('\n')
+                .trim()
+
+            // Thêm vào ops với định dạng code block
+            if (language && programmingLanguages.has(language.toLowerCase())) {
+                ops.push({
+                    insert: formattedContent + '\n',
+                    attributes: {
+                        'code-block': true,
+                        'code-lang': language.toLowerCase()
+                    }
+                })
+            } else {
+                ops.push({
+                    insert: formattedContent + '\n',
+                    attributes: {
+                        'code-block': true
+                    }
+                })
+            }
+        }
+
+        const processHeader = (content: string, level: QuillHeaderLevel) => {
+            parseInlineFormatting(content.trim(), ops)
+            ops.push({ insert: '\n', attributes: { header: level } })
+        }
+
+        for (let i = 0; i < contentLines.length; i++) {
+            const line = contentLines[i]
+
+            // Handle code blocks
+            const codeBlockStart = line.match(/^```(\w+)?/)
+            if (codeBlockStart) {
+                if (!inCodeBlock) {
+                    inCodeBlock = true
+                    codeBlockLanguage = codeBlockStart[1] || ''
+                    codeBlockContent = ''
+                } else {
+                    inCodeBlock = false
+                    processCodeBlock(codeBlockContent, codeBlockLanguage)
+                    codeBlockContent = ''
+                    codeBlockLanguage = ''
+                }
                 continue
             }
-            if (h2Match) {
-                ops.push({ insert: h2Match[1] }, { attributes: { header: 2 }, insert: '\n' }, { insert: '\n' })
-                continue
-            }
-            if (h3Match) {
-                ops.push({ insert: h3Match[1] }, { attributes: { header: 3 }, insert: '\n' }, { insert: '\n' })
+
+            if (inCodeBlock) {
+                // Thêm dòng mới khi nối các dòng code, nhưng không thêm cho dòng đầu tiên
+                if (codeBlockContent) {
+                    codeBlockContent += '\n' + line
+                } else {
+                    codeBlockContent = line
+                }
                 continue
             }
 
+            // Handle headers
+            const headerMatch = line.match(/^(#{1,6})\s+(.+)$/)
+            if (headerMatch) {
+                const level = headerMatch[1].length as QuillHeaderLevel
+                const content = headerMatch[2]
+                processHeader(content, level)
+                continue
+            }
+
+            // Handle blockquotes với inline formatting
+            const blockquoteMatch = line.match(/^> (.+)$/)
+            if (blockquoteMatch) {
+                parseInlineFormatting(blockquoteMatch[1], ops)
+                ops.push({ attributes: { blockquote: true }, insert: '\n' })
+                continue
+            }
+
+            // Handle lists với inline formatting
+            const orderedListMatch = line.match(/^\d+\.\s+(.+)$/)
+            const unorderedListMatch = line.match(/^[-*+]\s+(.+)$/)
+
+            if (orderedListMatch) {
+                parseInlineFormatting(orderedListMatch[1], ops)
+                ops.push({ attributes: { list: 'ordered' }, insert: '\n' })
+                continue
+            }
+            if (unorderedListMatch) {
+                parseInlineFormatting(unorderedListMatch[1], ops)
+                ops.push({ attributes: { list: 'bullet' }, insert: '\n' })
+                continue
+            }
+
+            // Handle images
             const imageMatch = line.match(/!\[(.*?)\]\((.*?)\)/)
             if (imageMatch) {
-                ops.push(
-                    { attributes: { align: 'center' }, insert: '\n' },
-                    { insert: { image: imageMatch[2] } },
-                    { attributes: { align: 'center' }, insert: '\n' }
-                )
+                ops.push({ insert: { image: imageMatch[2] } }, { insert: '\n' })
                 continue
             }
 
-            if (line || lines.length > 1) {
-                if (line) ops.push({ insert: line })
-                ops.push({ insert: '\n' })
+            // Handle horizontal rules
+            if (line.match(/^---+$/) || line.match(/^\*\*\*+$/) || line.match(/^___+$/)) {
+                ops.push({ insert: '─'.repeat(50) }, { insert: '\n' })
+                continue
             }
+
+            // Handle empty lines
+            if (!line.trim()) {
+                ops.push({ insert: '\n' })
+                continue
+            }
+
+            // Handle regular paragraphs with inline formatting
+            parseInlineFormatting(line, ops)
+            ops.push({ insert: '\n' })
         }
 
         if (ops.length === 0) {
@@ -216,6 +372,145 @@ export function convertMarkdownToQuill(markdown: string): QuillDelta {
     } catch (error) {
         console.error('Failed to convert markdown to Quill Delta:', error)
         return { ops: [{ insert: markdown }] }
+    }
+}
+
+// Helper function to parse inline formatting (bold, italic, code, links)
+function parseInlineFormatting(text: string, ops: QuillOp[]): void {
+    // Khởi tạo
+    let processed = false
+
+    // Patterns với thứ tự ưu tiên (từ phức tạp đến đơn giản)
+    const patterns = [
+        // Code blocks inline - ưu tiên cao nhất
+        { regex: /`([^`]+)`/g, attrs: { code: true }, priority: 1 },
+        // Links - ưu tiên cao
+        { regex: /\[([^\]]+)\]\(([^)]+)\)/g, isLink: true, priority: 2 },
+        // Bold + Italic combined
+        { regex: /\*\*\*([^*]+)\*\*\*/g, attrs: { bold: true, italic: true }, priority: 3 },
+        { regex: /___([^_]+)___/g, attrs: { bold: true, italic: true }, priority: 3 },
+        // Bold with colon (như "**Bootstrap:**") - special handling
+        { regex: /\*\*([^*]+):\*\*/g, attrs: { bold: true }, priority: 4, addColon: true },
+        // Bold only
+        { regex: /\*\*([^*]+)\*\*/g, attrs: { bold: true }, priority: 4 },
+        { regex: /__([^_]+)__/g, attrs: { bold: true }, priority: 4 },
+        // Strikethrough
+        { regex: /~~([^~]+)~~/g, attrs: { strike: true }, priority: 5 },
+        // Underline (không phổ biến trong Markdown nhưng hữu ích)
+        { regex: /<u>([^<]+)<\/u>/g, attrs: { underline: true }, priority: 5 },
+        // Italic - ưu tiên thấp nhất để tránh conflict với bold
+        { regex: /\*([^*\s][^*]*[^*\s])\*/g, attrs: { italic: true }, priority: 6 },
+        { regex: /_([^_\s][^_]*[^_\s])_/g, attrs: { italic: true }, priority: 6 }
+    ] // Tìm tất cả matches với position
+    const allMatches: Array<{
+        start: number
+        end: number
+        text: string
+        attrs?: QuillAttributes
+        priority: number
+        original: string
+        addColon?: boolean
+    }> = []
+
+    for (const pattern of patterns) {
+        let match
+        pattern.regex.lastIndex = 0
+
+        while ((match = pattern.regex.exec(text)) !== null) {
+            if (pattern.isLink) {
+                allMatches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[1], // Link text
+                    attrs: { link: match[2] }, // Link URL
+                    priority: pattern.priority,
+                    original: match[0]
+                })
+            } else {
+                allMatches.push({
+                    start: match.index,
+                    end: match.index + match[0].length,
+                    text: match[1], // Captured content
+                    attrs: pattern.attrs,
+                    priority: pattern.priority,
+                    original: match[0],
+                    addColon: pattern.addColon || false
+                })
+            }
+        }
+    }
+
+    // Sắp xếp theo vị trí, sau đó theo priority
+    allMatches.sort((a, b) => {
+        if (a.start !== b.start) return a.start - b.start
+        return a.priority - b.priority // Priority thấp hơn = ưu tiên cao hơn
+    })
+
+    // Loại bỏ overlapping matches - chọn match có priority cao hơn
+    const validMatches: typeof allMatches = []
+    for (const current of allMatches) {
+        let isValid = true
+
+        // Kiểm tra overlap với các match đã chọn
+        for (const existing of validMatches) {
+            // Kiểm tra overlap
+            if (current.start < existing.end && current.end > existing.start) {
+                // Có overlap - chọn match có priority cao hơn (số nhỏ hơn)
+                if (current.priority >= existing.priority) {
+                    isValid = false
+                    break
+                } else {
+                    // Current có priority cao hơn, remove existing
+                    const existingIndex = validMatches.indexOf(existing)
+                    validMatches.splice(existingIndex, 1)
+                }
+            }
+        }
+
+        if (isValid) {
+            validMatches.push(current)
+        }
+    }
+
+    // Sắp xếp lại theo vị trí
+    validMatches.sort((a, b) => a.start - b.start)
+
+    // Tạo ops từ matches
+    let currentIndex = 0
+    for (const match of validMatches) {
+        // Thêm text thuần trước match
+        if (match.start > currentIndex) {
+            const plainText = text.slice(currentIndex, match.start)
+            if (plainText) {
+                ops.push({ insert: plainText })
+                processed = true
+            }
+        } // Thêm formatted text
+        if (match.attrs) {
+            if (match.addColon) {
+                // Xử lý trường hợp đặc biệt như "**Bootstrap:**"
+                ops.push({ insert: match.text + ':', attributes: match.attrs })
+            } else {
+                ops.push({ insert: match.text, attributes: match.attrs })
+            }
+            processed = true
+        }
+
+        currentIndex = match.end
+    }
+
+    // Thêm text còn lại
+    if (currentIndex < text.length) {
+        const remainingTextPart = text.slice(currentIndex)
+        if (remainingTextPart) {
+            ops.push({ insert: remainingTextPart })
+            processed = true
+        }
+    }
+
+    // Nếu không có formatting nào được xử lý, thêm text gốc
+    if (!processed && text) {
+        ops.push({ insert: text })
     }
 }
 
@@ -302,5 +597,39 @@ export function convertQuillToPreview(content: string, maxLength: number = 200):
     } catch (error) {
         console.error('Error creating Quill preview:', error)
         return content.substring(0, maxLength) + '...'
+    }
+}
+
+export function mergeQuillDeltas(delta1: string, delta2: string): string {
+    try {
+        // Parse delta strings into objects
+        const firstDelta = JSON.parse(delta1)
+        const secondDelta = JSON.parse(delta2)
+
+        // Kiểm tra xem có phải Quill Delta hợp lệ không
+        if (!firstDelta.ops || !secondDelta.ops) {
+            throw new Error('Invalid Quill Delta format')
+        }
+
+        // Đảm bảo có dòng trống giữa hai nội dung
+        if (firstDelta.ops.length > 0) {
+            const lastOp = firstDelta.ops[firstDelta.ops.length - 1]
+            if (typeof lastOp.insert === 'string' && !lastOp.insert.endsWith('\n\n')) {
+                // Thêm dòng trống nếu cần
+                const newlinesNeeded = lastOp.insert.endsWith('\n') ? 1 : 2
+                firstDelta.ops.push({ insert: '\n'.repeat(newlinesNeeded) })
+            }
+        }
+
+        // Kết hợp hai delta
+        const mergedDelta = {
+            ops: [...firstDelta.ops, ...secondDelta.ops]
+        }
+
+        return JSON.stringify(mergedDelta)
+    } catch (error) {
+        console.error('Error merging Quill Deltas:', error)
+        // Trả về delta thứ hai nếu có lỗi
+        return delta2
     }
 }
