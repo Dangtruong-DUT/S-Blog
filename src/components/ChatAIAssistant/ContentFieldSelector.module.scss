@@ -1,0 +1,65 @@
+.field-selector {
+    display: flex;
+    gap: 8px;
+    padding: 8px 0;
+    width: 100%;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    .field-button {
+        padding: 8px 16px;
+        border: 1px solid var(--chat-border);
+        border-radius: 20px;
+        background: transparent;
+        color: var(--chat-text);
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        white-space: nowrap;
+        transition: all 0.2s ease;
+        flex: 1;
+        min-width: 100px;
+        max-width: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+
+        &:hover:not(.active) {
+            border-color: var(--chat-primary);
+            background: var(--chat-hover);
+            transform: translateY(-1px);
+        }
+
+        &.active {
+            background: var(--chat-primary);
+            border-color: var(--chat-primary);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+
+            &:hover {
+                background: var(--chat-primary-dark);
+            }
+        }
+
+        @media (max-width: 768px) {
+            min-width: 80px;
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .field-icon {
+            font-size: 16px;
+
+            @media (max-width: 768px) {
+                font-size: 14px;
+            }
+        }
+    }
+}
